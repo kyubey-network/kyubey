@@ -59,7 +59,7 @@
                             </div>
                         </td>
                         <td>@((x.Change * 100.0).ToString("0.0000"))%</td>
-                        <td>@x.Price EOS</td>
+                        <td>@x.Price.ToString("0.0000") EOS</td>
                         <td class="table-currency-exchange">
                             <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Buy</a>
                             <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Sell</a>

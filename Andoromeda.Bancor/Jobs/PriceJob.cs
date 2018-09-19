@@ -12,7 +12,7 @@ namespace Andoromeda.Bancor.Jobs
 {
     public class PriceJob : Job
     {
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 10, SkipWhileExecuting = true)]
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
         public void Calculate(IConfiguration config, KyubeyContext db)
         {
             CalculateAsync(config, db).Wait();
@@ -42,13 +42,18 @@ namespace Andoromeda.Bancor.Jobs
                             var text = await tableResponse.Content.ReadAsStringAsync();
                             var text2 = await k24hResponse.Content.ReadAsStringAsync();
                             var row = JsonConvert.DeserializeObject<Table>(text).rows.First();
-                            var k24h = JsonConvert.DeserializeObject<K24HResponse>(text2).data;
+                            var k24h = 0.0;
+                            try
+                            {
+                                k24h = JsonConvert.DeserializeObject<K24HResponse>(text2).data;
+                            }
+                            catch { }
                             double balance, supply;
 
                             if (x.BalancePath.Contains("."))
                             {
                                 var split = x.BalancePath.Split('.');
-                                balance = ObjectToDouble((row[split[0]] as IDictionary<string, object>)[split[1]]);
+                                balance = ObjectToDouble((ConvertObjectToDictionary(row[split[0]]))[split[1]]);
                             }
                             else
                             {
@@ -58,7 +63,7 @@ namespace Andoromeda.Bancor.Jobs
                             if (x.SupplyPath.Contains("."))
                             {
                                 var split = x.SupplyPath.Split('.');
-                                supply = ObjectToDouble((row[split[0]] as IDictionary<string, object>)[split[1]]);
+                                supply = ObjectToDouble((ConvertObjectToDictionary(row[split[0]]))[split[1]]);
                             }
                             else
                             {
@@ -66,7 +71,14 @@ namespace Andoromeda.Bancor.Jobs
                             }
                             
                             x.Price = balance / supply;
-                            x.Change = (x.Price - k24h) / k24h;
+                            if (k24h != 0.0)
+                            {
+                                x.Change = (x.Price - k24h) / k24h;
+                            }
+                            else
+                            {
+                                x.Change = 0.0;
+                            }
                             upload.Add(new
                             {
                                 catalog = "kyubey-" + x.Id,
@@ -101,6 +113,12 @@ namespace Andoromeda.Bancor.Jobs
             {
                 return Convert.ToDouble(obj);
             }
+        }
+
+        private IDictionary<string, object> ConvertObjectToDictionary(object src)
+        {
+            var json = JsonConvert.SerializeObject(src);
+            return JsonConvert.DeserializeObject<IDictionary<string, object>>(json);
         }
     }
 }

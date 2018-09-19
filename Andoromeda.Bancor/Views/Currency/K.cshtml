@@ -1,0 +1,303 @@
+﻿@model Currency
+<script src="~/js/eos.js"></script>
+<script src="~/js/echarts.js"></script>
+
+<header class="brand-header masthead text-center text-white"></header>
+
+<section>
+    <div class="container brand">
+        <img src="/currency/@Model.Id/icon" class="brand-icon" />
+        <div class="brand-name">@Model.Id</div>
+    </div>
+</section>
+
+<section class="brand-menu">
+    <div class="container">
+        <a class="brand-menu-item" asp-action="Index">About</a>
+        <a class="brand-menu-item active" asp-action="k">Candlestick</a>
+        <a class="brand-menu-item" asp-action="Buy">Buy</a>
+        <a class="brand-menu-item" asp-action="Sell">Sell</a>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrWhiteSpace(Model.Alert))
+                {
+                    <div class="card alert">
+                        @Model.Alert
+                    </div>
+                }
+                <div class="card links">
+                    @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
+                    {
+                        <div><i class="fa fa-home"></i> <a href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+                    {
+                        <div><i class="fa fa-github"></i> <a href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                    {
+                        <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
+                    }
+                </div>
+                <div class="card">
+                    <div class="brand-current-label">Current</div>
+                    <div class="brand-current-text">@Model.Price.ToString("0.0000") EOS</div>
+                </div>
+                <div class="card">
+                    <div class="brand-current-label">24H CHANGE</div>
+                    <div class="brand-current-text">@((Model.Change * 100.0).ToString("0.0000"))%</div>
+                </div>
+                <div class="row brand-manage">
+                    <a asp-action="Login" asp-route-id="@Model.Id">Manage</a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div id="chart" style="margin:30px; height:300px; width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function splitData(rawData) {
+        var categoryData = [];
+        var values = [];
+
+        for (var i = 0; i < rawData.length; i++) {
+            //splice 返回每组数组中被删除的第一项，即返回数组中被删除的日期 
+            //alert(rawData[i].splice(0, 1)[0]);
+            //categoryData 日期 把返回的日期放到categoryData[]数组中
+            categoryData.push(rawData[i].splice(0, 1)[0]);
+            //alert(categoryData);
+
+            //数据数组，即数组中除日期外的数据
+            // alert(rawData[i]);
+            values.push(rawData[i])
+        }
+        return {
+            categoryData: categoryData, //数组中的日期 x轴对应的日期
+            values: values  //数组中的数据 y轴对应的数据
+        };
+    }
+
+    $.getJSON('https://dasdaq-webapi.chinacloudsites.cn/api/Candlestick/kyubey-@Model.Id?begin=@DateTime.UtcNow.AddDays(-7).ToString("yyyy-MM-dd")', {}, function (data) {
+        data = data.data.values.map(x => [x.time.split('T')[0], x.opening, x.closing, x.min, x.max]);
+        var myChart = echarts.init(document.getElementById('chart'));
+        var data0 = splitData(data);
+
+        //计算MA平均线，N日移动平均线=N日收盘价之和/N dayCount要计算的天数(5,10,20,30)
+        function calculateMA(dayCount) {
+            var result = [];
+            for (var i = 0, len = data0.values.length; i < len; i++) {
+                if (i < dayCount) {
+                    result.push('-');
+                    //alert(result);
+                    continue; //结束单次循环，即不输出本次结果
+                }
+                var sum = 0;
+                for (var j = 0; j < dayCount; j++) {
+                    //收盘价总和
+                    sum += data0.values[i - j][1];
+                    //alert(sum);
+                }
+                result.push(sum / dayCount);
+                // alert(result);
+            }
+            return result;
+        }
+
+        option = {
+            title: { //标题
+                text: '@Model.Id',
+                left: 0
+            },
+            tooltip: { //提示框
+                trigger: 'axis', //触发类型：坐标轴触发
+                axisPointer: { //坐标轴指示器配置项
+                    type: 'cross' //指示器类型，十字准星
+                }
+            },
+            legend: { //图例控件，点击图例控制哪些系列不现实
+                data: ['Day-K', 'MA5', 'MA10', 'MA20', 'MA30']
+            },
+            grid: { //直角坐标系
+                show: true,
+                left: '10%', //grid组件离容器左侧的距离
+                right: '10%',
+                bottom: '15%',
+                //backgroundColor:'#ccc'
+            },
+            xAxis: {
+                type: 'category', //坐标轴类型，类目轴
+                data: data0.categoryData,
+                //scale: true, //只在数字轴中有效
+                boundaryGap: false, //刻度作为分割线，标签和数据点会在两个刻度上
+                axisLine: { onZero: false },
+                splitLine: { show: false }, //是否显示坐标轴轴线
+                //splitNumber: 20, //坐标轴的分割段数，预估值，在类目轴中无效
+                min: 'dataMin', //特殊值，数轴上的最小值作为最小刻度
+                max: 'dataMax' //特殊值，数轴上的最大值作为最大刻度
+            },
+            yAxis: {
+                scale: true, //坐标刻度不强制包含零刻度
+                splitArea: {
+                    show: true //显示分割区域
+                }
+            },
+            dataZoom: [ //用于区域缩放
+                {
+                    filterMode: 'filter', //当前数据窗口外的数据被过滤掉来达到数据窗口缩放的效果 默认值filter
+                    type: 'inside', //内置型数据区域缩放组件
+                    start: 50, //数据窗口范围的起始百分比
+                    end: 100 //数据窗口范围的结束百分比
+                },
+                {
+                    show: true,
+                    type: 'slider', //滑动条型数据区域缩放组件
+                    y: '90%',
+                    start: 50,
+                    end: 100
+                }
+            ],
+            series: [ //图表类型
+                {
+                    name: 'Day-K',
+                    type: 'candlestick', //K线图
+                    data: data0.values, //y轴对应的数据
+                    ////////////////////////图标标注/////////////////////////////
+                    markPoint: { //图表标注
+                        label: { //标注的文本
+                            normal: { //默认不显示标注
+                                show: true,
+                                //position:['20%','30%'],
+                                formatter: function (param) { //标签内容控制器
+                                    return param != null ? Math.round(param.value) : '';
+                                }
+                            }
+                        },
+                        data: [ //标注的数据数组
+                            {
+                                name: 'XX标点',
+                                coord: ['2013/5/31', 2300], //指定数据的坐标位置
+                                value: 2300,
+                                itemStyle: { //图形样式
+                                    normal: { color: 'rgb(41,60,85)' }
+                                }
+                            },
+                            {
+                                name: 'highest value',
+                                type: 'max', //最大值
+                                valueDim: 'highest' //在highest维度上的最大值 最高价
+                            },
+                            {
+                                name: 'lowest value',
+                                type: 'min',
+                                valueDim: 'lowest' //最低价
+                            },
+                            {
+                                name: 'average value on close',
+                                type: 'average',
+                                valueDim: 'close' //收盘价
+                            }
+                        ],
+                        tooltip: { //提示框
+                            formatter: function (param) {
+                                return param.name + '<br>' + (param.data.coord || '');
+                            }
+                        }
+                    },
+                    /////////////////////////////////图标标线///////////////////////////
+                    markLine: {
+                        symbol: ['none', 'none'], //标线两端的标记类型
+                        data: [
+                            [
+                                {
+                                    name: 'from lowest to highest',
+                                    type: 'min', //设置该标线为最小值的线
+                                    valueDim: 'lowest', //指定在哪个维度上的最小值
+                                    symbol: 'circle',
+                                    symbolSize: 10, //起点标记的大小
+                                    label: { //normal默认，emphasis高亮
+                                        normal: { show: false }, //不显示标签
+                                        emphasis: { show: false } //不显示标签
+                                    }
+                                },
+                                {
+                                    type: 'max',
+                                    valueDim: 'highest',
+                                    symbol: 'circle',
+                                    symbolSize: 10,
+                                    label: {
+                                        normal: { show: false },
+                                        emphasis: { show: false }
+                                    }
+                                }
+                            ],
+
+                            {
+                                name: 'min line on close',
+                                type: 'min',
+                                valueDim: 'close'
+                            },
+                            {
+                                name: 'max line on close',
+                                type: 'max',
+                                valueDim: 'close'
+                            }
+                        ]
+
+                    }
+
+                },
+
+                { //MA5 5天内的收盘价之和/5
+                    name: 'MA5',
+                    type: 'line',
+                    data: calculateMA(5),
+                    smooth: true,
+                    lineStyle: {
+                        normal: { opacity: 0.5 }
+                    }
+                },
+                {
+                    name: 'MA10',
+                    type: 'line',
+                    data: calculateMA(10),
+                    smooth: true,
+                    lineStyle: { //标线的样式
+                        normal: { opacity: 0.5 }
+                    }
+                },
+                {
+                    name: 'MA20',
+                    type: 'line',
+                    data: calculateMA(20),
+                    smooth: true,
+                    lineStyle: {
+                        normal: { opacity: 0.5 }
+                    }
+                },
+                {
+                    name: 'MA30',
+                    type: 'line',
+                    data: calculateMA(30),
+                    smooth: true,
+                    lineStyle: {
+                        normal: { opacity: 0.5 }
+                    }
+                },
+
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表
+        myChart.setOption(option);
+    });
+
+</script>

@@ -15,7 +15,7 @@
 <section class="brand-menu">
     <div class="container">
         <a class="brand-menu-item" asp-action="Index">About</a>
-        @*<a class="brand-menu-item">Candlestick</a>*@
+        <a class="brand-menu-item" asp-action="k">Candlestick</a>
         <a class="brand-menu-item active" asp-action="Buy">Buy</a>
         <a class="brand-menu-item" asp-action="Sell">Sell</a>
     </div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="card">
                     <div class="brand-current-label">Current</div>
-                    <div class="brand-current-text">@Model.Price</div>
+                    <div class="brand-current-text">@Model.Price.ToString("0.0000") EOS</div>
                 </div>
                 <div class="card">
                     <div class="brand-current-label">24H CHANGE</div>

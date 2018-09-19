@@ -31,6 +31,12 @@ namespace Andoromeda.Bancor.Controllers
             return View(await db.Currencies.SingleAsync(x => x.Id == id && x.Display, token));
         }
 
+        [HttpGet("[controller]/{id}/k")]
+        public async Task<IActionResult> k([FromServices] KyubeyContext db, string id, CancellationToken token)
+        {
+            return View(await db.Currencies.SingleAsync(x => x.Id == id && x.Display, token));
+        }
+
         [HttpGet("[controller]/{id}/javascript")]
         public async Task<IActionResult> Javascript([FromServices] KyubeyContext db, string id, CancellationToken token)
         {
