@@ -1,0 +1,265 @@
+﻿body {
+    background: #eeeeee;
+}
+
+.exchange {
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    padding: 15px;
+}
+
+section {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.currency-icon {
+    border: 3px solid #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    float: left;
+}
+
+.currency-selector {
+    width: 80px;
+    margin-left: 10px;
+    float: left;
+    line-height: 65px;
+    height: 65px;
+    font-size: 22px;
+}
+
+.currency-input {
+    width: calc(100% - 80px - 65px - 20px);
+    margin-left: 10px;
+    float: left;
+    height: 65px;
+    line-height: 65px;
+}
+
+.currency-input input {
+    height: 45px;
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.currency-to {
+    text-align: right;
+    color: #3584e5;
+    font-size: 18px;
+    height: 65px;
+    line-height: 65px;
+}
+
+.currency-convert {
+    text-align: right;
+}
+
+.btn-convert {
+    border-radius: 50px;
+    height: 45px;
+    margin: 10px 0;
+    padding: inherit 20px;
+    color: #fff!important;
+}
+
+.btn-convert-intable {
+    border-radius: 50px;
+    height: 40px;
+    margin: 5px 0;
+    padding: inherit 20px;
+    color: #fff !important;
+}
+
+.table-icon {
+    border: 3px solid #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    float: left;
+}
+
+.table-currency {
+    height: 50px;
+    float: left;
+}
+
+.currency-table-outer {
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.currency-table {
+    width: calc(100% + 30px);
+    margin: 0 -15px;
+    font-size: 14px;
+    border-collapse: collapse;
+}
+
+    .currency-table tr {
+        border: 1px solid rgb(223, 223, 223);
+    }
+
+    .currency-table th, .currency-table td {
+        padding: 15px 15px;
+    }
+
+    .currency-table thead {
+        background: #f9f9f9;
+        color: rgb(151, 151, 151);
+    }
+
+.table-currency {
+    margin-left: 15px;
+}
+
+.table-currency-symbol {
+    font-size: 18px;
+    line-height: 30px;
+    height: 30px;
+}
+
+.table-currency-name {
+    font-size: 14px;
+    line-height: 20px;
+    height: 20px;
+    color: #888;
+}
+
+.table-currency-exchange {
+    text-align: right;
+}
+
+.brand-icon {
+    border: 3px solid #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.brand {
+    margin-top: -140px;
+}
+
+.brand-name {
+    font-size: 32px;
+    color: #fff;
+    display: inline-block;
+    margin-left: 30px;
+}
+
+.brand-header {
+    position: static !important;
+}
+
+.brand-header {
+    padding-top: 100px!important;
+}
+
+.brand-menu {
+    background: #fff;
+    margin-top: -70px;
+    border-bottom: 1px solid #ccc;
+}
+
+    .brand-menu .container {
+        padding: 0 0 0 300px;
+    }
+
+.brand-menu-item {
+    padding: 18px 15px 15px 15px;
+    border-bottom: 3px solid #fff;
+    font-size: 18px;
+    color: #888;
+    height: 60px;
+    display: inline-block;
+}
+
+    .brand-menu-item:hover, .brand-menu-item.active {
+        border-bottom: 3px solid #ee0979;
+        color: #ee0979;
+    }
+
+    .card {
+        border-radius: 0;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+.brand-current-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+}
+
+.brand-current-text {
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.card.links i {
+    width: 25px;
+}
+
+.card.links div {
+    line-height: 30px;
+}
+
+.currency-input2 {
+    height: 45px;
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+}
+
+.btn-convert2 {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.no-padding {
+    padding: 0;
+    border: none;
+}
+
+.no-padding table {
+    width: 100%;
+    margin: 0;
+}
+
+.alert {
+    border-left: 8px solid rgb(255,128,128);
+}
+
+.js-outer {
+    border: 1px solid #ccc;
+}
+
+.required {
+    color: red;
+}
+
+.brand-menu-item:hover {
+    text-decoration: none;
+}
+
+.brand-manage {
+    padding: 15px;
+    padding-top: 0;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.brand-manage a {
+    color: #aaa;
+}

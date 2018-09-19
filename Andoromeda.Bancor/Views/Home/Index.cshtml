@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Currency>
+<header class="masthead text-center text-white">
+    <div class="masthead-content">
+        <div class="container">
+            <h1 class="masthead-heading mb-0">Give the Power</h1>
+            <h2 class="masthead-subheading mb-0">Back to Users</h2>
+            <a href="/" class="btn btn-primary btn-xl rounded-pill mt-5">White Paper</a>
+        </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>
+
+@*<section>
+    <form asp-action="Convert" class="container">
+        <div class="row exchange">
+            <div class="col-md-4">
+                <img src="~/img/eos.png" class="currency-icon" />
+                <div class="currency-selector">EOS</div>
+                <div class="currency-input"><input type="text" placeholder="Enter amount" /></div>
+            </div>
+            <div class="col-md-1">
+                <div class="currency-to">→</div>
+            </div>
+            <div class="col-md-4">
+                <img src="~/img/eos.png" class="currency-icon" />
+                <div class="currency-selector">EOS</div>
+                <div class="currency-input"><input type="text" placeholder="Enter amount" /></div>
+            </div>
+            <div class="col-md-3 currency-convert">
+                <input type="button" value="Convert" class="btn btn-primary btn-convert" />
+            </div>
+        </div>
+    </form>
+</section>*@
+
+<section>
+    <div class="container currency-table-outer">
+        <table class="currency-table">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>24H CHANGE</th>
+                    <th>PRICE EOS</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="~/currency/@x.Id/icon" class="table-icon" />
+                            <div class="table-currency">
+                                <a class="table-currency-symbol" asp-action="Index" asp-controller="Currency" asp-route-id="@x.Id">@x.Id</a>
+                                <div class="table-currency-name">@x.Name</div>
+                            </div>
+                        </td>
+                        <td>@((x.Change * 100.0).ToString("0.0000"))%</td>
+                        <td>@x.Price EOS</td>
+                        <td class="table-currency-exchange">
+                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Buy</a>
+                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Sell</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

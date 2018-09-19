@@ -1,0 +1,96 @@
+﻿@model Currency
+<script src="~/js/eos.js"></script>
+<script src="~/js/kyubey.js"></script>
+<script src="/Currency/@Model.Id/Javascript"></script>
+
+<header class="brand-header masthead text-center text-white"></header>
+
+<section>
+    <div class="container brand">
+        <img src="/currency/@Model.Id/icon" class="brand-icon" />
+        <div class="brand-name">@Model.Id</div>
+    </div>
+</section>
+
+<section class="brand-menu">
+    <div class="container">
+        <a class="brand-menu-item" asp-action="Index">About</a>
+        @*<a class="brand-menu-item">Candlestick</a>*@
+        <a class="brand-menu-item" asp-action="Buy">Buy</a>
+        <a class="brand-menu-item active" asp-action="Sell">Sell</a>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrWhiteSpace(Model.Alert))
+                {
+                    <div class="card alert">
+                        @Model.Alert
+                    </div>
+                }
+                <div class="card links">
+                    @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
+                    {
+                        <div><i class="fa fa-home"></i> <a href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+                    {
+                        <div><i class="fa fa-github"></i> <a href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                    {
+                        <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
+                    }
+                </div>
+                <div class="card">
+                    <div class="brand-current-label">Current</div>
+                    <div class="brand-current-text">@Model.Price</div>
+                </div>
+                <div class="card">
+                    <div class="brand-current-label">24H CHANGE</div>
+                    <div class="brand-current-text">@((Model.Change * 100.0).ToString("0.0000"))%</div>
+                </div>
+                <div class="row brand-manage">
+                    <a asp-action="Login" asp-route-id="@Model.Id">Manage</a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div><input class="currency-input2" type="text" placeholder="Enter amount" id="amount" /></div>
+                    <div><input class="btn btn-primary btn-convert2" type="button" value="Sell" onclick="sell()" /></div>
+                </div>
+
+                <div class="card no-padding">
+                    <table class="currency-table">
+                        <thead>
+                            <tr>
+                                <th>MY ASSETS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lstAssets"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modelContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
