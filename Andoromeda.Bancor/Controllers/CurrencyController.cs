@@ -70,9 +70,11 @@ namespace Andoromeda.Bancor.Controllers
             {
                 return Content("Access denied.");
             }
+            ViewBag.Password = password;
             return View(currency);
         }
 
+        [HttpPost("[controller]/{id}/manage")]
         public async Task<IActionResult> Manage(
             [FromServices]KyubeyContext db, 
             string id, 

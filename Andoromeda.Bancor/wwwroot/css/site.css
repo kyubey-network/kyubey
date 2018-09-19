@@ -263,3 +263,7 @@ section {
 .brand-manage a {
     color: #aaa;
 }
+
+.card img {
+    max-width: 100%;
+}
