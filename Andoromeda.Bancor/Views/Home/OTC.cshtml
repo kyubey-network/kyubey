@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Currency>
+﻿@model IEnumerable<OTC>
 <header class="masthead text-center text-white">
     <div class="masthead-content">
         <div class="container">
@@ -37,8 +37,8 @@
 </section>*@
 
 <section style="text-align: center">
-    <a class="area-item active" asp-action="Index">Bancor</a>
-    <a class="area-item" asp-action="OTC">OTC</a>
+    <a class="area-item" asp-action="Index">Bancor</a>
+    <a class="area-item active" asp-action="OTC">OTC</a>
 </section>
 
 <section>
@@ -47,8 +47,8 @@
             <thead>
                 <tr>
                     <th>NAME</th>
-                    <th>24H CHANGE</th>
-                    <th>PRICE EOS</th>
+                    <th>TRANSACTIONS</th>
+                    <th>PRICE AVG</th>
                     <th></th>
                 </tr>
             </thead>
@@ -57,17 +57,17 @@
                 {
                     <tr>
                         <td>
-                            <img src="~/currency/@x.Id/icon" class="table-icon" />
+                            <img src="/otc/@x.Id/icon" class="table-icon" />
                             <div class="table-currency">
-                                <a class="table-currency-symbol" asp-action="Index" asp-controller="Currency" asp-route-id="@x.Id">@x.Id</a>
+                                <a class="table-currency-symbol" asp-action="Index" asp-controller="OTC" asp-route-id="@x.Id">@x.Id</a>
                                 <div class="table-currency-name">@x.Name</div>
                             </div>
                         </td>
-                        <td>@((x.Change * 100.0).ToString("0.0000"))%</td>
-                        <td>@x.Price.ToString("0.0000") EOS</td>
+                        <td>@x.Transaction</td>
+                        <td>@x.PriceMin.ToString("0.0000") EOS ~ @x.PriceMax.ToString("0.0000") EOS</td>
                         <td class="table-currency-exchange">
-                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Buy</a>
-                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Currency">Sell</a>
+                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="OTC">Buy</a>
+                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="OTC">Sell</a>
                         </td>
                     </tr>
                 }

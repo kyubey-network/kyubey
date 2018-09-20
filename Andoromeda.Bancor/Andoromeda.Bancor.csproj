@@ -24,6 +24,23 @@
     <Content Update="Views\Currency\Sell.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Home\OTC.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\OTC\Publish.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\OTC\Buy.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\OTC\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\OTC\Sell.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties config_1json__JSONSchema="http://json.schemastore.org/epr-manifest" /></VisualStudio></ProjectExtensions>
 
 </Project>

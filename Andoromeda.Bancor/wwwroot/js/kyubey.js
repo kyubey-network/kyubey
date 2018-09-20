@@ -5,12 +5,12 @@ var account, eos, requiredFields;
 function showModal(title, content) {
     $('#modalTitle').text(title);
     $('#modalContent').text(content);
-    $('#myModal').modal('show');
+    $('#modal').modal('show');
 }
 
 setTimeout(function () {
     if (!('scatter' in window)) {
-        showModal('Scatter not found', 'Scatter is an EOS wallet addon for Chrome, please install Scatter first.');
+        showModal('Scatter插件没有找到', 'Scatter是一款EOS钱包，运行在Chrome浏览器中，请您确定已经安装Scatter插件. 参考：https://www.jianshu.com/p/a2e1e6204023');
     } else {
         var network = {
             blockchain: 'eos',

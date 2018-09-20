@@ -1,23 +1,20 @@
-﻿@model Currency
-<script src="~/js/eos.js"></script>
-<script src="~/js/kyubey.js"></script>
-<script src="/Currency/@Model.Id/Javascript"></script>
+﻿@model OTC
 
 <header class="brand-header masthead text-center text-white"></header>
 
 <section>
     <div class="container brand">
-        <img src="/currency/@Model.Id/icon" class="brand-icon" />
+        <img src="/otc/@Model.Id/icon" class="brand-icon" />
         <div class="brand-name">@Model.Id</div>
     </div>
 </section>
 
 <section class="brand-menu">
     <div class="container">
-        <a class="brand-menu-item" asp-action="Index">About</a>
-        <a class="brand-menu-item" asp-action="k">Candlestick</a>
+        <a class="brand-menu-item active" asp-action="Index">About</a>
         <a class="brand-menu-item" asp-action="Buy">Buy</a>
-        <a class="brand-menu-item active" asp-action="Sell">Sell</a>
+        <a class="brand-menu-item" asp-action="Sell">Sell</a>
+        <a class="brand-menu-item" asp-action="Publish">Publish</a>
     </div>
 </section>
 
@@ -47,31 +44,13 @@
                 </div>
                 <div class="card">
                     <div class="brand-current-label">Current</div>
-                    <div class="brand-current-text">@Model.Price.ToString("0.0000") EOS</div>
-                </div>
-                <div class="card">
-                    <div class="brand-current-label">24H CHANGE</div>
-                    <div class="brand-current-text">@((Model.Change * 100.0).ToString("0.0000"))%</div>
-                </div>
-                <div class="row brand-manage">
-                    <a asp-action="Login" asp-route-id="@Model.Id">Manage</a>
+                    <div class="brand-current-text-sm">Min: @Model.PriceMin.ToString("0.0000") EOS</div>
+                    <div class="brand-current-text-sm">Max: @Model.PriceMax.ToString("0.0000") EOS</div>
                 </div>
             </div>
             <div class="col-md-8">
                 <div class="card">
-                    <div><input class="currency-input2" type="text" placeholder="Enter amount" id="amount" /></div>
-                    <div><input class="btn btn-primary btn-convert2" type="button" value="Sell" onclick="sell()" /></div>
-                </div>
-
-                <div class="card no-padding">
-                    <table class="currency-table">
-                        <thead>
-                            <tr>
-                                <th>MY ASSETS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lstAssets"></tbody>
-                    </table>
+                    @Html.Marked(Model.Description)
                 </div>
             </div>
         </div>

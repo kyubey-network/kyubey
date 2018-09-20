@@ -142,6 +142,7 @@ section {
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    background: #fff;
 }
 
 .brand {
@@ -201,6 +202,11 @@ section {
 
 .brand-current-text {
     font-size: 34px;
+    font-weight: bold;
+}
+
+.brand-current-text-sm {
+    font-size: 24px;
     font-weight: bold;
 }
 
@@ -267,3 +273,19 @@ section {
 .card img {
     max-width: 100%;
 }
+
+.area-item {
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 20px;
+    color: #888;
+}
+
+    .area-item.active {
+        background: #ee0979;
+        color: #fff!important;
+    }
+
+    .filter {
+        line-height: 38px;
+    }

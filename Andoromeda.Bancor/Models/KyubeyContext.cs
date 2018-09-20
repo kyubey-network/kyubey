@@ -10,6 +10,8 @@ namespace Andoromeda.Bancor.Models
 
         public DbSet<Currency> Currencies { get; set; }
 
+        public DbSet<OTC> OTCs { get; set; }
+
         public DbSet<Blob> Blobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

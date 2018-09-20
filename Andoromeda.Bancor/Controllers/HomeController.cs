@@ -17,7 +17,15 @@ namespace Andoromeda.Bancor.Controllers
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, CancellationToken token)
         {
             var currencies = await db.Currencies
+                .Where(x => x.Display)
                 .OrderByDescending(x => x.PRI)
+                .ToListAsync(token);
+            return View(currencies);
+        }
+
+        public async Task<IActionResult> OTC([FromServices] KyubeyContext db, CancellationToken token)
+        {
+            var currencies = await db.OTCs
                 .ToListAsync(token);
             return View(currencies);
         }
@@ -31,7 +39,7 @@ namespace Andoromeda.Bancor.Controllers
         [HttpPost]
         public async Task<IActionResult> OnBoard([FromServices] KyubeyContext db, Currency model, string password, IFormFile file)
         {
-            model.Display = true;
+            //model.Display = true;
             model.PasswordSha256 = Convert.ToBase64String(Sha256(System.Text.Encoding.UTF8.GetBytes(password)));
             if (file != null && file.Length > 0)
             {

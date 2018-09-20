@@ -1,0 +1,156 @@
+﻿@model OTC
+<script src="~/js/eos.js"></script>
+<script src="~/js/kyubey.js"></script>
+
+<header class="brand-header masthead text-center text-white"></header>
+
+<section>
+    <div class="container brand">
+        <img src="/otc/@Model.Id/icon" class="brand-icon" />
+        <div class="brand-name">@Model.Id</div>
+    </div>
+</section>
+
+<section class="brand-menu">
+    <div class="container">
+        <a class="brand-menu-item" asp-action="Index">About</a>
+        <a class="brand-menu-item" asp-action="Buy">Buy</a>
+        <a class="brand-menu-item" asp-action="Sell">Sell</a>
+        <a class="brand-menu-item active" asp-action="Publish">Publish</a>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrWhiteSpace(Model.Alert))
+                {
+                    <div class="card alert">
+                        @Model.Alert
+                    </div>
+                }
+                <div class="card links">
+                    @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
+                    {
+                        <div><i class="fa fa-home"></i> <a href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+                    {
+                        <div><i class="fa fa-github"></i> <a href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                    {
+                        <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
+                    }
+                </div>
+                <div class="card">
+                    <div class="brand-current-label">Current</div>
+                    <div class="brand-current-text-sm">Min: @Model.PriceMin.ToString("0.0000") EOS</div>
+                    <div class="brand-current-text-sm">Max: @Model.PriceMax.ToString("0.0000") EOS</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <h5>我要购买 @Model.Id</h5>
+                    <table style="margin-bottom: 15px">
+                        <tr>
+                            <td><input type="text" id="txtBuyAmount" value="0.0000" class="form-control" /></td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">花费 EOS (总价)</td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="txtBuyEos" value="0.0000" class="form-control" /></td>
+                            <td>EOS</td>
+                        </tr>
+                    </table>
+                    <input type="button" class="btn btn-primary" value="挂单购买 @Model.Id" onclick="buy()" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <h5>我要出售 @Model.Id</h5>
+                    <table style="        margin-bottom: 15px">
+                        <tr>
+                            <td><input type="text" id="txtSellAmount" value="0.0000" class="form-control" /></td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">售价 EOS (总价)</td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" id="txtSellEos" value="0.0000" class="form-control" /></td>
+                            <td>EOS</td>
+                        </tr>
+                    </table>
+                    <input type="button" class="btn btn-primary" value="挂单出售 @Model.Id" onclick="sell()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function buy() {
+        eos.contract('eosio.token', { requiredFields })
+            .then(contract => {
+                var memo = `ask,${parseFloat($('#txtBuyAmount').val()).toFixed(4)} @Model.Id,@Model.Contract`;
+                return contract.transfer(
+                    account.name,
+                    'eosotcbackup',
+                    parseFloat($('#txtBuyEos').val()).toFixed(4) + ' EOS',
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+
+    
+    function sell() {
+        eos.contract('@Model.Contract', { requiredFields })
+            .then(contract => {
+                var memo = `ask,${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS,eosio.token`;
+                return contract.transfer(
+                    account.name,
+                    'eosotcbackup',
+                    parseFloat($('#txtSellAmount').val()).toFixed(4) + ' @Model.Id',
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+</script>
