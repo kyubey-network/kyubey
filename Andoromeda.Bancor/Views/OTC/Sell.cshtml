@@ -105,6 +105,63 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">交易金额</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        收入
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider1" data-slider-id="slider1" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value1" />
+                    </div>
+                    <div class="col-md-2" id="symbol1">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-2">
+                        支付
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider2" data-slider-id="slider2" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value2" />
+                    </div>
+                    <div class="col-md-2" id="symbol2">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-4" style="text-align: center">
+                        单价
+                    </div>
+                    <div class="col-md-2">
+                        ≈
+                    </div>
+                    <div class="col-md-4" id="unit">
+                    </div>
+                    <div class="col-md-2">
+                        EOS
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">Take</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     Date.prototype.Format = function (fmt) { //author: meizz
@@ -123,10 +180,20 @@
         return fmt;
     }
 
+    //进一法
+    Number.prototype.toCeil = function (num) {
+        return parseFloat(Math.ceil(this * Math.pow(10, num)) / Math.pow(10, num)).toFixed(num);
+    };
+
+    //去尾法
+    Number.prototype.toFloor = function (num) {
+        return parseFloat(Math.floor(this * Math.pow(10, num)) / Math.pow(10, num)).toFixed(num);
+    };
+
     function unit_price(eos, token) {
         return (parseFloat(eos.split(' ')[0]) / parseFloat(token.split(' ')[0])).toFixed(4) + " EOS";
     }
-    
+
     function PollTransactions() {
         $.getJSON('/otc/@Model.Id/sell-data', { min: $('#min').val(), max: $('#max').val() }, function (data) {
             var html = '';
@@ -136,7 +203,7 @@
             $('#lstTransactions').html(html);
         });
     }
-    
+
     $('#min').keyup(PollTransactions);
     $('#max').keyup(PollTransactions);
 
@@ -145,10 +212,75 @@
     setTimeout(PollTransactions, 3000);
     setInterval(PollTransactions, 5000);
 
+    var current_unit_price;
+
+    var slider1 = $('#slider1')
+        .on('slide', function (slideEvt) {
+            $('#value1').val(parseFloat(slider1.val()).toFixed(4));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            $('#value2').keyup();
+        });
+    slider1.bootstrapSlider();
+    var slider2 = $('#slider2');
+    slider2.bootstrapSlider()
+        .on('slide', function (slideEvt) {
+            $('#value2').val(parseFloat(slider2.val()).toFixed(4));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toFloor(4));
+            $('#value1').keyup();
+        });
+    var _id;
+
     function take(id) {
+        _id = id;
         var bid = $('#tx-' + id).find('.tx-bid').text();
+        var max1 = parseFloat(bid.split(' ')[0]).toFixed(4);
+        var symbol1 = bid.split(' ')[1];
+        $('#symbol1').text(symbol1);
         var ask = $('#tx-' + id).find('.tx-ask').text();
-        var memo = `take,${bid},eosio.token,${id}`;
+        var max2 = parseFloat(ask.split(' ')[0]).toFixed(4);
+        var symbol2 = ask.split(' ')[1];
+        $('#symbol2').text(symbol2);
+
+        current_unit_price = parseFloat(max2 / max1).toCeil(4);
+        $('#unit').text(parseFloat(max1 / max2).toCeil(4));
+
+        slider1.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider1.bootstrapSlider('setAttribute', 'min', 0);
+        slider1.bootstrapSlider('setAttribute', 'max', max1);
+        slider1.bootstrapSlider('setValue', parseFloat(max1), true);
+        slider1.bootstrapSlider('relayout');
+
+        $('#value1').val(max1);
+        $('#value1').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        slider2.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider2.bootstrapSlider('setAttribute', 'min', 0);
+        slider2.bootstrapSlider('setAttribute', 'max', max2);
+        slider2.bootstrapSlider('setValue', parseFloat(max2), true);
+        slider2.bootstrapSlider('relayout');
+
+        $('#value2').val(max2);
+        $('#value2').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toCeil(4));
+            val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        $('#modalTake').modal('show');
+    }
+
+    function take2(id) {
+        var bid = parseFloat($('#value1').val()).toFixed(4) + ' ' + $('#symbol1').text();
+        var ask = parseFloat($('#value2').val()).toFixed(4) + ' ' + $('#symbol2').text();
+        var memo = `take,${bid},eosio.token,${_id}`;
         eos.contract('@Model.Contract', { requiredFields })
             .then(contract => {
                 return contract.transfer(
@@ -167,7 +299,7 @@
                 showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
             });
     }
-    
+
     function cancel(id) {
         var bid = $('#tx-' + id).find('.tx-bid').text();
         var ask = $('#tx-' + id).find('.tx-ask').text();
