@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6D684C0C-033D-4187-945C-34DCB20EAC29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andoromeda.Kyubey.Portal", "src\Andoromeda.Kyubey.Portal\Andoromeda.Kyubey.Portal.csproj", "{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andoromeda.Kyubey.Manage", "src\Andoromeda.Kyubey.Manage\Andoromeda.Kyubey.Manage.csproj", "{35E10485-5975-4737-9F32-647BABB3BBF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andoromeda.Kyubey.Models", "src\Andoromeda.Kyubey.Models\Andoromeda.Kyubey.Models.csproj", "{B208B0F8-2B34-406E-964A-F616F04A501D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E10485-5975-4737-9F32-647BABB3BBF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E10485-5975-4737-9F32-647BABB3BBF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E10485-5975-4737-9F32-647BABB3BBF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E10485-5975-4737-9F32-647BABB3BBF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B208B0F8-2B34-406E-964A-F616F04A501D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B208B0F8-2B34-406E-964A-F616F04A501D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B208B0F8-2B34-406E-964A-F616F04A501D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B208B0F8-2B34-406E-964A-F616F04A501D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A1330EB-1F47-42BF-A98E-D4E2AF751DAD} = {6D684C0C-033D-4187-945C-34DCB20EAC29}
+		{35E10485-5975-4737-9F32-647BABB3BBF2} = {6D684C0C-033D-4187-945C-34DCB20EAC29}
+		{B208B0F8-2B34-406E-964A-F616F04A501D} = {6D684C0C-033D-4187-945C-34DCB20EAC29}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {084FA84C-31D5-48E4-A8EE-1D7515EE4A70}
+	EndGlobalSection
+EndGlobal

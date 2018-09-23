@@ -1,0 +1,19 @@
+﻿@model Prompt
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewBag.Title</h1>
+</div>
+
+<p class="message-manual">@Model.Details</p>
+@if (!string.IsNullOrEmpty(Model.RedirectUrl))
+{
+    <a href="@Model.RedirectUrl" class="btn btn-primary ripple home-link">@Model.RedirectText</a>
+}
+@if (!Model.HideBack)
+{
+    <a href="javascript:window.history.go(-1);" class="btn btn-primary ripple home-link">Back</a>
+}
+<a asp-controller="Home" asp-action="Index" class="btn btn-primary ripple home-link">Home</a>
