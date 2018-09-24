@@ -1,0 +1,28 @@
+﻿@model Token
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Icon"];
+    ViewBag.Current = "token-manage-icon";
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<form class="col-lg-6 col-md-12" asp-action="ManageIcon" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>@SR["Current Icon"]</label>
+        <br />
+        @if (Model.Icon == null || Model.Icon.Length == 0)
+        {
+        <span>未上传图标</span>
+        }
+        else
+        {
+        <img src="@Url.Action("Icon", new { id = Model.Id })" style="width: 150px; height: 150px;" />
+        }
+    </div>
+    <div class="form-group">
+        <label>@SR["Upload Icon"]</label> <small class="hint">@SR["Please upload *.png 150*150px icon"]</small>
+        <br />
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

@@ -1,0 +1,16 @@
+﻿@model Token
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Description"];
+    ViewBag.Current = "token-manage-description";
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<form class="col-lg-6 col-md-12" asp-action="ManageDescription" method="post">
+    <div class="form-group">
+        <label>@SR["Token Description"]</label> <small class="hint">@SR["Markdown supported"]</small>
+        <br />
+        <textarea name="description" class="markdown-textbox">@Model.Description</textarea>
+    </div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

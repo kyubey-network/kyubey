@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Kyubey Network - @SR["Log in"]</title>
+    <link href="~/styles/bootstrap.min.css" rel="stylesheet">
+    <link href="~/styles/login.css" rel="stylesheet" />
+</head>
+
+<body>
+    <form class="form-signin" asp-action="Login" method="post">
+        <div class="text-center mb-4">
+            <img class="mb-4" src="" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 font-weight-normal">Kyubey Network</h1>
+            <p>
+                Give the Power Back to Users
+            </p>
+        </div>
+
+        <div class="form-label-group">
+            <input type="text" name="username" class="form-control" placeholder="@SR["Username"]" required>
+        </div>
+
+        <div class="form-label-group">
+            <input type="password" name="password" class="form-control" placeholder="@SR["Password"]" required>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">@SR["Log in"]</button>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; @DateTime.UtcNow.Year</p>
+    </form>
+</body>
+</html>

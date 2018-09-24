@@ -189,3 +189,42 @@ body {
 .tab-pane img {
     max-width: 100%;
 }
+
+.no-rows {
+    text-align: center;
+}
+
+.manage-header {
+    margin-top: -16px;
+    padding-bottom: 0;
+    margin-bottom: 30px;
+    margin-left: 0;
+    padding-left: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.manage-header li {
+    display: inline-block;
+    padding: 15px 10px;
+}
+
+.manage-header-item a {
+    color: #888;
+}
+
+.manage-header-item.active a {
+    color: #095FB0;
+}
+
+.hint {
+    color: #aaa;
+}
+
+.tab-content {
+    margin-bottom: 30px;
+}
+
+.preview-buttons input[type="button"] {
+    width: 100%;
+    display: block;
+}

@@ -14,6 +14,6 @@
 }
 @if (!Model.HideBack)
 {
-    <a href="javascript:window.history.go(-1);" class="btn btn-primary ripple home-link">Back</a>
+    <a href="javascript:window.history.go(-1);" class="btn btn-primary ripple home-link">@SR["Back"]</a>
 }
-<a asp-controller="Home" asp-action="Index" class="btn btn-primary ripple home-link">Home</a>
+<a asp-controller="Home" asp-action="Index" class="btn btn-primary ripple home-link">@SR["Home"]</a>

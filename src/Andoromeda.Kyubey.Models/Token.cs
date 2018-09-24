@@ -21,6 +21,13 @@ namespace Andoromeda.Kyubey.Models
         CallThePersonFromApi
     }
 
+    public enum TokenStatus
+    {
+        Active,
+        DisabledByOwner,
+        DisabledByAdmin
+    }
+
     public class Token
     {
         [MaxLength(16)]
@@ -33,7 +40,13 @@ namespace Andoromeda.Kyubey.Models
 
         public string Description { get; set; }
  
-        public string Curve { get; set; }
+        [MaxLength(16)]
+        [ForeignKey("Curve")]
+        public string CurveId { get; set; }
+
+        public virtual Curve Curve { get; set; }
+
+        public JsonObject<IEnumerable<decimal>> CurveArguments { get; set; } = "[]";
 
         [MaxLength(64)]
         public string WebUrl { get; set; }
@@ -60,5 +73,7 @@ namespace Andoromeda.Kyubey.Models
         public TokenAlertPlan AlertPlan { get; set; }
 
         public TokenAlertNotificationType NotificationType { get; set; }
+
+        public TokenStatus Status { get; set; }
     }
 }

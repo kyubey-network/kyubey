@@ -32,85 +32,133 @@
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "home" ? "active" : "")" asp-action="Index" asp-controller="Home">
                                 <i class="fa fa-home"></i>
-                                Dashboard
+                                @SR["Dashboard"]
                             </a>
                         </li>
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Token</span>
+                        <span>@SR["Token"]</span>
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "token-all" ? "active" : "")" asp-action="Index" asp-controller="Token">
                                 <i class="fa fa-tasks"></i>
-                                All Tokens
+                                @SR["All Tokens"]
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "token-create" ? "active" : "")" asp-action="Create" asp-controller="Token">
                                 <i class="fa fa-plus"></i>
-                                Create Token
+                                @SR["Create Token"]
                             </a>
                         </li>
+                        @if (User.IsInRole("ROOT"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewBag.Current == "token-validate" ? "active" : "")" asp-action="Validate" asp-controller="Token">
+                                    <i class="fa fa-eye"></i>
+                                    @SR["Validate Token"]
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Bancor</span>
+                        <span>@SR["Bancor"]</span>
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "bancor-all" ? "active" : "")" asp-action="All" asp-controller="Bancor">
                                 <i class="fa fa-bitcoin"></i>
-                                All Bancor Tokens
+                                @SR["All Bancor Tokens"]
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "bancor-onboard" ? "active" : "")" asp-action="Onboard" asp-controller="Bancor">
                                 <i class="fa fa-plus"></i>
-                                Onboard
+                                @SR["Onboard_Bancor"]
                             </a>
                         </li>
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>OTC</span>
+                        <span>@SR["OTC"]</span>
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "otc-all" ? "active" : "")" asp-action="Create" asp-controller="Project">
                                 <i class="fa fa-bitcoin"></i>
-                                All OTC Tokens
+                                @SR["All OTC Tokens"]
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "otc-onboard" ? "active" : "")" asp-action="Onboard" asp-controller="Bancor">
                                 <i class="fa fa-plus"></i>
-                                Onboard
+                                @SR["Onboard_OTC"]
                             </a>
                         </li>
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Incident Management</span>
+                        <span>@SR["Incident Management"]</span>
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "icm-all" ? "active" : "")" asp-action="Create" asp-controller="IcM">
                                 <i class="fa fa-bell"></i>
-                                All Incidents
+                                @SR["All Incidents"]
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "icm-rule" ? "active" : "")" asp-action="Rule" asp-controller="IcM">
                                 <i class="fa fa-bullhorn"></i>
-                                Alert Rules
+                                @SR["Alert Rules"]
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewBag.Current == "icm-oncall" ? "active" : "")" asp-action="OnCall" asp-controller="IcM">
                                 <i class="fa fa-phone"></i>
-                                On Call Settings
+                                @SR["On Call Settings"]
+                            </a>
+                        </li>
+                    </ul>
+
+                    @if (User.IsInRole("ROOT"))
+                    {
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>@SR["Curve Management"]</span>
+                        </h6>
+                        <ul class="nav flex-column mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewBag.Current == "icm-all" ? "active" : "")" asp-action="Create" asp-controller="IcM">
+                                    <i class="fa fa-line-chart"></i>
+                                    @SR["All Curves"]
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewBag.Current == "icm-rule" ? "active" : "")" asp-action="Rule" asp-controller="IcM">
+                                    <i class="fa fa-plus"></i>
+                                    @SR["Create Curve"]
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>@SR["My Account"]</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "account-change-pwd" ? "active" : "")" asp-action="Create" asp-controller="IcM">
+                                <i class="fa fa-lock"></i>
+                                @SR["Change Password"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Rule" asp-controller="IcM">
+                                <i class="fa fa-sign-out"></i>
+                                @SR["Log out"]
                             </a>
                         </li>
                     </ul>
@@ -127,6 +175,9 @@
     <script src="/scripts/bootstrap.min.js"></script>
     <script src="/scripts/simplemde.min.js"></script>
     <script src="/scripts/jquery.fileupload.js"></script>
+    <script src="/scripts/localization.js"></script>
+    <script src="~/scripts/d3.min.js"></script>
+    <script src="~/scripts/function-plot.min.js"></script>
     <script src="/scripts/site.js"></script>
 </body>
 </html>

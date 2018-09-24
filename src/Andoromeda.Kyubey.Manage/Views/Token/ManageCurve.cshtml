@@ -1,0 +1,68 @@
+﻿@model Token
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Curve"];
+    ViewBag.Current = "token-manage-curve";
+    var curves = (IEnumerable<Curve>)ViewBag.Curves;
+    var functions = curves.ToDictionary(x => x.Id, x => new { x.PriceSupplyFunction, x.PriceBalanceFunction, x.BalanceSupplyFunction, x.SupplyBalanceFunction });
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<script>
+    var descriptions = @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(curves.ToDictionary(x => x.Id, x => x.Description))));
+    var args = @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(curves.ToDictionary(x => x.Id, x => x.Arguments.Object))));
+    var values = @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.CurveArguments.Object.Select(x =>x.ToString()))));
+    var functions = @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(functions)));
+    var currentCurve = '@Model.CurveId';
+</script>
+
+<form class="col-md-12" asp-action="ManageCurve" method="post" id="frmCurve">
+    <input type="hidden" name="arguments" id="hidArgs" />
+    <ul id="tabsJustified" class="nav nav-tabs" style="margin-top: 30px">
+        <li class="nav-item" id="curve-step1"><a href="#" data-target="#CurveType" data-toggle="tab" class="nav-link small text-uppercase active">@SR["Curve Type"]</a></li>
+        <li class="nav-item" id="curve-step2"><a href="#" data-target="#CurveArguments" data-toggle="tab" class="nav-link small text-uppercase">@SR["Curve Arguments"]</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade active show" id="CurveType">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label>@SR["Curve"]</label>
+                    <br />
+                    <select class="form-control" name="curveId" id="lstCurveType">
+                        <option value="">@SR["Not selected"]</option>
+                        @foreach (var x in curves)
+                        {
+                            <!option @(Model.CurveId == x.Id ? "selected" : "")>@x.Id</!option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div id="curve-description"></div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="CurveArguments">
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="dynamic-args"></div>
+                    <div class="form-group">
+                        <label>@SR["Max X"]</label>
+                        <input type="text" id="x-max" class="form-control" value="10000.0000" />
+                    </div>
+                    <div class="form-group">
+                        <label>@SR["Max Y"]</label>
+                        <input type="text" id="y-max" class="form-control" value="10000.0000" />
+                    </div>
+                    <div class="form-group preview-buttons" id="btn-preview-price-supply"><input type="button" value="@SR["Preview price-supply chart"]" class="btn btn-primary" onclick="render_chart('PriceSupplyFunction')" /></div>
+                    <div class="form-group preview-buttons" id="btn-preview-price-balance"><input type="button" value="@SR["Preview price-balance chart"]" class="btn btn-primary" onclick="render_chart('PriceBalanceFunction')" /></div>
+                    <div class="form-group preview-buttons" id="btn-preview-balance-supply"><input type="button" value="@SR["Preview balance-supply chart"]" class="btn btn-primary" onclick="render_chart('BalanceSupplyFunction')" /></div>
+                    <div class="form-group preview-buttons" id="btn-preview-supply-balance"><input type="button" value="@SR["Preview supply-balance chart"]" class="btn btn-primary" onclick="render_chart('SupplyBalanceFunction')" /></div>
+                </div>
+                <div class="col-md-9" id="chart">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

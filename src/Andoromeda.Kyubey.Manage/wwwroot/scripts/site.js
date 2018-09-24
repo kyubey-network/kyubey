@@ -59,3 +59,97 @@ function uploadFile() {
 }
 
 DropEnable();
+
+function renderArgsControl() {
+    var type = $('#lstCurveType').val();
+    if (!type) {
+        $('#curve-step2').hide();
+        return;
+    } else {
+        $('#curve-step2').show();
+    }
+
+    $('.preview-buttons').hide();
+    if (functions[type]['PriceSupplyFunction']) {
+        $('#btn-preview-price-supply').show();
+    }
+    if (functions[type]['PriceBalanceFunction']) {
+        $('#btn-preview-price-balance').show();
+    }
+    if (functions[type]['BalanceSupplyFunction']) {
+        $('#btn-preview-balance-supply').show();
+    }
+    if (functions[type]['SupplyBalanceFunction']) {
+        $('#btn-preview-supply-balance').show();
+    }
+
+    if (!args[type]) {
+        return;
+    }
+
+    var html = '';
+    for (var i = 0; i < args[type].length; i++) {
+        if (type !== currentCurve) {
+            html += `<div class="form-group"><label>${args[type][i].Id}</label> <small class="hint">${args[type][i].Name}</small><br /><input type="text" class="form-control args" /></div>`;
+        } else {
+            html += `<div class="form-group"><label>${args[type][i].Id}</label> <small class="hint">${args[type][i].Name}</small><br /><input type="text" class="form-control args" value="${values[i]}" /></div>`;
+        }
+        $('#dynamic-args').html(html);
+    }
+}
+
+if ($('#lstCurveType').length > 0) {
+    renderArgsControl();
+    render_chart();
+    $('#lstCurveType').change(renderArgsControl);
+}
+
+function render_chart(chart_type) {
+    if (chart_type) {
+        var type = $('#lstCurveType').val();
+        var vals = $('.args');
+        for (var i = 0; i < vals.length; i++) {
+            eval(`var ${args[type][i].Id} = ${$(vals[i]).val()}`);
+        }
+
+        eval(`var fn = \`${functions[type][chart_type]}\`;`);
+
+        functionPlot({
+            target: document.querySelector("#chart"),
+            xAxis: { domain: [0, $('#x-max').val()] },
+            yAxis: { domain: [0, $('#y-max').val()] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: fn
+                }
+            ]
+        });
+    } else {
+        functionPlot({
+            target: document.querySelector("#chart"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, 1] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+            ]
+        });
+    }
+}
+
+if ($('#frmCurve').length > 0) {
+    $('#frmCurve').submit(function () {
+        var vals = [];
+        var dom = $('.args');
+        for (var i = 0; i < dom.length; i++) {
+            vals.push(parseFloat($(dom[i]).val()));
+        }
+        $('#hidArgs').val(JSON.stringify(vals));
+    });
+}

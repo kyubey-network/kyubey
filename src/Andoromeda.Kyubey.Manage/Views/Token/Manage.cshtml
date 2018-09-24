@@ -1,0 +1,17 @@
+﻿@model Token
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Basic"];
+    ViewBag.Current = "token-manage-basic";
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<form class="col-lg-6 col-md-12" asp-action="Manage" method="post">
+    <div class="form-group"><label>@SR["Symbol"]</label><br /><input type="text" asp-for="Id" class="form-control" disabled /></div>
+    <div class="form-group"><label>@SR["Name"]</label><br /><input type="text" asp-for="Name" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Contract Account"]</label><br /><input type="text" asp-for="Contract" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Website Address"]</label><br /><input type="text" asp-for="WebUrl" class="form-control" /></div>
+    <div class="form-group"><label>@SR["GitHub"]</label><br /><input type="text" asp-for="GitHub" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Email"]</label><br /><input type="text" asp-for="Email" class="form-control" /></div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>
