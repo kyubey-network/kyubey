@@ -1,6 +1,7 @@
 ﻿{
   "Onboard_Bancor": "Onboard",
   "Onboard_OTC": "Onboard",
+  "Onboard_Exchange": "Onboard",
   "Status_Active": "Active",
   "Status_DisabledByOwner": "Disabled by owner",
   "Status_DisabledByAdmin": "Disabled by admin"

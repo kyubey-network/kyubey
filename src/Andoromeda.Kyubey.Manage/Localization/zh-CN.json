@@ -33,6 +33,8 @@
   "Status_Active": "正常",
   "Status_DisabledByOwner": "被所有者禁用",
   "Status_DisabledByAdmin": "被系统禁用",
+  "Status_Banned": "被封禁",
+  "Status_Reviewing": "待审核",
   "Create": "创建",
   "Create failed": "创建失败",
   "The symbol has already been used, please contact to us for reporting abuse.": "该标识已被他人使用，如果标识被滥用请及时与我们联系",
@@ -77,5 +79,10 @@
   "Token update failed": "通行证更新失败",
   "Curve not found": "没有找到曲线",
   "Provided arguments do not match the curve": "您提供的参数与曲线要求不符",
-  "The token curve has been updated successfully": "通行证曲线已更新成功"
+  "The token curve has been updated successfully": "通行证曲线已更新成功",
+  "Max X": "X轴最大值",
+  "Max Y": "Y轴最大值",
+  "Exchange": "交易所",
+  "Configure": "配置",
+  "Onboard_Exchange": "在交易所上架"
 }

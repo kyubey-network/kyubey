@@ -10,6 +10,7 @@
         <li class="manage-header-item @(ViewBag.Current == "token-manage-description" ? "active" : "")"><a asp-action="ManageDescription" asp-route-id="@Model.Id">@SR["Description"]</a></li>
         <li class="manage-header-item @(ViewBag.Current == "token-manage-icon" ? "active" : "")"><a asp-action="ManageIcon" asp-route-id="@Model.Id">@SR["Icon"]</a></li>
         <li class="manage-header-item @(ViewBag.Current == "token-manage-curve" ? "active" : "")"><a asp-action="ManageCurve" asp-route-id="@Model.Id">@SR["Curve"]</a></li>
+        <li class="manage-header-item @(ViewBag.Current == "token-manage-exchange" ? "active" : "")"><a asp-action="ManageExchange" asp-route-id="@Model.Id">@SR["Exchange"]</a></li>
         <li class="manage-header-item @(ViewBag.Current == "token-manage-pricing" ? "active" : "")"><a asp-action="ManagePricing" asp-route-id="@Model.Id">@SR["Pricing"]</a></li>
     </ul>
 </div>

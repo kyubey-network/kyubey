@@ -25,7 +25,7 @@ namespace Andoromeda.Kyubey.Manage.Controllers
 
             if(!string.IsNullOrWhiteSpace(name))
             {
-                ret.Where(x => x.Name.Contains(name));
+                ret.Where(x => x.Name.Contains(name) || x.Id.Contains(name));
             }
 
             // Only display owned tokens if the current user is not in root role.
@@ -341,6 +341,15 @@ namespace Andoromeda.Kyubey.Manage.Controllers
                 x.Title = SR["Token updated"];
                 x.Details = SR["The token curve has been updated successfully"];
             });
+        }
+        
+        [HttpGet]
+        [Route("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
+        public async Task<IActionResult> ManageExchange(string id, CancellationToken cancellationToken)
+        {
+            ViewBag.OTC = await DB.Otcs.AnyAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Bancor = await DB.Bancors.AnyAsync(x => x.Id == id, cancellationToken);
+            return await Manage(id, cancellationToken);
         }
     }
 }
