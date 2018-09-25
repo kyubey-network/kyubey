@@ -192,6 +192,10 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             }
 
             bancor.TradeJavascript = tradeJavascript;
+            if (!User.IsInRole("ROOT"))
+            {
+                bancor.Status = Status.Reviewing;
+            }
             await DB.SaveChangesAsync();
 
             return Prompt(x => 
