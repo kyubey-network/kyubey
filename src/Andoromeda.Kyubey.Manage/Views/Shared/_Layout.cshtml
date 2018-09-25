@@ -144,7 +144,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-action="Rule" asp-controller="Account">
+                            <a class="nav-link" href="javascript:$('#frmLogout').submit();">
                                 <i class="fa fa-sign-out"></i>
                                 @SR["Log out"]
                             </a>
@@ -157,6 +157,8 @@
             </main>
         </div>
     </div>
+
+    <form id="frmLogout" asp-action="Logout" asp-controller="Account"></form>
 
     <script src="/scripts/jquery.min.js"></script>
     <script src="/scripts/popper.min.js"></script>

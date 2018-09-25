@@ -40,6 +40,14 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await SignInManager.SignOutAsync();
+            return RedirectToAction("Login");
+        }
+
         [HttpGet]
         [Authorize]
         public IActionResult Password()
