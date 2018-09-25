@@ -1,0 +1,20 @@
+﻿@model Bancor
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Token Price"];
+    ViewBag.Current = "bancor-manage-price";
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<script src="~/scripts/ace/ace.js"></script>
+<script src="~/scripts/ace/theme-twilight.js"></script>
+<script src="~/scripts/ace/ext-language_tools.js"></script>
+<script src="~/scripts/ace/mode-javascript.js"></script>
+
+<form class="col-lg-8 col-md-12" asp-action="ManagePrice" method="post" id="frmBancorPrice">
+    <div class="form-group"><label>@SR["Contract"]</label><br /><input type="text" value="@Model.Token.Contract" class="form-control" disabled /></div>
+    <div class="form-group"><label>@SR["Bancor Table"]</label><br /><input type="text" asp-for="Table" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Bancor Scope"]</label><br /><input type="text" asp-for="Scope" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Price Javascript"]</label><br /><pre id="priceJavascript" style="height: 300px;">@Model.CurrentPriceJavascript</pre><input type="hidden" name="TradeJavascript" id="hidPriceJavascript" /></div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

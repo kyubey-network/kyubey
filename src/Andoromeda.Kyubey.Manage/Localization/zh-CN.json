@@ -84,5 +84,18 @@
   "Max Y": "Y轴最大值",
   "Exchange": "交易所",
   "Configure": "配置",
-  "Onboard_Exchange": "在交易所上架"
+  "Onboard_Exchange": "在交易所上架",
+  "Cannot onboard": "无法接入交易所",
+  "The token <{0}> is already onboarded": "{0}已经接入交易所，请勿重复接入",
+  "Onboarded": "已接入",
+  "The token has onboarded bancor exchange": "通行证已接入交易所",
+  "Token Price": "通行证价格",
+  "Bancor Table": "Bancor表名称",
+  "Bancor Scope": "Scope",
+  "Contract": "合约",
+  "Trade Javascript": "交易 Javascript 代码",
+  "Bancor info updated": "Bancor信息已更新",
+  "The bancor basic info has been updated successfully": "Bancor基本信息已保存成功",
+  "The bancor price info has been updated successfully": "Bancor价格信息已保存成功",
+  "Price Javascript": "价格Javascript"
 }

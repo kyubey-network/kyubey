@@ -2,6 +2,7 @@
 {
     public enum Status
     {
+        Preparing,
         Reviewing,
         Active,
         Banned

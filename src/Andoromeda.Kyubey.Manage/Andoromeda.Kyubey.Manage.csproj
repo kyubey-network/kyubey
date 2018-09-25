@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Bancor\ManagePrice.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Bancor\_ManageHeader.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Token\ManageExchange.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

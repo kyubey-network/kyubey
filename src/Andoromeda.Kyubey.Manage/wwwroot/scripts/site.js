@@ -153,3 +153,33 @@ if ($('#frmCurve').length > 0) {
         $('#hidArgs').val(JSON.stringify(vals));
     });
 }
+
+if ($('#frmBancorBasic').length > 0) {
+    var editor = ace.edit("tradeJavascript");
+    $('#tradeJavascript')[0].editor = editor;
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode('ace/mode/javascript');
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true
+    });
+
+    $('#frmBancorBasic').submit(function () {
+        $('#hidTradeJavascript').val($('#tradeJavascript')[0].editor.getValue());
+    });
+}
+
+if ($('#frmBancorPrice').length > 0) {
+    var editor = ace.edit("priceJavascript");
+    $('#priceJavascript')[0].editor = editor;
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode('ace/mode/javascript');
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true
+    });
+
+    $('#frmBancorPrice').submit(function () {
+        $('#hidPriceJavascript').val($('#priceJavascript')[0].editor.getValue());
+    });
+}
