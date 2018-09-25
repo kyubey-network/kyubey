@@ -97,5 +97,6 @@
   "Bancor info updated": "Bancor信息已更新",
   "The bancor basic info has been updated successfully": "Bancor基本信息已保存成功",
   "The bancor price info has been updated successfully": "Bancor价格信息已保存成功",
-  "Price Javascript": "价格Javascript"
+  "Buy Price Javascript": "购买价格 Javascript",
+  "Sell Price Javascript": "出售价格 Javascript"
 }

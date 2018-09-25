@@ -170,8 +170,8 @@ if ($('#frmBancorBasic').length > 0) {
 }
 
 if ($('#frmBancorPrice').length > 0) {
-    var editor = ace.edit("priceJavascript");
-    $('#priceJavascript')[0].editor = editor;
+    var editor = ace.edit("buyPriceJavascript");
+    $('#buyPriceJavascript')[0].editor = editor;
     editor.setTheme("ace/theme/twilight");
     editor.session.setMode('ace/mode/javascript');
     editor.setOptions({
@@ -180,6 +180,19 @@ if ($('#frmBancorPrice').length > 0) {
     });
 
     $('#frmBancorPrice').submit(function () {
-        $('#hidPriceJavascript').val($('#priceJavascript')[0].editor.getValue());
+        $('#hidBuyPriceJavascript').val($('#buyPriceJavascript')[0].editor.getValue());
+    });
+    
+    var editor2 = ace.edit("sellPriceJavascript");
+    $('#sellPriceJavascript')[0].editor = editor2;
+    editor2.setTheme("ace/theme/twilight");
+    editor2.session.setMode('ace/mode/javascript');
+    editor2.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true
+    });
+
+    $('#frmBancorPrice').submit(function () {
+        $('#hidSellPriceJavascript').val($('#sellPriceJavascript')[0].editor.getValue());
     });
 }

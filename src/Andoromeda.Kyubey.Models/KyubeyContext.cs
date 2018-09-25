@@ -53,7 +53,6 @@ namespace Andoromeda.Kyubey.Models
                     Id = "bancor",
                     PriceSupplyFunction = "${supply} * (pow((1 + (x - ${balance}) / ${balance}),${cw}) - 1) + ${supply}",
                     BalanceSupplyFunction = "x / ((${supply} * (pow((1 + (x - ${balance}) / ${balance}),${cw}) - 1) + ${supply}) * ${cw})",
-                    IsOfficial = true,
                     Description = "",
                     Arguments = JsonConvert.SerializeObject(new List<CurveArgument>
                     {
@@ -75,7 +74,6 @@ namespace Andoromeda.Kyubey.Models
                     BalanceSupplyFunction = "${k}/2 * x^2",
                     SupplyBalanceFunction = "(2/${k})^(0.5) * x^(0.5)",
                     PriceBalanceFunction = "((2/${k})^(0.5) * x^(0.5)) * ${k}",
-                    IsOfficial = true,
                     Description = "",
                     Arguments = JsonConvert.SerializeObject(new List<CurveArgument>
                     {

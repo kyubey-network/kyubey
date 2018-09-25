@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = SR["Create Curve"];
+    ViewBag.Current = "curve-create";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewBag.Title</h1>
+</div>
+
+<form class="col-lg-8 col-md-12" asp-action="Create" method="post">
+    <div class="form-group"><label>@SR["ID"]</label><br /><input type="text" class="form-control" disabled /></div>
+    <div class="form-group"><label>@SR["Price - Supply Function"]</label><br /><input type="text" name="PriceSupplyFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Price - Balance Function"]</label><br /><input type="text" name="PriceBalanceFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Balance - Supply Function"]</label><br /><input type="text" name="BalanceSupplyFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Supply - Balance Function"]</label><br /><input type="text" name="SupplyBalanceFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Arguments"]</label><br /><input type="text" name="Arguments" class="form-control" /></div>
+    <div class="form-group"><input type="submit" value="@SR["Create"]" class="btn btn-primary" /></div>
+</form>

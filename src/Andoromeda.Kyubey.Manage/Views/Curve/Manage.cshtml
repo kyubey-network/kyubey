@@ -1,0 +1,18 @@
+﻿@model Curve
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Curve"];
+    ViewBag.Current = "curve-manage";
+}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewBag.Title</h1>
+</div>
+
+<form class="col-lg-8 col-md-12" asp-action="Manage" method="post">
+    <div class="form-group"><label>@SR["ID"]</label><br /><input type="text" value="@Model.Id" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Price - Supply Function"]</label><br /><input type="text" asp-for="PriceSupplyFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Price - Balance Function"]</label><br /><input type="text" asp-for="PriceBalanceFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Balance - Supply Function"]</label><br /><input type="text" asp-for="BalanceSupplyFunction" class="form-control" /></div>
+    <div class="form-group"><label>@SR["Supply - Balance Function"]</label><br /><input type="text" asp-for="SupplyBalanceFunction" class="form-control" /></div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

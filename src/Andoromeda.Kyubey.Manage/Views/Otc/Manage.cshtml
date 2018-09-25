@@ -1,0 +1,17 @@
+﻿@model Otc
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Basic"];
+    ViewBag.Current = "otc-manage-basic";
+}
+
+@await Html.PartialAsync("_ManageHeader")
+
+<script src="~/scripts/ace/ace.js"></script>
+<script src="~/scripts/ace/theme-twilight.js"></script>
+<script src="~/scripts/ace/ext-language_tools.js"></script>
+<script src="~/scripts/ace/mode-javascript.js"></script>
+
+<form class="col-lg-8 col-md-12" asp-action="Manage" method="post" id="frmBancorBasic">
+    <div class="form-group"><label>@SR["Contract"]</label><br /><input type="text" value="@Model.Token.Contract" class="form-control" disabled /></div>
+    <div class="form-group"><input type="submit" value="@SR["Save"]" class="btn btn-primary" /></div>
+</form>

@@ -39,5 +39,45 @@ namespace Andoromeda.Kyubey.Manage.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Password()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Password(string old, string @new, string confirm)
+        {
+            if (@new != confirm)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Change Password Failed"];
+                    x.Details = SR["Confirm password is not equal to new password"];
+                    x.StatusCode = 400;
+                });
+            }
+
+            if (!await UserManager.CheckPasswordAsync(User.Current, old))
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Change Password Failed"];
+                    x.Details = SR["Old password is incorrect"];
+                    x.StatusCode = 400;
+                });
+            }
+
+            await UserManager.ChangePasswordAsync(User.Current, old, @new);
+
+            return Prompt(x => 
+            {
+                x.Title = SR["Password changed"];
+                x.Details = SR["Password has been updated successfully."];
+            });
+        }
     }
 }

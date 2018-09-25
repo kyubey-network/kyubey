@@ -27,6 +27,8 @@ namespace Andoromeda.Kyubey.Models
         [MaxLength(32)]
         public string Scope { get; set; }
 
-        public string CurrentPriceJavascript { get; set; }
+        public string CurrentBuyPriceJavascript { get; set; }
+
+        public string CurrentSellPriceJavascript { get; set; }
     }
 }

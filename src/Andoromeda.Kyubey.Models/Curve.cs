@@ -46,7 +46,5 @@ namespace Andoromeda.Kyubey.Models
         public string SupplyBalanceFunction { get; set; }
 
         public JsonObject<IEnumerable<CurveArgument>> Arguments { get; set; } = "[]";
-
-        public bool IsOfficial { get; set; }
     }
 }

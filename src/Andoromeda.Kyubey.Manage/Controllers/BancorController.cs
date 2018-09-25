@@ -109,7 +109,43 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             var bancor = new Bancor
             {
                 Id = id,
-                Status = Status.Preparing
+                Status = Status.Preparing,
+                TradeJavascript = @"function buy() {
+    var contract_account = 'your_contract_account';
+    var amount = $('#amount').val();
+    // You can use the variable: account, requiredFields in this script
+    eos.contract('eosio.token', { requiredFields }).then(contract => {
+        return contract.transfer(
+            account.name, 
+            contract_account, 
+            $('#amount').val().toFixed(4) + ' EOS', 
+            ``, 
+            { 
+                authorization: [`${account.name}@${account.authority}`] 
+            });
+    })
+}
+
+function sell() {
+    eos.contract(contract_account, { requiredFields }).then(contract => {
+        return contract.transfer(
+            account.name, 
+            contract_account, 
+            $('#amount').val().toFixed(4) + ' <YOUR SYMBOL>', 
+            ``, 
+            { 
+                authorization: [`${account.name}@${account.authority}`] 
+            });
+    })
+}",
+                CurrentBuyPriceJavascript = @"function getCurrentBuyPrice(rows) {
+    // The rows are from the bancor table you specified
+    return '0.0000 EOS';
+}",
+                CurrentSellPriceJavascript = @"function getCurrentSellPrice(rows) {
+    // The rows are from the bancor table you specified
+    return '0.0000 EOS';
+}"
             };
 
             DB.Bancors.Add(bancor);
@@ -208,7 +244,13 @@ namespace Andoromeda.Kyubey.Manage.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/price")]
-        public async Task<IActionResult> ManagePrice(string id, string table, string scope, string priceJavascript, CancellationToken cancellationToken)
+        public async Task<IActionResult> ManagePrice(
+            string id, 
+            string table, 
+            string scope, 
+            string buyPriceJavascript,
+            string sellPriceJavascript,
+            CancellationToken cancellationToken)
         {
             var bancor = await DB.Bancors
                 .Include(x => x.Token)
@@ -236,7 +278,8 @@ namespace Andoromeda.Kyubey.Manage.Controllers
 
             bancor.Table = table;
             bancor.Scope = scope;
-            bancor.CurrentPriceJavascript = priceJavascript;
+            bancor.CurrentBuyPriceJavascript = buyPriceJavascript;
+            bancor.CurrentSellPriceJavascript = sellPriceJavascript;
             await DB.SaveChangesAsync();
 
             return Prompt(x =>
