@@ -140,11 +140,11 @@ function sell() {
 }",
                 CurrentBuyPriceJavascript = @"function getCurrentBuyPrice(rows) {
     // The rows are from the bancor table you specified
-    return '0.0000 EOS';
+    return 0.0000;
 }",
                 CurrentSellPriceJavascript = @"function getCurrentSellPrice(rows) {
     // The rows are from the bancor table you specified
-    return '0.0000 EOS';
+    return 0.0000;
 }"
             };
 

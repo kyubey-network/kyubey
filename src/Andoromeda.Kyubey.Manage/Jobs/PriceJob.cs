@@ -30,6 +30,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
         private async Task CalculateBancorAsync(IConfiguration config, KyubeyContext db, INodeServices node)
         {
             var tokens = db.Bancors
+                .Where(x => !string.IsNullOrEmpty(x.Token.Contract))
                 .Include(x => x.Token)
                 .ToList();
             var upload = new List<object>();
