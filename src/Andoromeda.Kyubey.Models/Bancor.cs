@@ -17,7 +17,11 @@ namespace Andoromeda.Kyubey.Models
 
         public long Transactions { get; set; }
 
-        public double Price { get; set; }
+        public double BuyPrice { get; set; }
+
+        public double SellPrice { get; set; }
+
+        public double Change { get; set; }
 
         public string TradeJavascript { get; set; }
 

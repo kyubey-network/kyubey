@@ -7,8 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Node\price.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Node\price.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
+    <PackageReference Include="Pomelo.AspNetCore.TimedJob" Version="2.0.0-rtm-10046" />
   </ItemGroup>
 
   <ItemGroup>

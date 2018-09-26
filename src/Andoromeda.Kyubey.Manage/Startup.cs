@@ -21,7 +21,10 @@ namespace Andoromeda.Kyubey.Manage
         {
             services.AddConfiguration(out var Configuration);
             services.AddMvc();
-            services.AddNodeServices();
+            services.AddNodeServices(x =>
+            {
+                x.ProjectPath = "./Node";
+            });
             services.AddDbContext<KyubeyContext>(x =>
             {
                 x.UseMySql(Configuration["MySQL"]);
@@ -54,6 +57,7 @@ namespace Andoromeda.Kyubey.Manage
             services.AddSmartCookies();
             services.AddSmartUser<User, long>();
             services.AddAntiXss();
+            services.AddTimedJob();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -70,6 +74,8 @@ namespace Andoromeda.Kyubey.Manage
                 serviceScope.ServiceProvider.GetRequiredService<KyubeyContext>().InitializeDatabaseAsync(
                     serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>(),
                     serviceScope.ServiceProvider.GetRequiredService<RoleManager<UserRole>>()).Wait();
+
+                app.UseTimedJob();
             }
         }
     }
