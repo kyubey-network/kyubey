@@ -1,0 +1,183 @@
+﻿@model Token
+@{
+    ViewBag.Current = "token-sell";
+    Bancor bancor = ViewBag.Bancor;
+    Otc otc = ViewBag.Otc;
+}
+@await Html.PartialAsync("_TokenHeader")
+<script src="~/js/kyubey.js"></script>
+@if (bancor != null)
+{
+    <script src="/token/@(Model.Id).js"></script>
+}
+
+<section>
+    <div class="container">
+        <div class="row">
+            @await Html.PartialAsync("_TokenSidebar")
+            <div class="col-md-8">
+                @if (bancor != null)
+                {
+                    <div class="card">
+                        <div><input class="currency-input2" type="text" placeholder="@SR["Input amount"]" id="amount" /></div>
+                        <div><input class="btn btn-primary btn-convert2" type="button" value="@SR["Sell"]" onclick="sell()" /></div>
+                    </div>
+                }
+                @if (otc != null)
+                {
+
+                    <div class="card no-padding">
+                        <table class="currency-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>@SR["Owner"]</th>
+                                    <th>@SR["Asking"]</th>
+                                    <th>@SR["Bidding"]</th>
+                                    <th>@SR["Unit price"]</th>
+                                    <th>@SR["By"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="lstTransactions"></tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function unit_price(eos, token) {
+        return (parseFloat(eos.split(' ')[0]) / parseFloat(token.split(' ')[0])).toFixed(4) + " EOS";
+    }
+
+    function PollTransactions() {
+        $.getJSON('/token/@Model.Id/sell-data', { min: $('#min').val(), max: $('#max').val() }, function (data) {
+            var html = '';
+            for (var i = 0; i < data.length; i++) {
+                html += `<tr id='tx-${data[i].id}'><td class='tx-id'>${data[i].id}</td><td>${data[i].owner}</td><td class='tx-ask'>${data[i].ask.quantity}</td><td class='tx-bid'>${data[i].bid.quantity}</td><td>${unit_price(data[i].bid.quantity, data[i].ask.quantity)}</td><td>${(new Date(data[i].timestamp * 1000)).Format('yyyy-MM-dd hh:mm')}</td><td><a href="javascript:${account && data[i].owner === account.name ? 'cancel' : 'take'}(${data[i].id})">${account && data[i].owner === account.name ? 'Cancel' : 'Take' }</a></td></tr>`;
+            }
+            $('#lstTransactions').html(html);
+        });
+    }
+
+    $('#min').keyup(PollTransactions);
+    $('#max').keyup(PollTransactions);
+
+    setTimeout(PollTransactions, 1000);
+    setTimeout(PollTransactions, 2000);
+    setTimeout(PollTransactions, 3000);
+    setInterval(PollTransactions, 5000);
+
+    var current_unit_price;
+
+    var slider1 = $('#slider1')
+        .on('slide', function (slideEvt) {
+            $('#value1').val(parseFloat(slider1.val()).toFixed(4));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            $('#value2').keyup();
+        });
+    slider1.bootstrapSlider();
+    var slider2 = $('#slider2');
+    slider2.bootstrapSlider()
+        .on('slide', function (slideEvt) {
+            $('#value2').val(parseFloat(slider2.val()).toFixed(4));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toFloor(4));
+            $('#value1').keyup();
+        });
+    var _id;
+
+    function take(id) {
+        _id = id;
+        var bid = $('#tx-' + id).find('.tx-bid').text();
+        var max1 = parseFloat(bid.split(' ')[0]).toFixed(4);
+        var symbol1 = bid.split(' ')[1];
+        $('#symbol1').text(symbol1);
+        var ask = $('#tx-' + id).find('.tx-ask').text();
+        var max2 = parseFloat(ask.split(' ')[0]).toFixed(4);
+        var symbol2 = ask.split(' ')[1];
+        $('#symbol2').text(symbol2);
+
+        current_unit_price = parseFloat(max2 / max1).toCeil(4);
+        $('#unit').text(parseFloat(max1 / max2).toCeil(4));
+
+        slider1.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider1.bootstrapSlider('setAttribute', 'min', 0);
+        slider1.bootstrapSlider('setAttribute', 'max', max1);
+        slider1.bootstrapSlider('setValue', parseFloat(max1), true);
+        slider1.bootstrapSlider('relayout');
+
+        $('#value1').val(max1);
+        $('#value1').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        slider2.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider2.bootstrapSlider('setAttribute', 'min', 0);
+        slider2.bootstrapSlider('setAttribute', 'max', max2);
+        slider2.bootstrapSlider('setValue', parseFloat(max2), true);
+        slider2.bootstrapSlider('relayout');
+
+        $('#value2').val(max2);
+        $('#value2').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toCeil(4));
+            val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        $('#modalTake').modal('show');
+    }
+
+    function take2(id) {
+        var bid = parseFloat($('#value1').val()).toFixed(4) + ' ' + $('#symbol1').text();
+        var ask = parseFloat($('#value2').val()).toFixed(4) + ' ' + $('#symbol2').text();
+        var memo = `take,${bid},eosio.token,${_id}`;
+        eos.contract('@Model.Contract', { requiredFields })
+            .then(contract => {
+                return contract.transfer(
+                    account.name,
+                    'eosotcbackup',
+                    ask,
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+
+    function cancel(id) {
+        var bid = $('#tx-' + id).find('.tx-bid').text();
+        var ask = $('#tx-' + id).find('.tx-ask').text();
+        var memo = `${ask}@@@Model.Contract`;
+        eos.contract('eosotcbackup', { requiredFields })
+            .then(contract => {
+                return contract.retrieve(
+                    account.name,
+                    id,
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('取消成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('取消失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+</script>

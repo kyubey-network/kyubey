@@ -1,54 +1,17 @@
-﻿@model IEnumerable<OTC>
-<header class="masthead text-center text-white">
-    <div class="masthead-content">
-        <div class="container">
-            <h1 class="masthead-heading mb-0">Give the Power</h1>
-            <h2 class="masthead-subheading mb-0">Back to Users</h2>
-            <a href="/" class="btn btn-primary btn-xl rounded-pill mt-5">White Paper</a>
-        </div>
-    </div>
-    <div class="bg-circle-1 bg-circle"></div>
-    <div class="bg-circle-2 bg-circle"></div>
-    <div class="bg-circle-3 bg-circle"></div>
-    <div class="bg-circle-4 bg-circle"></div>
-</header>
-
-@*<section>
-    <form asp-action="Convert" class="container">
-        <div class="row exchange">
-            <div class="col-md-4">
-                <img src="~/img/eos.png" class="currency-icon" />
-                <div class="currency-selector">EOS</div>
-                <div class="currency-input"><input type="text" placeholder="Enter amount" /></div>
-            </div>
-            <div class="col-md-1">
-                <div class="currency-to">→</div>
-            </div>
-            <div class="col-md-4">
-                <img src="~/img/eos.png" class="currency-icon" />
-                <div class="currency-selector">EOS</div>
-                <div class="currency-input"><input type="text" placeholder="Enter amount" /></div>
-            </div>
-            <div class="col-md-3 currency-convert">
-                <input type="button" value="Convert" class="btn btn-primary btn-convert" />
-            </div>
-        </div>
-    </form>
-</section>*@
-
-<section style="text-align: center">
-    <a class="area-item" asp-action="Index">Bancor</a>
-    <a class="area-item active" asp-action="OTC">OTC</a>
-</section>
+﻿@model IEnumerable<Otc>
+@{
+    ViewBag.Current = "home-otc";
+}
+@await Html.PartialAsync("_HomeHeader")
 
 <section>
     <div class="container currency-table-outer">
         <table class="currency-table">
             <thead>
                 <tr>
-                    <th>NAME</th>
-                    <th>TRANSACTIONS</th>
-                    <th>PRICE AVG</th>
+                    <th>@SR["TOKEN"]</th>
+                    <th>@SR["TRANSACTIONS"]</th>
+                    <th>@SR["PRICE RANGE"]</th>
                     <th></th>
                 </tr>
             </thead>
@@ -57,17 +20,17 @@
                 {
                     <tr>
                         <td>
-                            <img src="/otc/@x.Id/icon" class="table-icon" />
+                            <img src="/token/@(x.Id).png" class="table-icon" />
                             <div class="table-currency">
                                 <a class="table-currency-symbol" asp-action="Index" asp-controller="OTC" asp-route-id="@x.Id">@x.Id</a>
-                                <div class="table-currency-name">@x.Name</div>
+                                <div class="table-currency-name">@x.Token.Name</div>
                             </div>
                         </td>
-                        <td>@x.Transaction</td>
+                        <td>@x.Transactions</td>
                         <td>@x.PriceMin.ToString("0.0000") EOS ~ @x.PriceMax.ToString("0.0000") EOS</td>
                         <td class="table-currency-exchange">
-                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="OTC">Buy</a>
-                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="OTC">Sell</a>
+                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">Buy</a>
+                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">Sell</a>
                         </td>
                     </tr>
                 }

@@ -12,22 +12,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Andoromeda.Kyubey.Models\Andoromeda.Kyubey.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Localization\ja-JP.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Localization\en-US.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Localization\zh-CN.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\Currency\Buy.cshtml">
+    <Content Update="Views\Token\Buy.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Currency\Login.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Currency\Manage.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Currency\Sell.cshtml">
+    <Content Update="Views\Token\Sell.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Home\OTC.cshtml">

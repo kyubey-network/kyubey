@@ -1,0 +1,18 @@
+﻿<header class="masthead text-center text-white">
+    <div class="masthead-content">
+        <div class="container">
+            <h1 class="masthead-heading mb-0">Give the Power</h1>
+            <h2 class="masthead-subheading mb-0">Back to Users</h2>
+            <a href="/" class="btn btn-primary btn-xl rounded-pill mt-5">@SR["White Paper"]</a>
+        </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>
+
+<section style="text-align: center">
+    <a class="area-item @(ViewBag.Current == "home-kyubey" ? "active" : "")" asp-action="Index">@SR["Kyubey"]</a>
+    <a class="area-item @(ViewBag.Current == "home-otc" ? "active" : "")" asp-action="OTC">@SR["OTC"]</a>
+</section>

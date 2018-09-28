@@ -1,91 +1,50 @@
-﻿@model OTC
-<script src="~/js/eos.js"></script>
-<script src="~/js/kyubey.js"></script>
-
-<header class="brand-header masthead text-center text-white"></header>
-
-<section>
-    <div class="container brand">
-        <img src="/otc/@Model.Id/icon" class="brand-icon" />
-        <div class="brand-name">@Model.Id</div>
-    </div>
-</section>
-
-<section class="brand-menu">
-    <div class="container">
-        <a class="brand-menu-item" asp-action="Index">About</a>
-        <a class="brand-menu-item" asp-action="Buy">Buy</a>
-        <a class="brand-menu-item" asp-action="Sell">Sell</a>
-        <a class="brand-menu-item active" asp-action="Publish">Publish</a>
-    </div>
-</section>
+﻿@model Token
+@{
+    ViewBag.Current = "token-about";
+    ViewBag.Title = Model.Id;
+}
+@await Html.PartialAsync("_TokenHeader")
 
 <section>
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                @if (!string.IsNullOrWhiteSpace(Model.Alert))
-                {
-                    <div class="card alert">
-                        @Model.Alert
-                    </div>
-                }
-                <div class="card links">
-                    @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
-                    {
-                        <div><i class="fa fa-home"></i> <a href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.GitHub))
-                    {
-                        <div><i class="fa fa-github"></i> <a href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.Email))
-                    {
-                        <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
-                    }
-                </div>
-                <div class="card">
-                    <div class="brand-current-label">Current</div>
-                    <div class="brand-current-text-sm">Min: @Model.PriceMin.ToString("0.0000") EOS</div>
-                    <div class="brand-current-text-sm">Max: @Model.PriceMax.ToString("0.0000") EOS</div>
-                </div>
-            </div>
+            @await Html.PartialAsync("_TokenSidebar")
             <div class="col-md-4">
                 <div class="card">
-                    <h5>我要购买 @Model.Id</h5>
+                    <h5>@SR["I want to buy {0}", Model.Id]</h5>
                     <table style="margin-bottom: 15px">
                         <tr>
                             <td><input type="text" id="txtBuyAmount" value="0.0000" class="form-control" /></td>
                             <td>@Model.Id</td>
                         </tr>
                         <tr>
-                            <td colspan="2">花费 EOS (总价)</td>
+                            <td colspan="2">@SR["Cost EOS (Total)"]</td>
                         </tr>
                         <tr>
                             <td><input type="text" id="txtBuyEos" value="0.0000" class="form-control" /></td>
                             <td>EOS</td>
                         </tr>
                     </table>
-                    <input type="button" class="btn btn-primary" value="挂单购买 @Model.Id" onclick="buy()" />
+                    <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id]" onclick="otc_buy()" />
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <h5>我要出售 @Model.Id</h5>
+                    <h5>@SR["I want to sell {0}", Model.Id]</h5>
                     <table style="        margin-bottom: 15px">
                         <tr>
                             <td><input type="text" id="txtSellAmount" value="0.0000" class="form-control" /></td>
                             <td>@Model.Id</td>
                         </tr>
                         <tr>
-                            <td colspan="2">售价 EOS (总价)</td>
+                            <td colspan="2">@SR["Price EOS (Total)"]</td>
                         </tr>
                         <tr>
                             <td><input type="text" id="txtSellEos" value="0.0000" class="form-control" /></td>
                             <td>EOS</td>
                         </tr>
                     </table>
-                    <input type="button" class="btn btn-primary" value="挂单出售 @Model.Id" onclick="sell()" />
+                    <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id]" onclick="otc_sell()" />
                 </div>
             </div>
         </div>
@@ -111,7 +70,7 @@
 
 
 <script>
-    function buy() {
+    function otc_buy() {
         eos.contract('eosio.token', { requiredFields })
             .then(contract => {
                 var memo = `ask,${parseFloat($('#txtBuyAmount').val()).toFixed(4)} @Model.Id,@Model.Contract`;
@@ -132,8 +91,8 @@
             });
     }
 
-    
-    function sell() {
+
+    function otc_sell() {
         eos.contract('@Model.Contract', { requiredFields })
             .then(contract => {
                 var memo = `ask,${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS,eosio.token`;

@@ -109,7 +109,7 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             var bancor = new Bancor
             {
                 Id = id,
-                Status = Status.Preparing,
+                Status = Status.Reviewing,
                 TradeJavascript = @"function buy() {
     var contract_account = 'your_contract_account';
     var amount = $('#amount').val();

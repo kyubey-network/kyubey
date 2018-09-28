@@ -1,61 +1,15 @@
-﻿@model Currency
-<script src="~/js/eos.js"></script>
+﻿@model Token
+@{
+    ViewBag.Current = "token-k";
+}
+@await Html.PartialAsync("_TokenHeader")
 <script src="~/js/echarts.js"></script>
 
-<header class="brand-header masthead text-center text-white"></header>
-
-<section>
-    <div class="container brand">
-        <img src="/currency/@Model.Id/icon" class="brand-icon" />
-        <div class="brand-name">@Model.Id</div>
-    </div>
-</section>
-
-<section class="brand-menu">
-    <div class="container">
-        <a class="brand-menu-item" asp-action="Index">About</a>
-        <a class="brand-menu-item active" asp-action="k">Candlestick</a>
-        <a class="brand-menu-item" asp-action="Buy">Buy</a>
-        <a class="brand-menu-item" asp-action="Sell">Sell</a>
-    </div>
-</section>
 
 <section>
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                @if (!string.IsNullOrWhiteSpace(Model.Alert))
-                {
-                    <div class="card alert">
-                        @Model.Alert
-                    </div>
-                }
-                <div class="card links">
-                    @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
-                    {
-                        <div><i class="fa fa-home"></i> <a href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.GitHub))
-                    {
-                        <div><i class="fa fa-github"></i> <a href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.Email))
-                    {
-                        <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
-                    }
-                </div>
-                <div class="card">
-                    <div class="brand-current-label">Current</div>
-                    <div class="brand-current-text">@Model.Price.ToString("0.0000") EOS</div>
-                </div>
-                <div class="card">
-                    <div class="brand-current-label">24H CHANGE</div>
-                    <div class="brand-current-text">@((Model.Change * 100.0).ToString("0.0000"))%</div>
-                </div>
-                <div class="row brand-manage">
-                    <a asp-action="Login" asp-route-id="@Model.Id">Manage</a>
-                </div>
-            </div>
+            @await Html.PartialAsync("_TokenSidebar")
             <div class="col-md-8">
                 <div class="card">
                     <div id="chart" style="margin:30px; height:300px; width: 100%"></div>
@@ -71,7 +25,7 @@
         var values = [];
 
         for (var i = 0; i < rawData.length; i++) {
-            //splice 返回每组数组中被删除的第一项，即返回数组中被删除的日期 
+            //splice 返回每组数组中被删除的第一项，即返回数组中被删除的日期
             //alert(rawData[i].splice(0, 1)[0]);
             //categoryData 日期 把返回的日期放到categoryData[]数组中
             categoryData.push(rawData[i].splice(0, 1)[0]);

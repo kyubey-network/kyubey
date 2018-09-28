@@ -1,0 +1,35 @@
+﻿@model Token
+@{
+    Otc otc = ViewBag.Otc;
+    Bancor bancor = ViewBag.Bancor;
+}
+
+<script src="~/js/eos.js"></script>
+
+<header class="brand-header masthead text-center text-white"></header>
+
+<section>
+    <div class="container brand">
+        <img src="/token/@(@Model.Id).png" class="brand-icon" />
+        <div class="brand-name">@Model.Id</div>
+    </div>
+</section>
+
+<section class="brand-menu">
+    <div class="container">
+        <a class="brand-menu-item @(ViewBag.Current == "token-about" ? "active" : "")" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
+        @if (bancor != null)
+        {
+            <a class="brand-menu-item @(ViewBag.Current == "token-k" ? "active" : "")" asp-action="KyubeyCandlestick" asp-route-id="@Model.Id">@SR["Candlestick"]</a>
+        }
+        @if (otc != null || bancor != null)
+        {
+            <a class="brand-menu-item @(ViewBag.Current == "token-buy" ? "active" : "")" asp-action="Buy" asp-route-id="@Model.Id">@SR["Buy"]</a>
+            <a class="brand-menu-item @(ViewBag.Current == "token-sell" ? "active" : "")" asp-action="Sell" asp-route-id="@Model.Id">@SR["Sell"]</a>
+        }
+        @if (otc != null)
+        {
+            <a class="brand-menu-item @(ViewBag.Current == "token-otc-publish" ? "active" : "")" asp-action="OtcPublish" asp-route-id="@Model.Id">@SR["OTC Publish"]</a>
+        }
+    </div>
+</section>

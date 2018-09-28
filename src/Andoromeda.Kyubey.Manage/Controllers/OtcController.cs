@@ -109,7 +109,7 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             var otc = new Otc
             {
                 Id = id,
-                Status = Status.Preparing
+                Status = Status.Reviewing
             };
 
             DB.Otcs.Add(otc);
