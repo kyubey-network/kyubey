@@ -5,6 +5,7 @@
 }
 
 <script src="~/js/eos.js"></script>
+<script src="~/js/common.js"></script>
 
 <header class="brand-header masthead text-center text-white"></header>
 
@@ -16,7 +17,8 @@
 </section>
 
 <section class="brand-menu">
-    <div class="container">
+
+    <div id="containId">
         <a class="brand-menu-item @(ViewBag.Current == "token-about" ? "active" : "")" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
         @if (!string.IsNullOrEmpty(Model.CurveId))
         {
@@ -36,4 +38,14 @@
             <a class="brand-menu-item @(ViewBag.Current == "token-otc-publish" ? "active" : "")" asp-action="OtcPublish" asp-route-id="@Model.Id">@SR["OTC Publish"]</a>
         }
     </div>
+    @{
+        <script>
+            if (isPc()) {
+                $("#containId").addClass("container");
+            } else {
+                $("#containId").addClass("mobile-container")
+            }
+        </script>
+
+    }
 </section>
