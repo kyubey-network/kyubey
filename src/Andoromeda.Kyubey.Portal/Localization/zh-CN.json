@@ -49,5 +49,11 @@
   "Preview Balance - Supply": "预览 储备金 - 发行量",
   "Incoming": "收入",
   "Outgoing": "支出",
-  "Transaction": "交易"
+  "Transaction": "交易",
+  "Transaction Succeeded": "交易成功",
+  "Transaction Failed": "交易失败",
+  "You can confirm the result in your wallet": "您可在钱包中验证本次交易结果",
+  "Please contact us if you have any questions": "如有任何问题请与我们联系",
+  "Transaction Cancelled": "交易已取消",
+  "Transaction Cancel Failed": "交易取消失败"
 }

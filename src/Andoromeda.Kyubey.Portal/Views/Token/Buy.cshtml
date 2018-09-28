@@ -212,10 +212,10 @@
                     });
             })
             .then(() => {
-                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+                showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
             })
             .catch(err => {
-                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+                showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
             });
     }
 
@@ -234,10 +234,10 @@
                     });
             })
             .then(() => {
-                showModal('取消成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+                showModal(@SR["Transaction Cancelled"], '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
             })
             .catch(err => {
-                showModal('取消失败', error.message + '如有任何问题请与我们的客服联系！');
+                showModal('@SR["Transaction Cancel Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
             });
     }
 </script>

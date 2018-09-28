@@ -15,13 +15,13 @@ namespace Andoromeda.Kyubey.Manage.Jobs
 {
     public class PriceJob : Job
     {
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 10, SkipWhileExecuting = true)]
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
         public void CalculateBancor(IConfiguration config, KyubeyContext db, INodeServices node)
         {
             CalculateBancorAsync(config, db, node).Wait();
         }
 
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 10, SkipWhileExecuting = true)]
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
         public void CalculateOTC(IConfiguration config, KyubeyContext db)
         {
             CalculateOTCAsync(config, db).Wait();
@@ -78,6 +78,8 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                                 price = x.BuyPrice,
                                 utcTime = time
                             });
+
+                            await db.SaveChangesAsync();
                         }
                     }
                     catch(Exception ex)

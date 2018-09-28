@@ -1,5 +1,5 @@
 ﻿{
-  "MySQL": "Server=kyubey2.mysqldb.chinacloudapi.cn;Port=3306;Database=kyubey2;Uid=kyubey2%web;Pwd=Kyubey2018;ConnectionReset=false",
+  "MySQL": "",
   "TransactionNode": "https://api.helloeos.com.cn",
   "Kdata": "https://dasdaq-webapi.chinacloudsites.cn"
 }
