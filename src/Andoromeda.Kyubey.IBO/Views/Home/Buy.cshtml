@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = SR["Buy"];
+    ViewBag.Current = "buy";
+}
+@if (ViewBag.Status == "InProgress")
+{
+    <h1>@SR["Current Group Purchase"] <br>@SR["Time Left"]</h1>
+}
+else
+{
+    <h1>@SR["Next Group Purchase"] <br>@SR["Will Start In"]</h1>
+}
+
+<script>
+    var time = '@ViewBag.Time';
+</script>
+<ul class="countdown">
+    <li>
+        <span class="days"></span>
+        <h3>@SR["Days"]</h3>
+    </li>
+    <li>
+        <span class="hours"></span>
+        <h3>@SR["Hours"]</h3>
+    </li>
+    <li>
+        <span class="minutes"></span>
+        <h3>@SR["Minutes"]</h3>
+    </li>
+    <li>
+        <span class="seconds"></span>
+        <h3>@SR["Seconds"]</h3>
+    </li>
+</ul>
+<div class="subscribe-form">
+    <div id="form">
+        <input type="text" id="amount" class="form-control" placeholder="@SR["Enter amount"]" required>
+        <button type="submit" class="form-control" id="btnBuy"><i class="fa fa-send-o"></i></button>
+    </div>
+</div>

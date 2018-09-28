@@ -1,0 +1,53 @@
+.navigator li {
+    display: inline-block;
+    padding: 15px;
+}
+
+.navigator li a {
+    color: rgba(255,255,255,0.5);
+}
+
+.navigator li:hover a {
+    color: rgb(255,255,255);
+}
+
+.navigator {
+    padding-left: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+
+.navigator li.active a {
+    color: #fff;
+}
+
+.btn-download {
+    padding: 15px;
+    border-radius: 70px;
+    background: #fff;
+    color: #888;
+}
+
+.download-outer {
+    margin-top: 30px;
+}
+
+.order-table {
+    width: 400px;
+    text-align: left;
+    color: rgba(255,255,255,0.7);
+    margin-top: -10px;
+}
+
+.order-table tr {
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+
+.order-table td, .order-table th {
+    padding: 10px;
+}
+
+.faq {
+    width: 400px;
+    color: rgba(255,255,255,0.7);
+    text-align: left;
+}

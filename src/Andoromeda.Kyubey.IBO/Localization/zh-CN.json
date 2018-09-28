@@ -1,0 +1,22 @@
+﻿{
+  "Current Group Purchase": "当前团购",
+  "Time Left": "剩余时间",
+  "Next Group Purchase": "下一轮团购",
+  "Will Start In": "即将开始",
+  "Enter amount": "输入数量",
+  "Sell your KBY token": "出售您的KBY通行证",
+  "Claim": "收益",
+  "Buy": "购买",
+  "Sell": "出售",
+  "Account": "账号",
+  "Amount": "数量",
+  "Help": "帮助",
+  "Days": "天",
+  "Hours": "时",
+  "Minutes": "分",
+  "Seconds": "秒",
+  "Home": "首页",
+  "White Paper": "白皮书",
+  "q1": "Q: Why there is no unit price displayed?",
+  "a1": "A: KBY is based on DAIBO protocol which provides a group purchase model, the unit price will be confirmed only the time up."
+}

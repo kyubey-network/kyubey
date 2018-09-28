@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Andoromeda.Kyubey.IBO.Models.Claim>
+@{
+    ViewBag.Title = SR["Claim"];
+    ViewBag.Current = "orders";
+}
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>@SR["Account"]</th>
+            <th>@SR["Amount"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var x in Model)
+        {
+            <tr>
+                <td>@x.Account</td>
+                <td>@x.Asset</td>
+            </tr>
+        }
+    </tbody>
+</table>

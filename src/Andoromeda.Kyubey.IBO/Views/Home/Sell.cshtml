@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = SR["Sell"];
+    ViewBag.Current = "sell";
+}
+<h1>@SR["Sell your KBY token"] <br>1.0000 KBY = @ViewBag.Price EOS</h1>
+<div class="subscribe-form" style="margin-top: 30px;">
+    <div id="form">
+        <input type="text" id="amount" class="form-control" placeholder="@SR["Enter amount"]" required>
+        <button type="submit" id="btnSell" class="form-control"><i class="fa fa-send-o"></i></button>
+    </div>
+</div>
