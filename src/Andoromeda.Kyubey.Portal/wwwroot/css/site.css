@@ -173,6 +173,9 @@ section {
     .brand-menu .container {
         padding: 0 0 0 300px;
     }
+    .brand-menu .mobile-container{
+        padding:0;
+    }
 
 .brand-menu-item {
     padding: 18px 15px 15px 15px;
