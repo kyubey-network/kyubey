@@ -18,6 +18,10 @@
 <section class="brand-menu">
     <div class="container">
         <a class="brand-menu-item @(ViewBag.Current == "token-about" ? "active" : "")" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
+        @if (!string.IsNullOrEmpty(Model.CurveId))
+        {
+            <a class="brand-menu-item @(ViewBag.Current == "token-curve" ? "active" : "")" asp-action="Curve" asp-route-id="@Model.Id">@SR["Curve"] (@Model.CurveId)</a>
+        }
         @if (bancor != null)
         {
             <a class="brand-menu-item @(ViewBag.Current == "token-k" ? "active" : "")" asp-action="KyubeyCandlestick" asp-route-id="@Model.Id">@SR["Candlestick"]</a>

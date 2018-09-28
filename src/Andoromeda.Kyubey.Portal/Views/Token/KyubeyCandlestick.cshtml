@@ -1,6 +1,7 @@
 ﻿@model Token
 @{
     ViewBag.Current = "token-k";
+    ViewBag.Title = Model.Id + " - " + SR["Candlestick"];
 }
 @await Html.PartialAsync("_TokenHeader")
 <script src="~/js/echarts.js"></script>

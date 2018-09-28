@@ -42,6 +42,9 @@
     <Content Update="Views\Account\Password.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Bancor\ManageStatus.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Bancor\ManagePrice.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -58,6 +61,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Otc\Manage.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Otc\ManageStatus.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Otc\Onboard.cshtml">

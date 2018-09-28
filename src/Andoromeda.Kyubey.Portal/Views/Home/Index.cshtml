@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Bancor>
 @{
+    ViewBag.Title = SR["Kyubey Exchange"];
     ViewBag.Current = "home-kyubey";
 }
 @await Html.PartialAsync("_HomeHeader")
@@ -10,6 +11,7 @@
             <thead>
                 <tr>
                     <th>@SR["TOKEN"]</th>
+                    <th>@SR["PROTOCOL"]</th>
                     <th>@SR["24H CHANGE"]</th>
                     <th>@SR["BUY PRICE EOS"]</th>
                     <th>@SR["SELL PRICE EOS"]</th>
@@ -27,6 +29,7 @@
                                 <div class="table-currency-name">@x.Token.Name</div>
                             </div>
                         </td>
+                        <td>@(x.Token.CurveId ?? SR["Unknown"])</td>
                         <td>@((x.Change * 100.0).ToString("0.0000"))%</td>
                         <td>@x.BuyPrice.ToString("0.0000") EOS</td>
                         <td>@x.SellPrice.ToString("0.0000") EOS</td>

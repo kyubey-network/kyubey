@@ -65,11 +65,11 @@ namespace Andoromeda.Kyubey.Models
                 await SaveChangesAsync();
             }
 
-            if (!await Curves.AnyAsync(x => x.Id == "kyubey", token))
+            if (!await Curves.AnyAsync(x => x.Id == "daibo", token))
             {
                 Curves.Add(new Curve
                 {
-                    Id = "kyubey",
+                    Id = "daibo",
                     PriceSupplyFunction = "${k} * x",
                     BalanceSupplyFunction = "${k}/2 * x^2",
                     SupplyBalanceFunction = "(2/${k})^(0.5) * x^(0.5)",

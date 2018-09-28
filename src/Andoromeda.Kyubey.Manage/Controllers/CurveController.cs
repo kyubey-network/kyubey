@@ -11,6 +11,7 @@ using Andoromeda.Kyubey.Models;
 
 namespace Andoromeda.Kyubey.Manage.Controllers
 {
+    [Authorize(Roles = "ROOT")]
     public class CurveController : BaseController
     {
         public async Task<IActionResult> Index(CancellationToken cancellationToken)

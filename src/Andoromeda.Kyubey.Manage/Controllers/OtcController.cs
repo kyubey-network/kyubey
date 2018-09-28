@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Andoromeda.Kyubey.Models;
 
@@ -153,6 +154,53 @@ namespace Andoromeda.Kyubey.Manage.Controllers
             }
 
             return View(otc);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "ROOT")]
+        [Route("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/status")]
+        public async Task<IActionResult> ManageStatus(string id, CancellationToken cancellationToken)
+        {
+            return await Manage(id, cancellationToken);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "ROOT")]
+        [Route("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/status")]
+        public async Task<IActionResult> ManageStatus(string id, Status status, CancellationToken cancellationToken)
+        {
+            var otc = await DB.Otcs
+                .Include(x => x.Token)
+                .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            if (otc == null)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Token not found"];
+                    x.Details = SR["The token <{0}> has not been found in bancor exchange.", id];
+                    x.StatusCode = 404;
+                });
+            }
+
+            if (!User.IsInRole("ROOT"))
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Permission Denied"];
+                    x.Details = SR["You don't have the access to {0}", otc.Token.Id];
+                    x.StatusCode = 401;
+                });
+            }
+
+            otc.Status = status;
+            await DB.SaveChangesAsync();
+
+            return Prompt(x =>
+            {
+                x.Title = SR["OTC info updated"];
+                x.Details = SR["The OTC status has been updated successfully"];
+            });
         }
     }
 }

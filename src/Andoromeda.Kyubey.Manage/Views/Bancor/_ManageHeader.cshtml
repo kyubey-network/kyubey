@@ -8,5 +8,9 @@
     <ul class="manage-header">
         <li class="manage-header-item @(ViewBag.Current == "bancor-manage-basic" ? "active" : "")"><a asp-action="Manage" asp-route-id="@Model.Id">@SR["Basic"]</a></li>
         <li class="manage-header-item @(ViewBag.Current == "bancor-manage-price" ? "active" : "")"><a asp-action="ManagePrice" asp-route-id="@Model.Id">@SR["Token Price"]</a></li>
+        @if (User.IsInRole("ROOT"))
+        {
+            <li class="manage-header-item @(ViewBag.Current == "bancor-manage-status" ? "active" : "")"><a asp-action="ManageStatus" asp-route-id="@Model.Id">@SR["Status"]</a></li>
+        }
     </ul>
 </div>

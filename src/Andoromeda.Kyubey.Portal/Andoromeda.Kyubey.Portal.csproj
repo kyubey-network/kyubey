@@ -28,6 +28,9 @@
     <Content Update="Views\Token\Buy.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Token\Curve.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Token\Sell.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

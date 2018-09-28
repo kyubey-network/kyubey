@@ -1,0 +1,176 @@
+﻿@model IEnumerable<Curve>
+@{
+    ViewBag.Title = SR["Curve Analysis"];
+    var current = Model.First(x => x.Id == ViewBag.CurveId);
+    var argumentNames = Newtonsoft.Json.JsonConvert.SerializeObject(current.Arguments.Object.Select(x => x.Id));
+}
+
+<script src="~/js/eval-expr.js"></script>
+<script src="~/js/d3.min.js"></script>
+<script src="~/js/function-plot.min.js"></script>
+
+<section style="margin-top: 120px; text-align: center">
+    @foreach (var x in Model)
+    {
+        <a class="area-item @(ViewBag.CurveId == x.Id ? "active" : "")" asp-controller="Analysis" asp-route-id="@x.Id">@x.Id</a>
+    }
+</section>
+
+<section style="margin-top: 60px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    @foreach (var x in current.Arguments.Object)
+                    {
+                        <label>
+                            @x.Id
+                            <input style="margin-bottom: 15px" class="form-control argument" placeholder="@x.Name" />
+                        </label>
+                    }
+                    @if (!string.IsNullOrEmpty(current.PriceBalanceFunction))
+                    {
+                        <input type="button" style="margin-bottom: 15px" class="btn btn-primary" value="@SR["Preview Price - Balance"]" onclick="chart_price_balance()" />
+                    }
+                    @if (!string.IsNullOrEmpty(current.PriceSupplyFunction))
+                    {
+                        <input type="button" style="margin-bottom: 15px" class="btn btn-primary" value="@SR["Preview Price - Supply"]" onclick="chart_price_supply()" />
+                    }
+                    @if (!string.IsNullOrEmpty(current.SupplyBalanceFunction))
+                    {
+                        <input type="button" style="margin-bottom: 15px" class="btn btn-primary" value="@SR["Preview Supply - Balance"]" onclick="chart_supply_balance()" />
+                    }
+                    @if (!string.IsNullOrEmpty(current.BalanceSupplyFunction))
+                    {
+                        <input type="button" style="margin-bottom: 15px" class="btn btn-primary" value="@SR["Preview Balance - Supply"]" onclick="chart_balance_supply()" />
+                    }
+                </div>
+            </div>
+            <div class="col-md-8" id="plot">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function empty_plot() {
+        functionPlot({
+            target: document.querySelector("#plot"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, 1] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+            ]
+        });
+    }
+
+    empty_plot();
+
+    function chart_price_supply() {
+        var argumentDoms = $('.argument');
+        var argNames = @(new HtmlString(argumentNames));
+        for (var i = 0; i < argumentDoms.length; i++) {
+            var val = $(argumentDoms[i]).val();
+            console.warn(`var ${argNames[i]} = ${val};`);
+            eval(`var ${argNames[i]} = ${val};`);
+        }
+
+        var func = (new MathExpression(`@(new HtmlString(current.PriceSupplyFunction))`)).toFunction();
+        functionPlot({
+            target: document.querySelector("#plot"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, func(1)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: `@(new HtmlString(current.PriceSupplyFunction))`
+                }
+            ]
+        });
+    }
+
+    function chart_price_balance() {
+        var argumentDoms = $('.argument');
+        var argNames = @(new HtmlString(argumentNames));
+        for (var i = 0; i < argumentDoms.length; i++) {
+            var val = $(argumentDoms[i]).val();
+            console.warn(`var ${argNames[i]} = ${val};`);
+            eval(`var ${argNames[i]} = ${val};`);
+        }
+
+        var func = (new MathExpression(`@(new HtmlString(current.PriceBalanceFunction))`)).toFunction();
+        functionPlot({
+            target: document.querySelector("#plot"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, func(1)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: `@(new HtmlString(current.PriceBalanceFunction))`
+                }
+            ]
+        });
+    }
+
+    function chart_supply_balance() {
+        var argumentDoms = $('.argument');
+        var argNames = @(new HtmlString(argumentNames));
+        for (var i = 0; i < argumentDoms.length; i++) {
+            var val = $(argumentDoms[i]).val();
+            console.warn(`var ${argNames[i]} = ${val};`);
+            eval(`var ${argNames[i]} = ${val};`);
+        }
+
+        var func = (new MathExpression(`@(new HtmlString(current.SupplyBalanceFunction))`)).toFunction();
+        functionPlot({
+            target: document.querySelector("#plot"),
+            xAxis: { domain: [0, 10000] },
+            yAxis: { domain: [0, func(10000)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: `@(new HtmlString(current.SupplyBalanceFunction))`
+                }
+            ]
+        });
+    }
+
+    function chart_balance_supply() {
+        var argumentDoms = $('.argument');
+        var argNames = @(new HtmlString(argumentNames));
+        for (var i = 0; i < argumentDoms.length; i++) {
+            var val = $(argumentDoms[i]).val();
+            console.warn(`var ${argNames[i]} = ${val};`);
+            eval(`var ${argNames[i]} = ${val};`);
+        }
+
+        var func = (new MathExpression(`@(new HtmlString(current.BalanceSupplyFunction))`)).toFunction();
+        functionPlot({
+            target: document.querySelector("#plot"),
+            xAxis: { domain: [0, 100000000] },
+            yAxis: { domain: [0, func(100000000)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: `@(new HtmlString(current.BalanceSupplyFunction))`
+                }
+            ]
+        });
+    }
+
+</script>

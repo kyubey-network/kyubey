@@ -62,6 +62,31 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         {
             return await Index(db, id, cancellationToken);
         }
+        
+        [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/curve")]
+        public async Task<IActionResult> Curve([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        {
+            var token = await db.Tokens
+                .Include(x => x.Curve)
+                .SingleOrDefaultAsync(x => x.Id == id
+                    && x.Status == TokenStatus.Active, cancellationToken);
+
+            if (token == null)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Token not found"];
+                    x.Details = SR["The token {0} is not found", id];
+                    x.StatusCode = 404;
+                });
+            }
+
+            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Curve = token.Curve;
+
+            return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+        }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.png")]
         public async Task<IActionResult> Icon([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)

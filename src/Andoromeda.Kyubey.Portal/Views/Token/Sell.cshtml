@@ -1,5 +1,6 @@
 ﻿@model Token
 @{
+    ViewBag.Title = Model.Id + " - " + SR["Sell"];
     ViewBag.Current = "token-sell";
     Bancor bancor = ViewBag.Bancor;
     Otc otc = ViewBag.Otc;
@@ -47,6 +48,64 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@SR["Transaction"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        @SR["Incoming"]
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider1" data-slider-id="slider1" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value1" />
+                    </div>
+                    <div class="col-md-2" id="symbol1">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-2">
+                        @SR["Outgoing"]
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider2" data-slider-id="slider2" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value2" />
+                    </div>
+                    <div class="col-md-2" id="symbol2">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-4" style="text-align: center">
+                        @SR["Unit Price"]
+                    </div>
+                    <div class="col-md-2">
+                        ≈
+                    </div>
+                    <div class="col-md-4" id="unit">
+                    </div>
+                    <div class="col-md-2">
+                        EOS
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">Take</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     function unit_price(eos, token) {

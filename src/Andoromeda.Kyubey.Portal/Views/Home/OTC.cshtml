@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Otc>
 @{
+    ViewBag.Title = SR["OTC"];
     ViewBag.Current = "home-otc";
 }
 @await Html.PartialAsync("_HomeHeader")
@@ -22,7 +23,7 @@
                         <td>
                             <img src="/token/@(x.Id).png" class="table-icon" />
                             <div class="table-currency">
-                                <a class="table-currency-symbol" asp-action="Index" asp-controller="OTC" asp-route-id="@x.Id">@x.Id</a>
+                                <a class="table-currency-symbol" asp-action="Index" asp-controller="Token" asp-route-id="@x.Id">@x.Id</a>
                                 <div class="table-currency-name">@x.Token.Name</div>
                             </div>
                         </td>
