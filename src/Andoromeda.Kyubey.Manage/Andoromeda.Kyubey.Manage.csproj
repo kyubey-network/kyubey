@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <LangVersion>7.3</LangVersion>
+    <UserSecretsId>fdcf0411-00e4-4701-aab5-6f377b1903c6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

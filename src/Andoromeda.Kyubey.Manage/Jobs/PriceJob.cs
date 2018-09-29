@@ -61,8 +61,10 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             }
                             catch { }
 
-                            x.BuyPrice = await node.InvokeExportAsync<double>("./price", "buyPrice", rows, x.CurrentBuyPriceJavascript);
-                            x.SellPrice = await node.InvokeExportAsync<double>("./price", "buyPrice", rows, x.CurrentBuyPriceJavascript);
+                            var buy = await node.InvokeExportAsync<string>("./price", "buyPrice", rows, x.CurrentBuyPriceJavascript);
+                            var sell = await node.InvokeExportAsync<string>("./price", "sellPrice", rows, x.CurrentSellPriceJavascript);
+                            x.BuyPrice = Convert.ToDouble(buy.Contains(".") ? buy.TrimEnd('0') : buy);
+                            x.SellPrice = Convert.ToDouble(sell.Contains(".") ? sell.TrimEnd('0') : sell);
 
                             if (k24h != 0.0)
                             {
