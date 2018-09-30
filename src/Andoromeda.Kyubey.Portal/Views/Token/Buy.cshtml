@@ -234,7 +234,7 @@
                     });
             })
             .then(() => {
-                showModal(@SR["Transaction Cancelled"], '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                showModal('@SR["Transaction Cancelled"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
             })
             .catch(err => {
                 showModal('@SR["Transaction Cancel Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
