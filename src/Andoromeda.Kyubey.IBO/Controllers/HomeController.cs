@@ -26,8 +26,9 @@ namespace Andoromeda.Kyubey.IBO.Controllers
         }
 
         [Route("/sell")]
-        public IActionResult Sell()
+        public IActionResult Sell([FromServices] IConfiguration config)
         {
+            ViewBag.Exchange = Convert.ToDouble(config["Exchange"]).ToString("0.0000");
             return View();
         }
 
