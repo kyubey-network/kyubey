@@ -15,4 +15,5 @@
 <section style="text-align: center">
     <a class="area-item @(ViewBag.Current == "home-kyubey" ? "active" : "")" asp-action="Index">@SR["Kyubey"]</a>
     <a class="area-item @(ViewBag.Current == "home-otc" ? "active" : "")" asp-action="OTC">@SR["OTC"]</a>
+    <a href="https://ibo.kyubey.network/buy" class="area-item @(ViewBag.Current == "home-ibo" ? "active" : "")">@SR["IBO"]</a>
 </section>
