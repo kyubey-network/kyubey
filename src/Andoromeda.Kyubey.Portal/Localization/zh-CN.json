@@ -26,6 +26,7 @@
   "Publish Buy Order {0}": "挂单购买 {0}",
   "Publish Sell Order {0}": "挂单出售 {0}",
   "Kyubey Exchange": "Kyubey 交易所",
+  "IBO": "IBO",
   "They are bidding {0} in OTC": "他们正在场外交易所出售{0}",
   "They are asking {0} in OTC": "他们正在场外交易所求购{0}",
   "Owner": "出售者",
