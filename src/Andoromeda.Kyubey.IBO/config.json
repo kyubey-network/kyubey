@@ -1,5 +1,6 @@
 {
   "Status": "InProgress",
-  "Time": "2018-09-29 12:00:00",
+  "Time": "2018-10-01 20:00:00",
+  "Exchange": 0.002,
   "TransactionNode": "https://api.helloeos.com.cn"
 }
