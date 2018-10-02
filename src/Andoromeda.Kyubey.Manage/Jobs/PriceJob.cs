@@ -33,7 +33,6 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 .Where(x => !string.IsNullOrEmpty(x.Token.Contract))
                 .Include(x => x.Token)
                 .ToList();
-            var upload = new List<object>();
             var time = DateTime.UtcNow;
             using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
             using (var kClient = new HttpClient { BaseAddress = new Uri(config["Kdata"]) })
@@ -74,13 +73,19 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             {
                                 x.Change = 0.0;
                             }
-                            upload.Add(new
-                            {
-                                catalog = "kyubey-" + x.Id,
-                                price = x.BuyPrice,
-                                utcTime = time
-                            });
 
+                            Console.WriteLine($"Uploading {x.Id} data...");
+                            using (await kClient.PostAsJsonAsync($"/api/Candlestick", new
+                            {
+                                values = new[] {
+                                    new
+                                    {
+                                        catalog = "kyubey-" + x.Id,
+                                        price = x.BuyPrice,
+                                        utcTime = time
+                                    }
+                                }
+                            })) { }
                             await db.SaveChangesAsync();
                         }
                     }
@@ -89,12 +94,6 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                         Console.WriteLine(ex.ToString());
                     }
                 }
-
-                Console.WriteLine($"Uploading {upload.Count} data...");
-                using (await kClient.PostAsJsonAsync($"/api/Candlestick", new
-                {
-                    values = upload
-                }))
                 { }
             }
             await db.SaveChangesAsync();

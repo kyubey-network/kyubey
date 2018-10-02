@@ -1,6 +1,6 @@
 ﻿namespace Andoromeda.Kyubey.IBO.Models
 {
-    public class Claim
+    public class Holder
     {
         public string Account { get; set; }
 

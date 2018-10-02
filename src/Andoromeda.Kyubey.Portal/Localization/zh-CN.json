@@ -56,5 +56,9 @@
   "You can confirm the result in your wallet": "您可在钱包中验证本次交易结果",
   "Please contact us if you have any questions": "如有任何问题请与我们联系",
   "Transaction Cancelled": "交易已取消",
-  "Transaction Cancel Failed": "交易取消失败"
+  "Transaction Cancel Failed": "交易取消失败",
+  "Holder": "持有者",
+  "Holders": "持有者",
+  "Amount": "数量",
+  "Holders list is not available": "持有者列表暂时不可用"
 }

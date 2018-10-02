@@ -1,0 +1,40 @@
+﻿@model Token
+@{
+    ViewBag.Current = "token-holders";
+    ViewBag.Title = Model.Id + " - " + SR["Holders"];
+}
+@await Html.PartialAsync("_TokenHeader")
+
+<section>
+    <div class="container">
+        <div class="row">
+            @await Html.PartialAsync("_TokenSidebar")
+            <div class="col-md-8">
+                <div class="card no-padding">
+                    @if (ViewBag.Holders == null)
+                    {
+                    <span>@SR["Holders list is not available"]</span>
+                    }
+                    <table class="currency-table">
+                        <thead>
+                            <tr>
+                                <th>@SR["Holder"]</th>
+                                <th>@SR["Amount"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(Holder x in ViewBag.Holders)
+                            {
+                            <tr>
+                                <td>@x.account</td>
+                                <td>@x.amount</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>

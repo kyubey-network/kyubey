@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -41,18 +42,14 @@ namespace Andoromeda.Kyubey.IBO.Controllers
         [Route("/orders")]
         public async Task<IActionResult> Orders([FromServices] IConfiguration config, CancellationToken token)
         {
-            using (var client = new HttpClient() { BaseAddress = new Uri(config["TransactionNode"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/history/get_actions", new
+            using (var client = new HttpClient() { BaseAddress = new Uri("https://cache.togetthere.cn") })
+            using (var response = await client.GetAsync($"/token/distributed/dacincubator/KBY", token))
             {
-                account_name = "dacincubator"
-            }, token))
-            {
-                var actions = await response.Content.ReadAsAsync<GetActionsRespose>(token);
-                var ret = actions.actions.Where(x => x.action_trace.act.account == "eosio.token"
-                    && x.action_trace.act.name == "transfer").Select(x => new Claim
+                var result = await response.Content.ReadAsAsync<IDictionary<string, double>>(token);
+                var ret = result.Select(x => new Holder
                     {
-                        Account = x.action_trace.act.data.to,
-                        Asset = x.action_trace.act.data.quantity
+                        Account = x.Key,
+                        Asset = x.Value.ToString("0.0000") + " KBY"
                     });
                 return View(ret);
             }

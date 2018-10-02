@@ -181,5 +181,53 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 return Json(rows.OrderBy(x => Convert.ToDouble(x.bid.quantity.Split(' ')[0]) / Convert.ToDouble(x.ask.quantity.Split(' ')[0])));
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Holders(
+            [FromServices] KyubeyContext db, 
+            string id, 
+            CancellationToken cancellationToken)
+        {
+            var token = await db.Tokens
+                .Include(x => x.Curve)
+                .SingleOrDefaultAsync(x => x.Id == id
+                    && x.Status == TokenStatus.Active, cancellationToken);
+
+            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            if (token == null)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Token not found"];
+                    x.Details = SR["The token {0} is not found", id];
+                    x.StatusCode = 404;
+                });
+            }
+
+            var cancel = new CancellationTokenSource();
+            cancel.CancelAfter(5000);
+            try
+            {
+                using (var client = new HttpClient() { BaseAddress = new Uri("https://cache.togetthere.cn") })
+                using (var resposne = await client.GetAsync($"/token/distributed/{token.Contract}/{token.Id}"))
+                {
+                    var dic = await resposne.Content.ReadAsAsync<IDictionary<string, double>>();
+                    ViewBag.Holders = dic.Select(x => new Holder
+                    {
+                        account = x.Key,
+                        amount = x.Value.ToString("0.0000") + " " + token.Id
+                    })
+                    .Take(20)
+                    .ToList();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+            }
+
+            return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+        }
     }
 }
