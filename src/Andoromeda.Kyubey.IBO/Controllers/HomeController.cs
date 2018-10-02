@@ -50,7 +50,8 @@ namespace Andoromeda.Kyubey.IBO.Controllers
                     {
                         Account = x.Key,
                         Asset = x.Value.ToString("0.0000") + " KBY"
-                    });
+                    })
+                    .Take(10);
                 return View(ret);
             }
         }
