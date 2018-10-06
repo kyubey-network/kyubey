@@ -91,6 +91,8 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Otc> Otcs { get; set; }
 
+        public DbSet<Dex> Dexes { get; set; }
+
         public DbSet<Bancor> Bancors { get; set; }
 
         public DbSet<AlertRule> AlertRules { get; set; }

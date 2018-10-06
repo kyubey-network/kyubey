@@ -1,0 +1,15 @@
+﻿@model Dex
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">@ViewBag.Title</h1>
+</div>
+
+<div class="container-flex">
+    <ul class="manage-header">
+        <li class="manage-header-item @(ViewBag.Current == "dex-manage-basic" ? "active" : "")"><a asp-action="Manage" asp-route-id="@Model.Id">@SR["Basic"]</a></li>
+        @if (User.IsInRole("ROOT"))
+        {
+            <li class="manage-header-item @(ViewBag.Current == "dex-manage-status" ? "active" : "")"><a asp-action="ManageStatus" asp-route-id="@Model.Id">@SR["Status"]</a></li>
+        }
+    </ul>
+</div>

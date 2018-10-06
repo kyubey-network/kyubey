@@ -56,11 +56,11 @@
                         @if (User.IsInRole("ROOT"))
                         {
                             @*<li class="nav-item">
-                                <a class="nav-link @(ViewBag.Current == "token-validate" ? "active" : "")" asp-action="Validate" asp-controller="Token">
-                                    <i class="fa fa-eye"></i>
-                                    @SR["Validate Token"]
-                                </a>
-                            </li>*@
+                    <a class="nav-link @(ViewBag.Current == "token-validate" ? "active" : "")" asp-action="Validate" asp-controller="Token">
+                        <i class="fa fa-eye"></i>
+                        @SR["Validate Token"]
+                    </a>
+                </li>*@
                         }
                     </ul>
 
@@ -72,6 +72,18 @@
                             <a class="nav-link @(ViewBag.Current == "bancor-all" ? "active" : "")" asp-action="All" asp-controller="Bancor">
                                 <i class="fa fa-bitcoin"></i>
                                 @SR["All Bancor Tokens"]
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>@SR["DEX"]</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "dex-all" ? "active" : "")" asp-action="Index" asp-controller="Dex">
+                                <i class="fa fa-bitcoin"></i>
+                                @SR["All DEX Tokens"]
                             </a>
                         </li>
                     </ul>
@@ -89,28 +101,28 @@
                     </ul>
 
                     @*<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>@SR["Incident Management"]</span>
-                    </h6>
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewBag.Current == "icm-all" ? "active" : "")" asp-action="Create" asp-controller="IcM">
-                                <i class="fa fa-bell"></i>
-                                @SR["All Incidents"]
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewBag.Current == "icm-rule" ? "active" : "")" asp-action="Rule" asp-controller="IcM">
-                                <i class="fa fa-bullhorn"></i>
-                                @SR["Alert Rules"]
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewBag.Current == "icm-oncall" ? "active" : "")" asp-action="OnCall" asp-controller="IcM">
-                                <i class="fa fa-phone"></i>
-                                @SR["On Call Settings"]
-                            </a>
-                        </li>
-                    </ul>*@
+            <span>@SR["Incident Management"]</span>
+        </h6>
+        <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+                <a class="nav-link @(ViewBag.Current == "icm-all" ? "active" : "")" asp-action="Create" asp-controller="IcM">
+                    <i class="fa fa-bell"></i>
+                    @SR["All Incidents"]
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewBag.Current == "icm-rule" ? "active" : "")" asp-action="Rule" asp-controller="IcM">
+                    <i class="fa fa-bullhorn"></i>
+                    @SR["Alert Rules"]
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewBag.Current == "icm-oncall" ? "active" : "")" asp-action="OnCall" asp-controller="IcM">
+                    <i class="fa fa-phone"></i>
+                    @SR["On Call Settings"]
+                </a>
+            </li>
+        </ul>*@
 
                     @if (User.IsInRole("ROOT"))
                     {
