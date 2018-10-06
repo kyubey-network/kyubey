@@ -204,7 +204,7 @@
             .then(contract => {
                 return contract.transfer(
                     account.name,
-                    'eosotcbackup',
+                    '@ViewBag.OtcContract',
                     ask,
                     memo,
                     {
@@ -223,7 +223,7 @@
         var bid = $('#tx-' + id).find('.tx-bid').text();
         var ask = $('#tx-' + id).find('.tx-ask').text();
         var memo = `${ask}@@eosio.token`;
-        eos.contract('eosotcbackup', { requiredFields })
+        eos.contract('@ViewBag.OtcContract', { requiredFields })
             .then(contract => {
                 return contract.retrieve(
                     account.name,

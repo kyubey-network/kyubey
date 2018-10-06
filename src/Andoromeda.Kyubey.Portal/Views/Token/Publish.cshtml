@@ -2,6 +2,8 @@
 @{
     ViewBag.Current = "token-publish";
     ViewBag.Title = Model.Id + " - " + SR["Publish"];
+    Otc otc = ViewBag.Otc;
+    Dex dex = ViewBag.Dex;
 }
 @await Html.PartialAsync("_TokenHeader")
 <script src="~/js/kyubey.js"></script>
@@ -26,7 +28,14 @@
                             <td>EOS</td>
                         </tr>
                     </table>
-                    <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id]" onclick="otc_buy()" />
+                    @if (otc != null)
+                    {
+                        <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id] (DEX)" onclick="dex_buy()" />
+                    }
+                    @if (dex != null)
+                    {
+                        <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id] (OTC)" onclick="otc_buy()" />
+                    }
                 </div>
             </div>
             <div class="col-md-4">
@@ -45,7 +54,14 @@
                             <td>EOS</td>
                         </tr>
                     </table>
-                    <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id]" onclick="otc_sell()" />
+                    @if (dex != null)
+                    {
+                        <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id] (DEX)" onclick="dex_sell()" />
+                    }
+                    @if (otc != null)
+                    {
+                        <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id] (OTC)" onclick="otc_sell()" />
+                    }
                 </div>
             </div>
         </div>
@@ -71,13 +87,67 @@
 
 
 <script>
+    function dex_buy() {
+        var tokenCount = parseInt(parseFloat($('#txtBuyAmount').val()) * 1000);
+        var eosCount = parseInt(parseFloat($('#txtBuyEos').val()) * 1000);
+        if (eosCount % tokenCount != 0) {
+            alert('@SR["Minimum unit price must be 0.0001 EOS"]');
+            return;
+        }
+        eos.contract('eosio.token', { requiredFields })
+            .then(contract => {
+                var memo = $('#txtBuyAmount').val()).toFixed(4) + ' @Model.Id';
+                return contract.transfer(
+                    account.name,
+                    '@ViewBag.DexContract',
+                    parseFloat($('#txtBuyEos').val()).toFixed(4) + ' EOS',
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+
+    function dex_sell() {
+        var tokenCount = parseInt(parseFloat($('#txtSellAmount').val()) * 1000);
+        var eosCount = parseInt(parseFloat($('#txtSellEos').val()) * 1000);
+        if (eosCount % tokenCount != 0) {
+            alert('@SR["Minimum unit price must be 0.0001 EOS"]');
+            return;
+        }
+        eos.contract('@Model.Contract', { requiredFields })
+            .then(contract => {
+                var memo = `${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS`;
+                return contract.transfer(
+                    account.name,
+                    '@ViewBag.DexContract',
+                    parseFloat($('#txtSellAmount').val()).toFixed(4) + ' @Model.Id',
+                    memo,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
+            })
+            .catch(err => {
+                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
+            });
+    }
+
     function otc_buy() {
         eos.contract('eosio.token', { requiredFields })
             .then(contract => {
                 var memo = `ask,${parseFloat($('#txtBuyAmount').val()).toFixed(4)} @Model.Id,@Model.Contract`;
                 return contract.transfer(
                     account.name,
-                    'eosotcbackup',
+                    '@ViewBag.OtcContract',
                     parseFloat($('#txtBuyEos').val()).toFixed(4) + ' EOS',
                     memo,
                     {
@@ -99,7 +169,7 @@
                 var memo = `ask,${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS,eosio.token`;
                 return contract.transfer(
                     account.name,
-                    'eosotcbackup',
+                    '@ViewBag.OtcContract',
                     parseFloat($('#txtSellAmount').val()).toFixed(4) + ' @Model.Id',
                     memo,
                     {

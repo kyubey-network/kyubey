@@ -1,5 +1,9 @@
 {
   "MySQL": "",
   "TransactionNode": "https://api.helloeos.com.cn",
-  "Kdata": "https://dasdaq-webapi.chinacloudsites.cn"
+  "Kdata": "https://dasdaq-webapi.chinacloudsites.cn",
+  "Contracts": {
+    "Otc": "eosotcbackup",
+    "Dex": "pomelodex"
+  }
 }
