@@ -35,6 +35,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
@@ -51,8 +52,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             return await Index(db, id, cancellationToken);
         }
 
-        [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/otc/publish")]
-        public async Task<IActionResult> OtcPublish([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/publish")]
+        public async Task<IActionResult> Publish([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
             return await Index(db, id, cancellationToken);
         }
@@ -83,6 +84,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
@@ -195,6 +197,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             if (token == null)
             {

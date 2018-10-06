@@ -2,6 +2,7 @@
 @{
     Otc otc = ViewBag.Otc;
     Bancor bancor = ViewBag.Bancor;
+    Dex dex = ViewBag.Dex;
 }
 
 <script src="~/js/eos.js"></script>
@@ -32,14 +33,14 @@
         {
             <a class="brand-menu-item @(ViewBag.Current == "token-k" ? "active" : "")" asp-action="KyubeyCandlestick" asp-route-id="@Model.Id">@SR["Candlestick"]</a>
         }
-        @if (otc != null || bancor != null)
+        @if (otc != null || bancor != null || dex != null)
         {
             <a class="brand-menu-item @(ViewBag.Current == "token-buy" ? "active" : "")" asp-action="Buy" asp-route-id="@Model.Id">@SR["Buy"]</a>
             <a class="brand-menu-item @(ViewBag.Current == "token-sell" ? "active" : "")" asp-action="Sell" asp-route-id="@Model.Id">@SR["Sell"]</a>
         }
-        @if (otc != null)
+        @if (otc != null || dex != null)
         {
-            <a class="brand-menu-item @(ViewBag.Current == "token-otc-publish" ? "active" : "")" asp-action="OtcPublish" asp-route-id="@Model.Id">@SR["OTC Publish"]</a>
+            <a class="brand-menu-item @(ViewBag.Current == "token-publish" ? "active" : "")" asp-action="Publish" asp-route-id="@Model.Id">@SR["OTC Publish"]</a>
         }
     </div>
     @{

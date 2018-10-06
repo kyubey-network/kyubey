@@ -2,6 +2,7 @@
 @{
     Otc otc = ViewBag.Otc;
     Bancor bancor = ViewBag.Bancor;
+    Dex dex = ViewBag.Dex;
 }
 
 <div class="col-md-4">
@@ -48,8 +49,16 @@
     {
         <div class="card">
             <div class="brand-current-label">@SR["OTC Price"]</div>
-            <div class="brand-current-text-sm">Min: @otc.PriceMin.ToString("0.0000") EOS</div>
-            <div class="brand-current-text-sm">Max: @otc.PriceMax.ToString("0.0000") EOS</div>
+            <div class="brand-current-text-sm">@SR["Min"]: @otc.PriceMin.ToString("0.0000") EOS</div>
+            <div class="brand-current-text-sm">@SR["Max"]: @otc.PriceMax.ToString("0.0000") EOS</div>
+        </div>
+    }
+    @if (dex != null)
+    {
+        <div class="card">
+            <div class="brand-current-label">@SR["Dex Price"]</div>
+            <div class="brand-current-text-sm">@SR["Min"]: @dex.PriceMin.ToString("0.0000") EOS</div>
+            <div class="brand-current-text-sm">@SR["Max"]: @dex.PriceMax.ToString("0.0000") EOS</div>
         </div>
     }
 </div>
