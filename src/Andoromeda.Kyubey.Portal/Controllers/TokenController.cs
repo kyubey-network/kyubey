@@ -119,32 +119,44 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             double? min,
             double? max,
             string id,
-            CancellationToken token)
+            CancellationToken token,
+            bool isDex = false)
         {
             var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
+            var dex = await db.Dexes.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
             using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
             using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = "eosotcbackup",
-                scope = "eosio.token",
-                table = "order",
+                code = isDex ? config["Contracts:Dex"] : config["Contracts:Otc"],
+                scope = isDex ? dex.Id : otc.Token.Contract,
+                table = isDex ? "sellorder" : "order",
                 json = true,
                 limit = 65535
             }))
             {
-                IEnumerable<Order> rows = JsonConvert.DeserializeObject<OrderTable>((await tableResponse1.Content.ReadAsStringAsync()))
-                    .rows
-                    .Where(y => y.bid.quantity.EndsWith(otc.Id) && y.bid.contract == otc.Token.Contract)
-                    .Where(y => y.ask.quantity.EndsWith("EOS") && y.ask.contract == "eosio.token");
+                IEnumerable<Order> rows;
+
+                if (isDex)
+                {
+                    rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                        .rows;
+                }
+                else
+                {
+                    rows = JsonConvert.DeserializeObject<OrderTable<OtcOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                        .rows
+                        .Where(y => y.IsBidValid(otc.Id, otc.Token.Contract))
+                        .Where(y => y.IsAskValid("EOS", "eosio.token"));
+                }
                 if (min.HasValue)
                 {
-                    rows = rows.Where(x => Convert.ToDouble(x.ask.quantity.Split(' ')[0]) / Convert.ToDouble(x.bid.quantity.Split(' ')[0]) >= min.Value);
+                    rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
                 }
                 if (max.HasValue)
                 {
-                    rows = rows.Where(x => Convert.ToDouble(x.ask.quantity.Split(' ')[0]) / Convert.ToDouble(x.bid.quantity.Split(' ')[0]) <= max.Value);
+                    rows = rows.Where(x => x.GetUnitPrice() <= max.Value);
                 }
-                return Json(rows.OrderBy(x => Convert.ToDouble(x.ask.quantity.Split(' ')[0]) / Convert.ToDouble(x.bid.quantity.Split(' ')[0])));
+                return Json(rows.OrderByDescending(x => x.GetUnitPrice()));
             }
         }
 
@@ -155,32 +167,43 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             double? min,
             double? max,
             string id,
-            CancellationToken token)
+            CancellationToken token,
+            bool isDex = false)
         {
             var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
+            var dex = await db.Dexes.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
             using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
             using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = "eosotcbackup",
-                scope = otc.Token.Contract,
-                table = "order",
+                code = isDex ? config["Contracts:Dex"] : config["Contracts:Otc"],
+                scope = isDex? dex.Id : otc.Token.Contract,
+                table = isDex ? "buyorder" : "order",
                 json = true,
                 limit = 65535
             }))
             {
-                IEnumerable<Order> rows = JsonConvert.DeserializeObject<OrderTable>((await tableResponse1.Content.ReadAsStringAsync()))
-                    .rows
-                    .Where(y => y.ask.quantity.EndsWith(otc.Id) && y.ask.contract == otc.Token.Contract)
-                    .Where(y => y.bid.quantity.EndsWith("EOS") && y.bid.contract == "eosio.token");
+                IEnumerable<Order> rows;
+                if (isDex)
+                {
+                    rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                        .rows;
+                }
+                else
+                {
+                    rows = JsonConvert.DeserializeObject<OrderTable<OtcOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                        .rows
+                        .Where(y => y.IsAskValid(otc.Id, otc.Token.Contract))
+                        .Where(y => y.IsBidValid("EOS", "eosio.token"));
+                }
                 if (min.HasValue)
                 {
-                    rows = rows.Where(x => Convert.ToDouble(x.bid.quantity.Split(' ')[0]) / Convert.ToDouble(x.ask.quantity.Split(' ')[0]) >= min.Value);
+                    rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
                 }
                 if (max.HasValue)
                 {
-                    rows = rows.Where(x => Convert.ToDouble(x.bid.quantity.Split(' ')[0]) / Convert.ToDouble(x.ask.quantity.Split(' ')[0]) <= max.Value);
+                    rows = rows.Where(x => x.GetUnitPrice() <= max.Value);
                 }
-                return Json(rows.OrderBy(x => Convert.ToDouble(x.bid.quantity.Split(' ')[0]) / Convert.ToDouble(x.ask.quantity.Split(' ')[0])));
+                return Json(rows.OrderBy(x => x.GetUnitPrice()));
             }
         }
 
