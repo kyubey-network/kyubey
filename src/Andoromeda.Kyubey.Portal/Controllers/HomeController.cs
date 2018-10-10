@@ -35,16 +35,5 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .ToListAsync(cancellationToken);
             return View(tokens);
         }
-
-        [Route("/dex")]
-        public async Task<IActionResult> DEX([FromServices] KyubeyContext db, CancellationToken cancellationToken)
-        {
-            var tokens = await db.Dexes
-                .Include(x => x.Token)
-                .Where(x => x.Status == Status.Active)
-                .OrderByDescending(x => x.Token.Priority)
-                .ToListAsync(cancellationToken);
-            return View(tokens);
-        }
     }
 }

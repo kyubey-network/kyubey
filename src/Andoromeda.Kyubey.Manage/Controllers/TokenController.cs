@@ -349,7 +349,6 @@ namespace Andoromeda.Kyubey.Manage.Controllers
         {
             ViewBag.OTC = await DB.Otcs.AnyAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await DB.Bancors.AnyAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Dex = await DB.Dexes.AnyAsync(x => x.Id == id, cancellationToken);
             return await Manage(id, cancellationToken);
         }
     }

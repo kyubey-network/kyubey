@@ -108,15 +108,15 @@
 </div>
 
 <script>
-    function unit_price(eos, token) {
-        return (parseFloat(eos.split(' ')[0]) / parseFloat(token.split(' ')[0])).toFixed(4) + " EOS";
+    function get_unit_price(num) {
+        return parseFloat(num / 10000.0).toFixed(4) + ' EOS';
     }
 
     function PollTransactions() {
         $.getJSON('/token/@Model.Id/sell-data', { min: $('#min').val(), max: $('#max').val() }, function (data) {
             var html = '';
             for (var i = 0; i < data.length; i++) {
-                html += `<tr id='tx-${data[i].id}'><td class='tx-id'>${data[i].id}</td><td>${data[i].owner}</td><td class='tx-ask'>${data[i].ask.quantity}</td><td class='tx-bid'>${data[i].bid.quantity}</td><td>${unit_price(data[i].bid.quantity, data[i].ask.quantity)}</td><td>${(new Date(data[i].timestamp * 1000)).Format('yyyy-MM-dd hh:mm')}</td><td><a href="javascript:${account && data[i].owner === account.name ? 'cancel' : 'take'}(${data[i].id})">${account && data[i].owner === account.name ? 'Cancel' : 'Take' }</a></td></tr>`;
+                html += `<tr id='tx-${data[i].id}'><td class='tx-id'>${data[i].id}</td><td>${data[i].account}</td><td class='tx-ask'>${data[i].ask}</td><td class='tx-bid'>${data[i].bid}</td><td>${get_unit_price(data[i].unit_price)}</td><td>${(new Date(data[i].timestamp * 1000)).Format('yyyy-MM-dd hh:mm')}</td><td><a href="javascript:${account && data[i].owner === account.name ? 'cancel' : 'take'}(${data[i].id})">${account && data[i].owner === account.name ? 'Cancel' : 'Take' }</a></td></tr>`;
             }
             $('#lstTransactions').html(html);
         });
@@ -198,14 +198,13 @@
     function take2(id) {
         var bid = parseFloat($('#value1').val()).toFixed(4) + ' ' + $('#symbol1').text();
         var ask = parseFloat($('#value2').val()).toFixed(4) + ' ' + $('#symbol2').text();
-        var memo = `take,${bid},eosio.token,${_id}`;
         eos.contract('@Model.Contract', { requiredFields })
             .then(contract => {
                 return contract.transfer(
                     account.name,
                     '@ViewBag.OtcContract',
                     ask,
-                    memo,
+                    bid,
                     {
                         authorization: [`${account.name}@@${account.authority}`]
                     });
@@ -224,10 +223,10 @@
         var memo = `${ask}@@@Model.Contract`;
         eos.contract('@ViewBag.OtcContract', { requiredFields })
             .then(contract => {
-                return contract.retrieve(
+                return contract.cancelbuy(
                     account.name,
+                    '@Model.Id',
                     id,
-                    memo,
                     {
                         authorization: [`${account.name}@@${account.authority}`]
                     });

@@ -9,6 +9,8 @@ namespace Andoromeda.Kyubey.Portal.Models
 
         public long timestamp { get; set; }
 
+        public long unit_price { get; set; }
+
         public abstract bool IsBidValid(string symbol, string contract = null);
 
         public abstract bool IsAskValid(string symbol, string contract = null);

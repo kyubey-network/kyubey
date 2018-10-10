@@ -35,7 +35,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
@@ -84,7 +83,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
@@ -119,35 +117,23 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             double? min,
             double? max,
             string id,
-            CancellationToken token,
-            bool isDex = false)
+            CancellationToken token)
         {
             var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
-            var dex = await db.Dexes.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
             using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
             using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = isDex ? config["Contracts:Dex"] : config["Contracts:Otc"],
-                scope = isDex ? dex.Id : otc.Token.Contract,
-                table = isDex ? "sellorder" : "order",
+                code = config["Contracts:Otc"],
+                scope = otc.Id,
+                table = "sellorder",
                 json = true,
                 limit = 65535
             }))
             {
                 IEnumerable<Order> rows;
 
-                if (isDex)
-                {
-                    rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                        .rows;
-                }
-                else
-                {
-                    rows = JsonConvert.DeserializeObject<OrderTable<OtcOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                        .rows
-                        .Where(y => y.IsBidValid(otc.Id, otc.Token.Contract))
-                        .Where(y => y.IsAskValid("EOS", "eosio.token"));
-                }
+                rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                    .rows;
                 if (min.HasValue)
                 {
                     rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
@@ -167,34 +153,22 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             double? min,
             double? max,
             string id,
-            CancellationToken token,
-            bool isDex = false)
+            CancellationToken token)
         {
             var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
-            var dex = await db.Dexes.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
             using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
             using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = isDex ? config["Contracts:Dex"] : config["Contracts:Otc"],
-                scope = isDex? dex.Id : otc.Token.Contract,
-                table = isDex ? "buyorder" : "order",
+                code = config["Contracts:Otc"],
+                scope = otc.Id,
+                table = "buyorder",
                 json = true,
                 limit = 65535
             }))
             {
                 IEnumerable<Order> rows;
-                if (isDex)
-                {
-                    rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                        .rows;
-                }
-                else
-                {
-                    rows = JsonConvert.DeserializeObject<OrderTable<OtcOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                        .rows
-                        .Where(y => y.IsAskValid(otc.Id, otc.Token.Contract))
-                        .Where(y => y.IsBidValid("EOS", "eosio.token"));
-                }
+                rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
+                    .rows;
                 if (min.HasValue)
                 {
                     rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
@@ -220,7 +194,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Dex = await db.Dexes.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             if (token == null)
             {

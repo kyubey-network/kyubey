@@ -32,17 +32,4 @@
             }
         </div>
     </div>
-    <div class="form-group">
-        <label>@SR["DEX"]</label><br />
-        <div>
-            @if (ViewBag.Dex)
-            {
-                <a asp-action="Manage" asp-controller="Dex" asp-route-id="@Model.Id">@SR["Configure"]</a>
-            }
-            else
-            {
-                <a asp-action="Onboard" asp-controller="Dex" asp-route-id="@Model.Id">@SR["Onboard_Exchange"]</a>
-            }
-        </div>
-    </div>
 </form>

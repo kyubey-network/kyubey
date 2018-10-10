@@ -3,7 +3,6 @@
     ViewBag.Current = "token-publish";
     ViewBag.Title = Model.Id + " - " + SR["Publish"];
     Otc otc = ViewBag.Otc;
-    Dex dex = ViewBag.Dex;
 }
 @await Html.PartialAsync("_TokenHeader")
 <script src="~/js/kyubey.js"></script>
@@ -28,20 +27,13 @@
                             <td>EOS</td>
                         </tr>
                     </table>
-                    @if (otc != null)
-                    {
-                        <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id] (DEX)" onclick="dex_buy()" />
-                    }
-                    @if (dex != null)
-                    {
-                        <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id] (OTC)" onclick="otc_buy()" />
-                    }
+                    <input type="button" class="btn btn-primary" value="@SR["Publish Buy Order {0}", Model.Id]" onclick="dex_buy()" />
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
                     <h5>@SR["I want to sell {0}", Model.Id]</h5>
-                    <table style="        margin-bottom: 15px">
+                    <table style="margin-bottom: 15px">
                         <tr>
                             <td><input type="text" id="txtSellAmount" value="0.0000" class="form-control" /></td>
                             <td>@Model.Id</td>
@@ -54,14 +46,7 @@
                             <td>EOS</td>
                         </tr>
                     </table>
-                    @if (dex != null)
-                    {
-                        <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id] (DEX)" onclick="dex_sell()" />
-                    }
-                    @if (otc != null)
-                    {
-                        <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id] (OTC)" onclick="otc_sell()" />
-                    }
+                    <input type="button" class="btn btn-primary" value="@SR["Publish Sell Order {0}", Model.Id]" onclick="dex_sell()" />
                 </div>
             </div>
         </div>
@@ -99,7 +84,7 @@
                 var memo = $('#txtBuyAmount').val()).toFixed(4) + ' @Model.Id';
                 return contract.transfer(
                     account.name,
-                    '@ViewBag.DexContract',
+                    '@ViewBag.OtcContract',
                     parseFloat($('#txtBuyEos').val()).toFixed(4) + ' EOS',
                     memo,
                     {
@@ -124,49 +109,6 @@
         eos.contract('@Model.Contract', { requiredFields })
             .then(contract => {
                 var memo = `${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS`;
-                return contract.transfer(
-                    account.name,
-                    '@ViewBag.DexContract',
-                    parseFloat($('#txtSellAmount').val()).toFixed(4) + ' @Model.Id',
-                    memo,
-                    {
-                        authorization: [`${account.name}@@${account.authority}`]
-                    });
-            })
-            .then(() => {
-                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
-            })
-            .catch(err => {
-                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
-            });
-    }
-
-    function otc_buy() {
-        eos.contract('eosio.token', { requiredFields })
-            .then(contract => {
-                var memo = `ask,${parseFloat($('#txtBuyAmount').val()).toFixed(4)} @Model.Id,@Model.Contract`;
-                return contract.transfer(
-                    account.name,
-                    '@ViewBag.OtcContract',
-                    parseFloat($('#txtBuyEos').val()).toFixed(4) + ' EOS',
-                    memo,
-                    {
-                        authorization: [`${account.name}@@${account.authority}`]
-                    });
-            })
-            .then(() => {
-                showModal('交易成功', '请在您的钱包中确认本次交易，如有任何问题请与我们的客服联系！');
-            })
-            .catch(err => {
-                showModal('交易失败', error.message + '如有任何问题请与我们的客服联系！');
-            });
-    }
-
-
-    function otc_sell() {
-        eos.contract('@Model.Contract', { requiredFields })
-            .then(contract => {
-                var memo = `ask,${parseFloat($('#txtSellEos').val()).toFixed(4)} EOS,eosio.token`;
                 return contract.transfer(
                     account.name,
                     '@ViewBag.OtcContract',
