@@ -39,14 +39,14 @@ section {
     line-height: 65px;
 }
 
-.currency-input input {
-    height: 45px;
-    border: none;
-    outline: 0;
-    border-bottom: 1px solid #ccc;
-    font-size: 18px;
-    padding: 10px;
-}
+    .currency-input input {
+        height: 45px;
+        border: none;
+        outline: 0;
+        border-bottom: 1px solid #ccc;
+        font-size: 18px;
+        padding: 10px;
+    }
 
 .currency-to {
     text-align: right;
@@ -65,7 +65,7 @@ section {
     height: 45px;
     margin: 10px 0;
     padding: inherit 20px;
-    color: #fff!important;
+    color: #fff !important;
 }
 
 .btn-convert-intable {
@@ -161,7 +161,7 @@ section {
 }
 
 .brand-header {
-    padding-top: 100px!important;
+    padding-top: 100px !important;
 }
 
 .brand-menu {
@@ -173,8 +173,9 @@ section {
     .brand-menu .container {
         padding: 0 0 0 300px;
     }
-    .brand-menu .mobile-container{
-        padding:0;
+
+    .brand-menu .mobile-container {
+        padding: 0;
     }
 
 .brand-menu-item {
@@ -191,11 +192,11 @@ section {
         color: #ee0979;
     }
 
-    .card {
-        border-radius: 0;
-        padding: 25px;
-        margin-bottom: 30px;
-    }
+.card {
+    border-radius: 0;
+    padding: 25px;
+    margin-bottom: 30px;
+}
 
 .brand-current-label {
     font-size: 18px;
@@ -241,10 +242,10 @@ section {
     border: none;
 }
 
-.no-padding table {
-    width: 100%;
-    margin: 0;
-}
+    .no-padding table {
+        width: 100%;
+        margin: 0;
+    }
 
 .alert {
     border-left: 8px solid rgb(255,128,128);
@@ -269,9 +270,9 @@ section {
     color: #aaa;
 }
 
-.brand-manage a {
-    color: #aaa;
-}
+    .brand-manage a {
+        color: #aaa;
+    }
 
 .card img {
     max-width: 100%;
@@ -286,9 +287,307 @@ section {
 
     .area-item.active {
         background: #ee0979;
-        color: #fff!important;
+        color: #fff !important;
     }
 
-    .filter {
-        line-height: 38px;
+.filter {
+    line-height: 38px;
+}
+
+#containId {
+    padding-left: 200px !important;
+}
+
+.exchange-orders-header {
+    margin: -25px;
+    margin-bottom: 0;
+    background: rgb(247,247,247);
+    padding: 15px;
+}
+
+.order-filter-button {
+    border: 1px solid rgb(247,247,247);
+    display: inline-block;
+    cursor: pointer;
+}
+
+    .order-filter-button.active, .order-filter-button:hover {
+        border-color: rgba(0,0,0,.2);
+    }
+
+.exchange-orders-table {
+    width: calc(100% + 50px);
+    margin: 0 -25px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    color: #888;
+    font-size: 12px;
+}
+
+    .exchange-orders-table thead {
+        background: rgb(247,247,247);
+    }
+
+    .exchange-orders-table thead {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .exchange-orders-table th, .exchange-orders-table td {
+        padding: 2px 10px;
+    }
+
+    .exchange-orders-table td {
+        text-align: right;
+    }
+
+    .exchange-orders-table th {
+        text-align: right;
+    }
+
+    .exchange-orders-table tbody tr {
+        cursor: pointer;
+    }
+
+    .exchange-orders-table tbody tr:hover {
+        font-weight: bold;
+        background: #eee;
+    }
+
+    #sell-order-table tr td:first-child {
+        color: red;
+    }
+
+#buy-order-table tr td:first-child {
+    color: green;
+}
+
+.exchange-orders-split {
+    background: rgb(247,247,247);
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    margin: 0 -25px;
+    color: #ee0979;
+}
+
+#buy-order-table {
+    margin-bottom: -25px;
+}
+
+.hidden {
+    display: none;
+}
+
+.exchange-chart-menu {
+    margin: -25px -25px 0 -25px;
+    background: rgb(247,247,247);
+}
+
+.exchange-chart-menu-item {
+    display: inline-block;
+    padding: 10px 15px;
+    margin-right: 5px;
+    text-align: center;
+    color: #888 !important;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+    .exchange-chart-menu-item.active {
+        background: #fff;
+        color: #ee0979 !important;
+    }
+
+.exchange-buy-text {
+    font-size: 14px;
+    color: green;
+    padding: 10px 0;
+}
+.exchange-sell-text {
+    font-size: 14px;
+    color: red;
+    padding: 10px 0;
+}
+
+.exchange-panel {
+    margin-top: 20px;
+    color: #888;
+}
+
+.exchange-panel .col-md-6:first-child {
+    border-right: 1px solid #ddd;
+}
+
+.btn-full-width {
+    width: 100%;
+}
+
+.exchange-form-input {
+    height: 40px;
+}
+
+.exchange-textbox-unit {
+    height: 32.6px;
+    width: 55px;
+    text-align: right;
+    border: 1px solid #ddd;
+    border-left: none;
+    display: inline-block;
+    float: left;
+    padding: 0 5px;
+    line-height: 30.6px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.exchange-textbox {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #888;
+    height: 32.6px;
+    width: calc(100% - 65px);
+    float: left;
+    border-right: none;
+    display: inline-block;
+}
+
+.exchange-label {
+    height: 32.6px;
+    line-height: 32.6px;
+    text-align: right;
+    font-size: 14px;
+}
+
+.exchange-order-card {
+    height: 800px;
+}
+
+.exchange-chart-card, .exchange-pair-card {
+    height: 420px;
+}
+
+.exchange-submit-card, .exchange-transaction-card {
+    height: 350px;
+}
+
+.exchange-pair-menu {
+    margin: -25px -25px 0 -25px;
+    background: rgb(247,247,247);
+    padding: 15px;
+}
+
+.exchange-pair-menu-item {
+    padding: 3px 8px;
+    color: #888!important;
+    display: inline-block;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+    .exchange-pair-menu-item.active {
+        color: #fff!important;
+        background: #ee0979;
+    }
+
+    .exchange-search-outer {
+        text-align: right;
+    }
+
+.exchange-search-textbox {
+    font-size: 12px;
+    color: #888;
+    padding: 3px 8px;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+.exchange-pair-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 12px;
+    border-collapse: collapse;
+}
+
+    .exchange-pair-table th, .exchange-pair-table td {
+        padding: 8px 10px;
+    }
+
+    .exchange-pair-table thead {
+        background: rgb(247,247,247);
+    }
+
+    .exchange-pair-table thead {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .exchange-pair-table tbody tr {
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    .exchange-pair-table tbody tr:hover {
+        background: #fafafa;
+    }
+
+.exchange-pair-table-outer {
+    margin: 0 -25px -25px -25px;
+    width: calc(100% + 50px);
+    height: 363px;
+    overflow-y: auto;
+}
+
+.exchange-transaction-menu {
+    margin: -25px -25px 0 -25px;
+    background: rgb(247,247,247);
+    line-height: 40.67px;
+    font-size: 14px;
+    padding: 0 15px;
+}
+
+.exchange-transaction-table-outer {
+    height: 309.33px;
+    width: calc(100% + 50px);
+    overflow-y: auto;
+    margin: 0 -25px -25px -25px;
+}
+
+.exchange-transaction-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+}
+
+    .exchange-transaction-table thead {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .exchange-transaction-table tr:hover {
+        font-weight: bold;
+    }
+
+    .exchange-transaction-table td, .exchange-transaction-table th {
+        padding: 4px 8px;
+    }
+
+    .exchange-transaction-table thead {
+        background: rgb(247,247,247);
+    }
+
+.exchange-order-state-table {
+    width: 100%;
+    font-size: 12px;
+    color: #888;
+}
+
+.exchange-order-state-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+    .exchange-order-state-table th, .exchange-order-state-table td {
+        padding: 10px 15px;
     }

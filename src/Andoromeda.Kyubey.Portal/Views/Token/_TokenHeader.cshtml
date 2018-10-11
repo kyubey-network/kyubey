@@ -10,14 +10,13 @@
 <header class="brand-header masthead text-center text-white"></header>
 
 <section>
-    <div class="container brand">
+    <div class="container-fluid brand">
         <img src="/token/@(@Model.Id).png" class="brand-icon" />
         <div class="brand-name">@Model.Id</div>
     </div>
 </section>
 
 <section class="brand-menu">
-
     <div id="containId">
         <a class="brand-menu-item @(ViewBag.Current == "token-about" ? "active" : "")" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
         @if (!string.IsNullOrEmpty(Model.Contract))
@@ -34,18 +33,13 @@
         }
         @if (otc != null || bancor != null)
         {
-            <a class="brand-menu-item @(ViewBag.Current == "token-buy" ? "active" : "")" asp-action="Buy" asp-route-id="@Model.Id">@SR["Buy"]</a>
-            <a class="brand-menu-item @(ViewBag.Current == "token-sell" ? "active" : "")" asp-action="Sell" asp-route-id="@Model.Id">@SR["Sell"]</a>
-        }
-        @if (otc != null)
-        {
-            <a class="brand-menu-item @(ViewBag.Current == "token-publish" ? "active" : "")" asp-action="Publish" asp-route-id="@Model.Id">@SR["Publish"]</a>
+            <a class="brand-menu-item @(ViewBag.Current == "token-exchange" ? "active" : "")" asp-action="Exchange" asp-route-id="@Model.Id">@SR["Exchange"]</a>
         }
     </div>
     @{
         <script>
             if (isPc()) {
-                $("#containId").addClass("container");
+                $("#containId").addClass("container-fluid");
             } else {
                 $("#containId").addClass("mobile-container");
             }

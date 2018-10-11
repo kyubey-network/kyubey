@@ -28,6 +28,9 @@
     <Content Update="Localization\zh-CN.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Views\Token\Exchange.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Token\Buy.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

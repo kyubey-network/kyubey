@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andoromeda.Kyubey.Manage", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andoromeda.Kyubey.Models", "src\Andoromeda.Kyubey.Models\Andoromeda.Kyubey.Models.csproj", "{B208B0F8-2B34-406E-964A-F616F04A501D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Andoromeda.Kyubey.IBO", "src\Andoromeda.Kyubey.IBO\Andoromeda.Kyubey.IBO.csproj", "{E3FBE7E3-93E0-4339-8EAC-4559FF856742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andoromeda.Kyubey.IBO", "src\Andoromeda.Kyubey.IBO\Andoromeda.Kyubey.IBO.csproj", "{E3FBE7E3-93E0-4339-8EAC-4559FF856742}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

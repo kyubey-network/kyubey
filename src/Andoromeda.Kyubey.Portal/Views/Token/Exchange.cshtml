@@ -1,0 +1,596 @@
+﻿@model Token
+@{
+    ViewBag.Title = Model.Id + " - " + SR["Exchange"];
+    ViewBag.Current = "token-exchange";
+    Bancor bancor = ViewBag.Bancor;
+    Otc otc = ViewBag.Otc;
+}
+@await Html.PartialAsync("_TokenHeader")
+<script src="~/js/kyubey.js"></script>
+@if (bancor != null)
+{
+    <script src="/token/@(Model.Id).js"></script>
+}
+
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card exchange-order-card">
+                    <div class="exchange-orders-header">
+                        <a class="order-filter-button active"><img src="~/img/order-mixed.png" /></a>
+                        <a class="order-filter-button"><img src="~/img/order-buy.png" /></a>
+                        <a class="order-filter-button"><img src="~/img/order-sell.png" /></a>
+                    </div>
+                    <table class="exchange-orders-table" id="sell-order-table">
+                        <thead>
+                            <tr>
+                                <th>@SR["Unit Price"] (EOS)</th>
+                                <th>@SR["Amount"] (@Model.Id)</th>
+                                <th>@SR["Total"] (EOS)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="exchange-orders-split">
+                        0.0001
+                    </div>
+                    <table class="exchange-orders-table" id="buy-order-table">
+                        <thead class="hidden">
+                            <tr>
+                                <th>@SR["Unit Price"] (EOS)</th>
+                                <th>@SR["Amount"] (@Model.Id)</th>
+                                <th>@SR["Total"] (EOS)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                            <tr>
+                                <td>0.0001</td>
+                                <td>1.0000</td>
+                                <td>1.0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card exchange-chart-card">
+                    <div class="exchange-chart-menu">
+                        <a class="exchange-chart-menu-item active">@SR["Candlestick"]</a>
+                        <a class="exchange-chart-menu-item">@SR["Curve"]</a>
+                    </div>
+                </div>
+                <div class="card exchange-submit-card">
+                    <div class="exchange-chart-menu">
+                        <a class="exchange-chart-menu-item active">@SR["Limit Order"]</a>
+                        <a class="exchange-chart-menu-item">@SR["Market Order"]</a>
+                        <a class="exchange-chart-menu-item">@SR["Exchange Via Contract"]</a>
+                    </div>
+                    <div class="row exchange-panel">
+                        <div class="col-md-6">
+                            <div class="exchange-buy-text">@SR["Buy {0}", Model.Id]</div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Price"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtBuyPrice" value="0" />
+                                    <div class="exchange-textbox-unit">EOS</div>
+                                </div>
+                            </div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtBuyAmount" value="0" />
+                                    <div class="exchange-textbox-unit">@Model.Id</div>
+                                </div>
+                            </div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Total"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtBuyTotal" value="0" />
+                                    <div class="exchange-textbox-unit">EOS</div>
+                                </div>
+                            </div>
+                            <div>
+                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Buy {0}", Model.Id]" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="exchange-sell-text">@SR["Sell {0}", Model.Id]</div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Price"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtSellPrice" value="0" />
+                                    <div class="exchange-textbox-unit">EOS</div>
+                                </div>
+                            </div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtSellAmount" value="0" />
+                                    <div class="exchange-textbox-unit">@Model.Id</div>
+                                </div>
+                            </div>
+                            <div class="row exchange-form-input">
+                                <div class="col-sm-4 exchange-label">@SR["Total"]</div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="exchange-textbox" id="txtSellTotal" value="0" />
+                                    <div class="exchange-textbox-unit">EOS</div>
+                                </div>
+                            </div>
+                            <div>
+                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Sell {0}", Model.Id]" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card exchange-pair-card">
+                    <div class="exchange-pair-menu">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <a class="exchange-pair-menu-item active"><i class="fa fa-list"></i> @SR["All"]</a>
+                                <a class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="exchange-pair-table-outer">
+                        <table class="exchange-pair-table">
+                            <thead>
+                                <tr>
+                                    <th>@SR["Market"]</th>
+                                    <th>@SR["Last Price"]</th>
+                                    <th>@SR["Change"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-star-o"></i> HPY</td>
+                                    <td>0.0002</td>
+                                    <td>+2.32%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card exchange-transaction-card">
+                    <div class="exchange-transaction-menu">
+                        @SR["Recent Transactions"]
+                    </div>
+                    <div class="exchange-transaction-table-outer">
+                        <table class="exchange-transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>@SR["Price"] (EOS)</th>
+                                    <th>@SR["Amount"] (@Model.Id)</th>
+                                    <th>@SR["Time"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0.1234</td>
+                                    <td>1.2345</td>
+                                    <td>10-11 13:44:43</td>
+                                </tr>
+                                <tr>
+                                    <td>0.1234</td>
+                                    <td>1.2345</td>
+                                    <td>10-11 13:44:43</td>
+                                </tr>
+                                <tr>
+                                    <td>0.1234</td>
+                                    <td>1.2345</td>
+                                    <td>10-11 13:44:43</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="exchange-chart-menu">
+                        <a class="exchange-chart-menu-item active">@SR["Opening Orders"]</a>
+                        <a class="exchange-chart-menu-item">@SR["History Orders"]</a>
+                    </div>
+                    <table class="exchange-order-state-table">
+                        <thead>
+                            <tr>
+                                <th>@SR["Token"]</th>
+                                <th>@SR["Published at"]</th>
+                                <th>@SR["Unit price"]</th>
+                                <th>@SR["Amount"]</th>
+                                <th>@SR["Action"]</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@SR["Transaction"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        @SR["Outgoing"]
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider1" data-slider-id="slider1" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value1" />
+                    </div>
+                    <div class="col-md-2" id="symbol1">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-2">
+                        @SR["Incoming"]
+                    </div>
+                    <div class="col-md-4">
+                        <input id="slider2" data-slider-id="slider2" type="text" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" id="value2" />
+                    </div>
+                    <div class="col-md-2" id="symbol2">
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-md-4" style="text-align: center">
+                        @SR["Unit Price"]
+                    </div>
+                    <div class="col-md-2">
+                        ≈
+                    </div>
+                    <div class="col-md-4" id="unit">
+                    </div>
+                    <div class="col-md-2">
+                        EOS
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">Take</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function get_unit_price(num) {
+        return parseFloat(num / 10000.0).toFixed(4) + ' EOS';
+    }
+
+    function PollTransactions() {
+        $.getJSON('/token/@Model.Id/buy-data', { min: $('#min').val(), max: $('#max').val() }, function (data) {
+            var html = '';
+            for (var i = 0; i < data.length; i++) {
+                html += `<tr id='tx-${data[i].id}'><td class='tx-id'>${data[i].id}</td><td>${data[i].account}</td><td class='tx-bid'>${data[i].bid}</td><td class='tx-ask'>${data[i].ask}</td><td>${get_unit_price(data[i].unit_price)}</td><td>${(new Date(data[i].timestamp * 1000)).Format('yyyy-MM-dd hh:mm')}</td><td><a href="javascript:${account && data[i].owner === account.name ? 'cancel' : 'take'}(${data[i].id})">${account && data[i].owner === account.name ? 'Cancel' : 'Take' }</a></td></tr>`;
+            }
+            $('#lstTransactions').html(html);
+        });
+    }
+
+    $('#min').keyup(PollTransactions);
+    $('#max').keyup(PollTransactions);
+
+    setTimeout(PollTransactions, 1000);
+    setTimeout(PollTransactions, 2000);
+    setTimeout(PollTransactions, 3000);
+    setInterval(PollTransactions, 5000);
+
+    var current_unit_price;
+
+    var slider1 = $('#slider1')
+        .on('slide', function (slideEvt) {
+            $('#value1').val(parseFloat(slider1.val()).toFixed(4));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            $('#value2').keyup();
+        });
+    slider1.bootstrapSlider();
+    var slider2 = $('#slider2');
+    slider2.bootstrapSlider()
+        .on('slide', function (slideEvt) {
+            $('#value2').val(parseFloat(slider2.val()).toFixed(4));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toFloor(4));
+            $('#value1').keyup();
+        });
+    var _id;
+
+    function take(id) {
+        _id = id;
+        var bid = $('#tx-' + id).find('.tx-bid').text();
+        var max1 = parseFloat(bid.split(' ')[0]).toFixed(4);
+        var symbol1 = bid.split(' ')[1];
+        $('#symbol1').text(symbol1);
+        var ask = $('#tx-' + id).find('.tx-ask').text();
+        var max2 = parseFloat(ask.split(' ')[0]).toFixed(4);
+        var symbol2 = ask.split(' ')[1];
+        $('#symbol2').text(symbol2);
+
+        current_unit_price = parseFloat(max2 / max1).toCeil(4);
+        $('#unit').text(current_unit_price);
+
+        slider1.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider1.bootstrapSlider('setAttribute', 'min', 0);
+        slider1.bootstrapSlider('setAttribute', 'max', max1);
+        slider1.bootstrapSlider('setValue', parseFloat(max1), true);
+        slider1.bootstrapSlider('relayout');
+
+        $('#value1').val(max1);
+        $('#value1').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
+            val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        slider2.bootstrapSlider('setAttribute', 'step', 0.0001);
+        slider2.bootstrapSlider('setAttribute', 'min', 0);
+        slider2.bootstrapSlider('setAttribute', 'max', max2);
+        slider2.bootstrapSlider('setValue', parseFloat(max2), true);
+        slider2.bootstrapSlider('relayout');
+
+        $('#value2').val(max2);
+        $('#value2').unbind('keyup').keyup(function () {
+            var val = parseFloat($('#value2').val()).toFixed(4);
+            slider2.bootstrapSlider('setValue', parseFloat(val));
+            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toCeil(4));
+            val = parseFloat($('#value1').val()).toFixed(4);
+            slider1.bootstrapSlider('setValue', parseFloat(val));
+        });
+
+        $('#modalTake').modal('show');
+    }
+
+    function take2() {
+        var bid = parseFloat($('#value1').val()).toFixed(4) + ' ' + $('#symbol1').text();
+        var ask = parseFloat($('#value2').val()).toFixed(4) + ' ' + $('#symbol2').text();
+        eos.contract('@Model.Contract', { requiredFields })
+            .then(contract => {
+                return contract.transfer(
+                    account.name,
+                    '@ViewBag.OtcContract',
+                    ask,
+                    bid,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+            })
+            .catch(err => {
+                showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+            });
+    }
+
+    function cancel(id) {
+        eos.contract('@ViewBag.OtcContract', { requiredFields })
+            .then(contract => {
+                return contract.cancelsell(
+                    account.name,
+                    '@Model.Id',
+                    id,
+                    {
+                        authorization: [`${account.name}@@${account.authority}`]
+                    });
+            })
+            .then(() => {
+                showModal('@SR["Transaction Cancelled"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+            })
+            .catch(err => {
+                showModal('@SR["Transaction Cancel Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+            });
+    }
+</script>

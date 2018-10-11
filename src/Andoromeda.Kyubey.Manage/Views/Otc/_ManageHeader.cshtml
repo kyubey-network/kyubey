@@ -4,7 +4,7 @@
     <h1 class="h2">@ViewBag.Title</h1>
 </div>
 
-<div class="container-flex">
+<div class="container-fluid">
     <ul class="manage-header">
         <li class="manage-header-item @(ViewBag.Current == "otc-manage-basic" ? "active" : "")"><a asp-action="Manage" asp-route-id="@Model.Id">@SR["Basic"]</a></li>
         @if (User.IsInRole("ROOT"))

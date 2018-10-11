@@ -23,7 +23,7 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-        <div class="container">
+        <div class="@(ViewBag.Flex ? "container-fluid" : "container")">
             <a class="navbar-brand" href="/">Kyubey</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -45,10 +45,9 @@
 
     <!-- Footer -->
     <footer class="py-5 bg-black">
-        <div class="container">
+        <div class="@(ViewBag.Flex ? "container-fluid" : "container")">
             <p class="m-0 text-center text-white small">Copyright &copy; Kyubey @DateTime.Now.Year</p>
         </div>
-        <!-- /.container -->
     </footer>
 </body>
 

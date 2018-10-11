@@ -16,6 +16,13 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class TokenController : BaseController
     {
+        public override void Prepare()
+        {
+            base.Prepare();
+
+            ViewBag.Flex = true;
+        }
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -47,6 +54,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/buy")]
         public async Task<IActionResult> Buy([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        {
+            return await Index(db, id, cancellationToken);
+        }
+
+        [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
+        public async Task<IActionResult> Exchange([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
             return await Index(db, id, cancellationToken);
         }

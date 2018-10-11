@@ -10,6 +10,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             base.Prepare();
             ViewBag.OtcContract = Configuration["Contracts:Otc"];
             ViewBag.DexContract = Configuration["Contracts:Dex"];
+            ViewBag.Flex = false;
         }
     }
 }
