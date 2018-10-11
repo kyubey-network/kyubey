@@ -59,7 +59,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
 
         private async Task<EosAction> LookupActionAsync(IConfiguration config, KyubeyContext db)
         {
-            var row = await db.Constants.SingleAsync(x => x.Id == "action_seq");
+            var row = await db.Constants.SingleAsync(x => x.Id == "action_pos");
             var position = Convert.ToInt64(row.Value);
             ++position;
             using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
