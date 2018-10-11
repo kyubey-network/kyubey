@@ -1,5 +1,5 @@
 ﻿{
   "MySQL": "",
-  "TransactionNode": "https://api.helloeos.com.cn",
+  "TransactionNode": "http://node.eosflare.io/v1/history/get_actions",
   "Kdata": "https://dasdaq-webapi.chinacloudsites.cn"
 }

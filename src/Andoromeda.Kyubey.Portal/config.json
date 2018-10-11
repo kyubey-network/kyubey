@@ -3,7 +3,6 @@
   "TransactionNode": "https://api.helloeos.com.cn",
   "Kdata": "https://dasdaq-webapi.chinacloudsites.cn",
   "Contracts": {
-    "Otc": "eosotcbackup",
-    "Dex": "pomelodex111"
+    "Otc": "kyubeydex.bp"
   }
 }
