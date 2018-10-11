@@ -20,5 +20,9 @@ namespace Andoromeda.Kyubey.Models
         public double PriceMin { get; set; }
 
         public double PriceMax { get; set; }
+
+        public double Price { get; set; }
+        
+        public long Offset { get; set; }
     }
 }

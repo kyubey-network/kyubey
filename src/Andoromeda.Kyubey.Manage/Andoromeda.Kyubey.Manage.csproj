@@ -87,6 +87,6 @@
     </Content>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties config_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

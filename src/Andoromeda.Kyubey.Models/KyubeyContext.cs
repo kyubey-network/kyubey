@@ -83,6 +83,17 @@ namespace Andoromeda.Kyubey.Models
 
                 await SaveChangesAsync();
             }
+
+            if (!await Constants.AnyAsync(x => x.Id == "action_pos", token))
+            {
+                Constants.Add(new Constant
+                {
+                    Id = "action_pos",
+                    Value = "-1"
+                });
+
+                await SaveChangesAsync();
+            }
         }
 
         public DbSet<Blob> Blobs { get; set; }
@@ -98,6 +109,10 @@ namespace Andoromeda.Kyubey.Models
         public DbSet<AlertLog> AlertLogs { get; set; }
 
         public DbSet<Curve> Curves { get; set; }
+
+        public DbSet<Constant> Constants { get; set; }
+
+        public DbSet<MatchReceipt> MatchReceipts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -119,6 +134,10 @@ namespace Andoromeda.Kyubey.Models
             builder.Entity<Otc>(e =>
             {
                 e.HasIndex(x => x.Status);
+            });
+
+            builder.Entity<MatchReceipt>(e => {
+                e.HasIndex(x => x.Time);
             });
         }
     }
