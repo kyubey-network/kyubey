@@ -107,39 +107,39 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 {
                     try
                     {
-                        using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
+                        var last = await db.MatchReceipts
+                            .Where(y => y.Id == x.Id)
+                            .LastOrDefaultAsync();
+
+                        if (last == null)
                         {
-                            code = "eosotcbackup",
-                            scope = "eosio.token",
-                            table = "order",
-                            json = true,
-                            limit = 65535
-                        }))
-                        using (var tableResponse2 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
-                        {
-                            code = "eosotcbackup",
-                            scope = x.Token.Contract,
-                            table = "order",
-                            json = true,
-                            limit = 65535
-                        }))
-                        {
-                            var rows1 = JsonConvert.DeserializeObject<OrderTable>((await tableResponse1.Content.ReadAsStringAsync()))
-                                .rows
-                                .Where(y => y.bid.quantity.EndsWith(x.Id) && y.bid.contract == x.Token.Contract)
-                                .Where(y => y.ask.quantity.EndsWith("EOS") && y.ask.quantity == "eosio.token");
-                            var rows2 = JsonConvert.DeserializeObject<OrderTable>((await tableResponse2.Content.ReadAsStringAsync()))
-                                .rows
-                                .Where(y => y.ask.quantity.EndsWith(x.Id) && y.ask.contract == x.Token.Contract)
-                                .Where(y => y.bid.quantity.EndsWith("EOS") && y.bid.contract == "eosio.token");
-                            x.Transactions = rows1.Count() + rows2.Count();
-                            if (rows1.Count() > 0)
-                            {
-                                x.PriceMin = rows1.Min(y => Convert.ToDouble(y.ask.quantity.Split(' ')[0]) / Convert.ToDouble(y.bid.quantity.Split(' ')[0]));
-                                x.PriceMax = rows1.Max(y => Convert.ToDouble(y.ask.quantity.Split(' ')[0]) / Convert.ToDouble(y.bid.quantity.Split(' ')[0]));
-                            }
-                            await db.SaveChangesAsync();
+                            continue;
                         }
+
+                        var price = last.UnitPrice / 10000.0;
+
+                        try
+                        {
+                            using (var kClient = new HttpClient { BaseAddress = new Uri(config["Kdata"]) })
+                            {
+                                Console.WriteLine($"Uploading {x.Id} data...");
+                                using (await kClient.PostAsJsonAsync($"/api/Candlestick", new
+                                {
+                                    values = new[] {
+                                    new
+                                    {
+                                        catalog = "kyubey-dex-" + x.Id,
+                                        price = price,
+                                        utcTime = DateTime.UtcNow
+                                    }
+                                }
+                                })) { }
+                            }
+                        }
+                        catch { }
+
+                        x.Price = price;
+                        await db.SaveChangesAsync();
                     }
                     catch (Exception ex)
                     {
