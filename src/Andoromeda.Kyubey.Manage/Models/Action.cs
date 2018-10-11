@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Andoromeda.Kyubey.Manage.Models
 {
+    public class EosActionWrap
+    {
+        public IEnumerable<EosAction> actions { get; set; }
+    }
+
     public class EosAction
     {
         public long global_action_seq { get; set; }
@@ -24,7 +30,7 @@ namespace Andoromeda.Kyubey.Manage.Models
 
         public string name { get; set; }
 
-        public ActionTraceActAuthorization authorization { get; set; }
+        public IEnumerable<ActionTraceActAuthorization> authorization { get; set; }
 
         public ActionDataWrap data { get; set; }
     }

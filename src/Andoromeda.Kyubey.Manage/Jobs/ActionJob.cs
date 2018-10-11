@@ -39,7 +39,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 var ask = Convert.ToDouble(data.ask.Split(' ')[0]);
                 var unit_price = (double)bid / (double)ask;
                 var tokenId = data.ask.Split(' ')[1];
-
+                
                 db.MatchReceipts.Add(new MatchReceipt
                 {
                     Id = act.global_action_seq.ToString(),
@@ -67,11 +67,12 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             {
                 account_name = "kyubeydex.bp",
 	            pos = position,
-	            offset= 1
+	            offset= 0
             }))
             {
-                var result = await response.Content.ReadAsAsync<IEnumerable<EosAction>>();
-                if (result.Count() == 0)
+                var txt = await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsAsync<EosActionWrap>();
+                if (result.actions.Count() == 0)
                 {
                     return null;
                 }
@@ -79,7 +80,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 row.Value = position.ToString();
                 await db.SaveChangesAsync();
 
-                return result.First();
+                return result.actions.First();
             }
         }
     }

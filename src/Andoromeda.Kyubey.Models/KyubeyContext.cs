@@ -138,6 +138,7 @@ namespace Andoromeda.Kyubey.Models
 
             builder.Entity<MatchReceipt>(e => {
                 e.HasIndex(x => x.Time);
+                e.HasIndex(x => x.TokenId);
             });
         }
     }
