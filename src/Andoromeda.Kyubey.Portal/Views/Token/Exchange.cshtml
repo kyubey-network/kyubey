@@ -11,18 +11,18 @@
 {
     <script src="/token/@(Model.Id).js"></script>
 }
-
-<section>
+<script src="~/js/vue.js"></script>
+<section id="app">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3">
                 <div class="card exchange-order-card">
                     <div class="exchange-orders-header">
-                        <a class="order-filter-button active"><img src="~/img/order-mixed.png" /></a>
-                        <a class="order-filter-button"><img src="~/img/order-buy.png" /></a>
-                        <a class="order-filter-button"><img src="~/img/order-sell.png" /></a>
+                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'mixed' }" v-on:click="control.order = 'mixed'"><img src="~/img/order-mixed.png" /></a>
+                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'buy' }" v-on:click="control.order = 'buy'"><img src="~/img/order-buy.png" /></a>
+                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'sell' }" v-on:click="control.order = 'sell'"><img src="~/img/order-sell.png" /></a>
                     </div>
-                    <table class="exchange-orders-table" id="sell-order-table">
+                    <table class="exchange-orders-table" id="sell-order-table" v-if="control.order !== 'buy'">
                         <thead>
                             <tr>
                                 <th>@SR["Unit Price"] (EOS)</th>
@@ -31,88 +31,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
+                            <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)">
+                                <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                <td>{{ parseFloat(x.total).toFixed(4) }}</td>
                             </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
+                            <tr v-if="sellOrders.length === 0">
+                                <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="exchange-orders-split">
-                        0.0001
+                        {{ lastMatched }}
                     </div>
-                    <table class="exchange-orders-table" id="buy-order-table">
-                        <thead class="hidden">
+                    <table class="exchange-orders-table" id="buy-order-table" v-if="control.order !== 'sell'">
+                        <thead v-bind:class="{ 'hidden': control.order !== 'buy' }">
                             <tr>
                                 <th>@SR["Unit Price"] (EOS)</th>
                                 <th>@SR["Amount"] (@Model.Id)</th>
@@ -120,80 +53,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
+                            <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)">
+                                <td>{{ x.unit }}</td>
+                                <td>{{ x.amount }}</td>
+                                <td>{{ x.total }}</td>
                             </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
-                            </tr>
-                            <tr>
-                                <td>0.0001</td>
-                                <td>1.0000</td>
-                                <td>1.0000</td>
+                            <tr v-if="buyOrders.length === 0">
+                                <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
                             </tr>
                         </tbody>
                     </table>
@@ -208,63 +74,81 @@
                 </div>
                 <div class="card exchange-submit-card">
                     <div class="exchange-chart-menu">
-                        <a class="exchange-chart-menu-item active">@SR["Limit Order"]</a>
-                        <a class="exchange-chart-menu-item">@SR["Market Order"]</a>
-                        <a class="exchange-chart-menu-item">@SR["Exchange Via Contract"]</a>
+                        @if (otc != null)
+                        {
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'limit' }" v-on:click="control.publish = 'limit'">@SR["Limit Order"]</a>
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'market' }" v-on:click="control.publish = 'market'">@SR["Market Order"]</a>
+                        }
+                        @if (bancor != null)
+                        {
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'contract' }" v-on:click="control.publish = 'contract'">@SR["Exchange Via Contract"]</a>
+                        }
                     </div>
                     <div class="row exchange-panel">
                         <div class="col-md-6">
                             <div class="exchange-buy-text">@SR["Buy {0}", Model.Id]</div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Price"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtBuyPrice" value="0" />
+                                <div class="col-sm-8" v-if="control.publish === 'limit'">
+                                    <input type="text" class="exchange-textbox" v-model="inputs.buyPrice" />
                                     <div class="exchange-textbox-unit">EOS</div>
                                 </div>
+                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
+                                    @SR["Best Matches"]
+                                </div>
+                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
+                                    {{ contractBuy }}
+                                </div>
                             </div>
-                            <div class="row exchange-form-input">
+                            <div class="row exchange-form-input" v-if="control.publish === 'limit'">
                                 <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtBuyAmount" value="0" />
+                                    <input type="text" class="exchange-textbox" v-model="inputs.buyAmount" />
                                     <div class="exchange-textbox-unit">@Model.Id</div>
                                 </div>
                             </div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtBuyTotal" value="0" />
+                                    <input type="text" class="exchange-textbox" v-model="inputs.buyTotal" />
                                     <div class="exchange-textbox-unit">EOS</div>
                                 </div>
                             </div>
                             <div>
-                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Buy {0}", Model.Id]" />
+                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Buy {0}", Model.Id]" v-on:click="buy()" />
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="exchange-sell-text">@SR["Sell {0}", Model.Id]</div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Price"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtSellPrice" value="0" />
+                                <div class="col-sm-8" v-if="control.publish === 'limit'">
+                                    <input type="text" class="exchange-textbox" v-model="inputs.sellPrice" />
                                     <div class="exchange-textbox-unit">EOS</div>
+                                </div>
+                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
+                                    @SR["Best Matches"]
+                                </div>
+                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
+                                    {{ contractSell }}
                                 </div>
                             </div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtSellAmount" value="0" />
+                                    <input type="text" class="exchange-textbox" v-model="inputs.sellAmount" />
                                     <div class="exchange-textbox-unit">@Model.Id</div>
                                 </div>
                             </div>
-                            <div class="row exchange-form-input">
+                            <div class="row exchange-form-input" v-if="control.publish === 'limit'">
                                 <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" id="txtSellTotal" value="0" />
+                                    <input type="text" class="exchange-textbox" v-model="inputs.sellTotal" />
                                     <div class="exchange-textbox-unit">EOS</div>
                                 </div>
                             </div>
                             <div>
-                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Sell {0}", Model.Id]" />
+                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Sell {0}", Model.Id]" v-on:click="sell()" />
                             </div>
                         </div>
                     </div>
@@ -287,61 +171,16 @@
                         <table class="exchange-pair-table">
                             <thead>
                                 <tr>
-                                    <th>@SR["Market"]</th>
+                                    <th>@SR["Token"]</th>
                                     <th>@SR["Last Price"]</th>
                                     <th>@SR["Change"]</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-star-o"></i> HPY</td>
-                                    <td>0.0002</td>
-                                    <td>+2.32%</td>
+                                <tr v-for="x in pairs" v-on:click="redirectToToken(x.id)">
+                                    <td><i class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i> {{ x.id }}</td>
+                                    <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                    <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change / 100.0).toFixed(2) }}%</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -362,20 +201,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>0.1234</td>
-                                    <td>1.2345</td>
-                                    <td>10-11 13:44:43</td>
-                                </tr>
-                                <tr>
-                                    <td>0.1234</td>
-                                    <td>1.2345</td>
-                                    <td>10-11 13:44:43</td>
-                                </tr>
-                                <tr>
-                                    <td>0.1234</td>
-                                    <td>1.2345</td>
-                                    <td>10-11 13:44:43</td>
+                                <tr v-for="x in recentTransactions">
+                                    <td>{{ x.price }}</td>
+                                    <td>{{ x.amount }}</td>
+                                    <td>{{ x.time }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -387,19 +216,54 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="exchange-chart-menu">
-                        <a class="exchange-chart-menu-item active">@SR["Opening Orders"]</a>
-                        <a class="exchange-chart-menu-item">@SR["History Orders"]</a>
+                        <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'current' }" v-on:click="control.my = 'current'">@SR["Opening Orders"]</a>
+                        <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'history' }" v-on:click="control.my = 'history'">@SR["History Orders"]</a>
                     </div>
-                    <table class="exchange-order-state-table">
+                    <table class="exchange-order-state-table" v-if="control.my === 'current'">
                         <thead>
                             <tr>
                                 <th>@SR["Token"]</th>
+                                <th>@SR["Type"]</th>
                                 <th>@SR["Published at"]</th>
                                 <th>@SR["Unit price"]</th>
                                 <th>@SR["Amount"]</th>
                                 <th>@SR["Action"]</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            <tr v-for="x in currentOrders">
+                                <td>{{ x.token }}</td>
+                                <td>{{ x.type }}</td>
+                                <td>{{ x.time }}</td>
+                                <td>{{ x.price }}</td>
+                                <td>{{ x.amount }}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="exchange-order-state-table" v-if="control.my === 'history'">
+                        <thead>
+                            <tr>
+                                <th>@SR["Token"]</th>
+                                <th>@SR["Bidder"]</th>
+                                <th>@SR["Asker"]</th>
+                                <th>@SR["Matched at"]</th>
+                                <th>@SR["Unit price"]</th>
+                                <th>@SR["Amount"]</th>
+                                <th>@SR["Total"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="x in currentOrders">
+                                <td>{{ x.tokenId }}</td>
+                                <td>{{ x.bidder }}</td>
+                                <td>{{ x.asker }}</td>
+                                <td>{{ x.time }}</td>
+                                <td>{{ x.unitPrice }} EOS</td>
+                                <td>{{ parseFloat(x.ask).toFixed(4) }} {{ x.tokenId }}</td>
+                                <td>{{ parseFloat(x.bid).toFixed(4) }} EOS</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -459,15 +323,241 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">Take</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">@SR["Take"]</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            control: {
+                order: 'mixed',
+                my: 'current',
+                publish: '@(otc == null ? "contract" : "limit")'
+            },
+            inputs: {
+                pair: null,
+                buyPrice: 0,
+                sellPrice: 0,
+                buyAmount: 0,
+                sellAmount: 0,
+                buyTotal: 0,
+                sellTotal: 0
+            },
+            buyOrders: [],
+            sellOrders: [],
+            lastMatched: '0.0000',
+            recentTransactions: [],
+            currentOrders: [],
+            historyOrders: [],
+            pairs: [],
+            contractBuy: null,
+            contractSell: null,
+            fav: []
+        },
+        watch: {
+            'inputs.buyPrice': function (val) {
+                this.inputs.buyTotal = val * this.inputs.buyAmount;
+            },
+            'inputs.buyAmount': function (val) {
+                this.inputs.buyTotal = val * this.inputs.buyPrice;
+            },
+            'inputs.buyTotal': function (val) {
+                if (this.control.publish === 'limit') {
+                    this.inputs.buyPrice = val / (this.inputs.buyAmount || 1);
+                }
+            },
+            'inputs.sellPrice': function (val) {
+                this.inputs.sellTotal = val * this.inputs.sellAmount;
+            },
+            'inputs.sellAmount': function (val) {
+                this.inputs.sellTotal = val * this.inputs.sellPrice;
+            },
+            'inputs.sellTotal': function (val) {
+                if (this.control.publish === 'limit') {
+                    this.inputs.sellPrice = val / (this.inputs.sellAmount || 1);
+                }
+            },
+            deep: true
+        },
+        created: function () {
+            this.init();
+            setInterval(this.init, 1000 * 60);
+        },
+        methods: {
+            init: function () {
+                this.getOrders();
+                this.getRecentTransaction();
+                this.getCurrentOrders();
+                this.getHistoryOrders();
+                this.getContractPrices();
+                this.getPairs();
+            },
+            getOrders: function () {
+                var self = this;
+                $.getJSON('/token/@Model.Id/buy-data', {}, function (data) {
+                    self.buyOrders = data;
+                });
+                $.getJSON('/token/@Model.Id/sell-data', {}, function (data) {
+                    self.sellOrders = data;
+                });
+                $.get('/token/@Model.Id/last-match', {}, function (data) {
+                    self.lastMatched = parseFloat(data).toFixed(4);
+                });
+            },
+            getRecentTransaction: function () {
+                var self = this;
+                $.getJSON('/token/@Model.Id/recent-transaction', {}, function (data) {
+                    self.recentTransactions = data;
+                });
+            },
+            getCurrentOrders: function () {
+                if (account && account.name) {
+                    var self = this;
+                    $.getJSON(`/token/${account.name}/current-order`, {}, function (data) {
+                        self.currentOrders = data;
+                    });
+                }
+            },
+            getHistoryOrders: function () {
+                var self = this;
+                if (account && account.name) {
+                    $.getJSON(`/token/${account.name}/history-order`, {}, function (data) {
+                        self.historyOrders = data;
+                    });
+                }
+            },
+            getContractPrices: function () {
+                var self = this;
+                $.getJSON(`/token/@Model.Id/contract-price`, {}, function (data) {
+                    self.contractBuy = data.buyPrice;
+                    self.contractSell = data.sellPrice;
+                });
+            },
+            getPairs: function () {
+                var self = this;
+                $.getJSON('/token/pair', { token: self.inputs.pair }, function (data) {
+                    self.pairs = data;
+                });
+            },
+            redirectToToken: function (id) {
+                window.location = `/token/${id}/exchange`;
+            },
+            setPublish: function (price, amount) {
+                this.inputs.buyPrice = price;
+                this.inputs.buyAmount = amount;
+                this.inputs.sellPrice = price;
+                this.inputs.sellAmount = amount;
+            },
+            buy: function () {
+                if (!account || !account.name) {
+                    alert('@SR["Please login scatter before publish order."]');
+                    return;
+                }
+                if (this.control.publish === 'limit') {
+                    var price = parseFloat(parseFloat(this.inputs.buyPrice).toFixed(4));
+                    var ask = parseFloat(parseFloat(this.inputs.buyAmount).toFixed(4));
+                    var bid = parseFloat(ask * price);
+                    eos.contract('eosio.token', { requiredFields })
+                        .then(contract => {
+                            return contract.transfer(
+                                account.name,
+                                '@ViewBag.OtcContract',
+                                bid.toFixed(4) + ' EOS',
+                                ask.toFixed(4) + ' @Model.Id',
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        })
+                        .then(() => {
+                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                        })
+                        .catch(err => {
+                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                        });
+                }
+                else if (this.control.publish === 'market') {
+                    eos.contract('eosio.token', { requiredFields })
+                        .then(contract => {
+                            return contract.transfer(
+                                account.name,
+                                '@ViewBag.OtcContract',
+                                parseFloat(this.inputs.buyTotal).toFixed(4) + ' EOS',
+                                'market',
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        })
+                        .then(() => {
+                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                        })
+                        .catch(err => {
+                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                        });
+                }
+                else if (this.control.publish === 'contract') {
+                    buy(parseFloat(this.inputs.buyTotal));
+                }
+            },
+            sell: function () {
+                if (!account || !account.name) {
+                    alert('@SR["Please login scatter before publish order."]');
+                    return;
+                }
+                if (this.control.publish === 'limit') {
+                    var price = parseFloat(parseFloat(this.inputs.sellPrice).toFixed(4));
+                    var bid = parseFloat(parseFloat(this.inputs.sellAmount).toFixed(4));
+                    var ask = parseFloat(bid * price);
+                    eos.contract('@Model.Contract', { requiredFields })
+                        .then(contract => {
+                            return contract.transfer(
+                                account.name,
+                                '@ViewBag.OtcContract',
+                                bid.toFixed(4) + ' @Model.Id',
+                                ask.toFixed(4) + ' EOS',
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        })
+                        .then(() => {
+                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                        })
+                        .catch(err => {
+                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                        });
+                }
+                else if (this.control.publish === 'market') {
+                    eos.contract('@Model.Contract', { requiredFields })
+                        .then(contract => {
+                            return contract.transfer(
+                                account.name,
+                                '@ViewBag.OtcContract',
+                                parseFloat(this.inputs.sellAmount).toFixed(4) + ' @Model.Id',
+                                'market',
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        })
+                        .then(() => {
+                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                        })
+                        .catch(err => {
+                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                        });
+                }
+                else if (this.control.publish === 'contract') {
+                    sell(parseFloat(this.inputs.sellAmount));
+                }
+            }
+        }
+    });
+
+
     function get_unit_price(num) {
-        return parseFloat(num / 10000.0).toFixed(4) + ' EOS';
+        return parseFloat(num).toFixed(4) + ' EOS';
     }
 
     function PollTransactions() {

@@ -19,6 +19,12 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             TryHandleActionAsync(config, db).Wait();
         }
 
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
+        public void PollOrders(IConfiguration config, KyubeyContext db)
+        {
+            PollOrdersAsync(config, db).Wait();
+        }
+
         private async Task<int> TryHandleActionAsync(IConfiguration config, KyubeyContext db)
         {
             var cnt = 0;
@@ -81,6 +87,89 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 await db.SaveChangesAsync();
 
                 return result.actions.First();
+            }
+        }
+
+        private async Task PollOrdersAsync(IConfiguration config, KyubeyContext db)
+        {
+            var tokens = await db.Otcs
+                .Where(x => x.Status == Status.Active)
+                .ToListAsync();
+
+            foreach(var x in tokens)
+            {
+                try
+                {
+                    Console.WriteLine($"Polling {x.Id} sell orders...");
+                    await PollOrdersOfTokenAsync(config, db, x.Id, true);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+
+                try
+                {
+                    Console.WriteLine($"Polling {x.Id} buy orders...");
+                    await PollOrdersOfTokenAsync(config, db, x.Id, false);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
+        private async Task PollOrdersOfTokenAsync(IConfiguration config, KyubeyContext db, string tokenId, bool isSell = false)
+        {
+            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
+            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
+            {
+                code = config["DexContract"],
+                table = isSell ? "sellorder" : "buyorder",
+                limit = 65535,
+                scope = tokenId,
+                json = true
+            }))
+            {
+                var txt = await response.Content.ReadAsStringAsync();
+                var table = await response.Content.ReadAsAsync<OrderTable>();
+                if (isSell)
+                {
+                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
+                    foreach (var x in table.rows)
+                    {
+                        db.DexSellOrders.Add(new DexSellOrder
+                        {
+                            Id = x.id.ToString(),
+                            Account = x.account,
+                            Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
+                            Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
+                            Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
+                            TokenId = tokenId,
+                            UnitPrice = x.unit_price
+                        });
+                    }
+                    await db.SaveChangesAsync();
+                }
+                else
+                {
+                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
+                    foreach (var x in table.rows)
+                    {
+                        db.DexSellOrders.Add(new DexSellOrder
+                        {
+                            Account = x.account,
+                            Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
+                            Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
+                            Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
+                            TokenId = tokenId,
+                            UnitPrice = x.unit_price
+                        });
+                    }
+                }
+                await db.SaveChangesAsync();
             }
         }
     }

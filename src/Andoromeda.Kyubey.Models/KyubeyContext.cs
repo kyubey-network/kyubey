@@ -114,6 +114,10 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<MatchReceipt> MatchReceipts { get; set; }
 
+        public DbSet<DexBuyOrder> DexBuyOrders { get; set; }
+
+        public DbSet<DexSellOrder> DexSellOrders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -136,9 +140,24 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.Status);
             });
 
-            builder.Entity<MatchReceipt>(e => {
+            builder.Entity<MatchReceipt>(e => 
+            {
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.TokenId);
+            });
+
+            builder.Entity<DexBuyOrder>(e =>
+            {
+                e.HasIndex(x => x.TokenId);
+                e.HasIndex(x => x.Time);
+                e.HasIndex(x => x.UnitPrice);
+            });
+
+            builder.Entity<DexSellOrder>(e =>
+            {
+                e.HasIndex(x => x.TokenId);
+                e.HasIndex(x => x.Time);
+                e.HasIndex(x => x.UnitPrice);
             });
         }
     }

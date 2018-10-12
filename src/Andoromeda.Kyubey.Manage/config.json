@@ -1,5 +1,7 @@
 ﻿{
   "MySQL": "",
   "TransactionNode": "http://node.eosflare.io/v1/history/get_actions",
-  "Kdata": "https://dasdaq-webapi.chinacloudsites.cn"
+  "TransactionNodeBackup": "http://api1.eosasia.one",
+  "Kdata": "https://dasdaq-webapi.chinacloudsites.cn",
+  "DexContract": "kyubeydex.bp"
 }

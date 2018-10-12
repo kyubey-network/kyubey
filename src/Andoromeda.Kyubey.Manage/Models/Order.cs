@@ -6,11 +6,13 @@ namespace Andoromeda.Kyubey.Manage.Models
     {
         public int id { get; set; }
 
-        public string owner { get; set; }
+        public string account { get; set; }
 
-        public Asset bid { get; set; }
+        public string bid { get; set; }
 
-        public Asset ask { get; set; }
+        public string ask { get; set; }
+
+        public long unit_price { get; set; }
 
         public long timestamp { get; set; }
     }

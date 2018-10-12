@@ -459,6 +459,12 @@ section {
     font-size: 14px;
 }
 
+.exchange-text {
+    height: 32.6px;
+    line-height: 32.6px;
+    font-size: 14px;
+}
+
 .exchange-order-card {
     height: 800px;
 }
@@ -590,4 +596,12 @@ section {
 
     .exchange-order-state-table th, .exchange-order-state-table td {
         padding: 10px 15px;
+    }
+
+    .green {
+        color: green;
+    }
+
+    .red {
+        color: red;
     }

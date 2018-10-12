@@ -23,6 +23,25 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Flex = true;
         }
 
+        [HttpGet("[controller]/pair")]
+        public async Task<IActionResult> Pair([FromServices] KyubeyContext db, string token, CancellationToken cancellationToken)
+        {
+            IQueryable<Otc> ret = db.Otcs
+                .Where(x => x.Status == Status.Active);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                ret = ret.Where(x => x.Id.Contains(token));
+            }
+
+            return Json(await ret.Select(x => new
+            {
+                id = x.Id,
+                price = x.Price,
+                change = x.Change
+            }).ToListAsync(cancellationToken));
+        }
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -45,7 +64,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
-
+        
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/sell")]
         public async Task<IActionResult> Sell([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -123,6 +142,21 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             return Content(token.TradeJavascript, "application/x-javascript");
         }
 
+        [HttpGet("[controller]/{id}/contract-price")]
+        public async Task<IActionResult> ContractPrice(
+            [FromServices] KyubeyContext db,
+            [FromServices] IConfiguration config,
+            string id,
+            CancellationToken token)
+        {
+            var bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id);
+            return Json(new
+            {
+                BuyPrice = bancor.BuyPrice,
+                SellPrice = bancor.SellPrice
+            });
+        }
+
         [HttpGet("[controller]/{id}/buy-data")]
         public async Task<IActionResult> BuyData(
             [FromServices] KyubeyContext db,
@@ -132,31 +166,21 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             string id,
             CancellationToken token)
         {
-            var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
-            using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
-            using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
-            {
-                code = config["Contracts:Otc"],
-                scope = otc.Id,
-                table = "sellorder",
-                json = true,
-                limit = 65535
-            }))
-            {
-                IEnumerable<Order> rows;
+            var orders = await db.DexBuyOrders
+                .Where(x => x.TokenId == id)
+                .OrderByDescending(x => x.UnitPrice)
+                .Take(15)
+                .ToListAsync();
 
-                rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                    .rows;
-                if (min.HasValue)
+            var ret = orders
+                .Select(x => new
                 {
-                    rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
-                }
-                if (max.HasValue)
-                {
-                    rows = rows.Where(x => x.GetUnitPrice() <= max.Value);
-                }
-                return Json(rows.OrderByDescending(x => x.GetUnitPrice()));
-            }
+                    unit = x.UnitPrice,
+                    amount = x.Ask,
+                    total = x.Bid
+                });
+
+            return Json(ret);
         }
 
         [HttpGet("[controller]/{id}/sell-data")]
@@ -168,30 +192,104 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             string id,
             CancellationToken token)
         {
-            var otc = await db.Otcs.Include(x => x.Token).SingleAsync(x => x.Id == id, token);
-            using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
-            using (var tableResponse1 = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
-            {
-                code = config["Contracts:Otc"],
-                scope = otc.Id,
-                table = "buyorder",
-                json = true,
-                limit = 65535
-            }))
-            {
-                IEnumerable<Order> rows;
-                rows = JsonConvert.DeserializeObject<OrderTable<DexOrder>>((await tableResponse1.Content.ReadAsStringAsync()))
-                    .rows;
-                if (min.HasValue)
+            var orders = await db.DexSellOrders
+                .Where(x => x.TokenId == id)
+                .OrderBy(x => x.UnitPrice)
+                .Take(15)
+                .ToListAsync();
+            orders.Reverse();
+
+            var ret = orders
+                .Select(x => new
                 {
-                    rows = rows.Where(x => x.GetUnitPrice() >= min.Value);
-                }
-                if (max.HasValue)
-                {
-                    rows = rows.Where(x => x.GetUnitPrice() <= max.Value);
-                }
-                return Json(rows.OrderBy(x => x.GetUnitPrice()));
+                    unit = x.UnitPrice,
+                    amount = x.Ask,
+                    total = x.Bid
+                });
+
+            return Json(ret);
+        }
+
+        [HttpGet("[controller]/{id}/last-match")]
+        public async Task<IActionResult> LastMatch(string id, CancellationToken token)
+        {
+            var last = await DB.MatchReceipts
+                .LastOrDefaultAsync(x => x.TokenId == id, token);
+            if (last == null)
+            {
+                return Content("0.0000");
             }
+            return Content(last.UnitPrice.ToString());
+        }
+
+        [HttpGet("[controller]/{id}/recent-transaction")]
+        public async Task<IActionResult> RecentTransaction(string id, CancellationToken token)
+        {
+            var ret = await DB.MatchReceipts
+                .Where(x => x.TokenId == id)
+                .OrderByDescending(x => x.Time)
+                .Take(20)
+                .ToListAsync(token);
+
+            return Json(ret.Select(x => new
+            {
+                price = x.UnitPrice,
+                amount = x.Ask,
+                time = x.Time
+            }));
+        }
+
+        [HttpGet("[controller]/{account}/current-order")]
+        public async Task<IActionResult> CurrentOrder(string id, string account, bool only = false, CancellationToken token = default)
+        {
+            IQueryable<DexBuyOrder> buyOrders = DB.DexBuyOrders
+                .Where(x => x.Account == account);
+            if (only)
+            {
+                buyOrders = buyOrders.Where(x => x.TokenId == id);
+            }
+            
+            IQueryable<DexSellOrder> sellOrders = DB.DexSellOrders
+                .Where(x => x.Account == account);
+            if (only)
+            {
+                sellOrders = sellOrders.Where(x => x.TokenId == id);
+            }
+
+            var ret = new List<CurrentOrder>(buyOrders.Count() + sellOrders.Count());
+            ret.AddRange((await buyOrders.ToListAsync(token)).Select(x => new CurrentOrder
+            {
+                id = Convert.ToInt64(x.Id),
+                token = x.TokenId,
+                amount = x.Ask,
+                price = x.UnitPrice,
+                time = x.Time,
+                type = "Buy"
+            }));
+            ret.AddRange((await sellOrders.ToListAsync(token)).Select(x => new CurrentOrder
+            {
+                id = Convert.ToInt64(x.Id),
+                token = x.TokenId,
+                amount = x.Bid,
+                price = x.UnitPrice,
+                time = x.Time,
+                type = "Sell"
+            }));
+
+            return Json(ret.OrderByDescending(x => x.time));
+        }
+
+        [HttpGet("[controller]/{account}/history-order")]
+        public async Task<IActionResult> HistoryOrder(string id, string account, bool only = false, CancellationToken token = default)
+        {
+            IQueryable<MatchReceipt> matches = DB.MatchReceipts
+                .Where(x => x.Bidder == account || x.Asker == account);
+            if (only)
+            {
+                matches = matches.Where(x => x.TokenId == id);
+            }
+
+            return Json(await matches.OrderByDescending(x => x.Time).ToListAsync());
         }
 
         [HttpGet]

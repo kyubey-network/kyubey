@@ -111,12 +111,18 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             .Where(y => y.Id == x.Id)
                             .LastOrDefaultAsync();
 
+                        var last24 = await db.MatchReceipts
+                            .Where(y => y.Id == x.Id)
+                            .Where(y => y.Time < DateTime.UtcNow.AddDays(-1))
+                            .LastOrDefaultAsync();
+
                         if (last == null)
                         {
                             continue;
                         }
 
                         var price = last.UnitPrice / 10000.0;
+                        var price24 = last24?.UnitPrice / 10000.0;
 
                         try
                         {
@@ -139,6 +145,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                         catch { }
 
                         x.Price = price;
+                        x.Change = price / (price24 ?? 1.0) - 1.0;
                         await db.SaveChangesAsync();
                     }
                     catch (Exception ex)
