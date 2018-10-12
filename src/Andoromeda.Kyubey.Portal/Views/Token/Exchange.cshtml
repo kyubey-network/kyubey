@@ -497,7 +497,7 @@
                         .then(() => {
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
-                        .catch(err => {
+                        .catch(error => {
                             showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
@@ -516,7 +516,7 @@
                         .then(() => {
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
-                        .catch(err => {
+                        .catch(error => {
                             showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
@@ -547,7 +547,7 @@
                         .then(() => {
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
-                        .catch(err => {
+                        .catch(error => {
                             showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
@@ -566,7 +566,7 @@
                         .then(() => {
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
-                        .catch(err => {
+                        .catch(error => {
                             showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
