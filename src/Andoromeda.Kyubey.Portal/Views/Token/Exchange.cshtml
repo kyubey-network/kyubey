@@ -6,6 +6,7 @@
     Otc otc = ViewBag.Otc;
 }
 @await Html.PartialAsync("_TokenHeader")
+<script src="~/js/moment.js"></script>
 <script src="~/js/kyubey.js"></script>
 @if (bancor != null)
 {
@@ -202,9 +203,9 @@
                             </thead>
                             <tbody>
                                 <tr v-for="x in recentTransactions">
-                                    <td>{{ x.price }}</td>
-                                    <td>{{ x.amount }}</td>
-                                    <td>{{ x.time }}</td>
+                                    <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                    <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -270,6 +271,24 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -396,6 +415,9 @@
                 this.getContractPrices();
                 this.getPairs();
             },
+            moment: function (time) {
+                return moment(time);
+            },
             getOrders: function () {
                 var self = this;
                 $.getJSON('/token/@Model.Id/buy-data', {}, function (data) {
@@ -454,7 +476,7 @@
             },
             buy: function () {
                 if (!account || !account.name) {
-                    alert('@SR["Please login scatter before publish order."]');
+                    showModal('@(new HtmlString(SR["Error"]))', '@(new HtmlString(SR["Please login scatter before publish order."]))');
                     return;
                 }
                 if (this.control.publish === 'limit') {
@@ -473,10 +495,10 @@
                                 });
                         })
                         .then(() => {
-                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(err => {
-                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
                 else if (this.control.publish === 'market') {
@@ -492,10 +514,10 @@
                                 });
                         })
                         .then(() => {
-                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(err => {
-                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
                 else if (this.control.publish === 'contract') {
@@ -504,7 +526,7 @@
             },
             sell: function () {
                 if (!account || !account.name) {
-                    alert('@SR["Please login scatter before publish order."]');
+                    showModal('@(new HtmlString(SR["Error"]))', '@(new HtmlString(SR["Please login scatter before publish order."]))');
                     return;
                 }
                 if (this.control.publish === 'limit') {
@@ -523,10 +545,10 @@
                                 });
                         })
                         .then(() => {
-                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(err => {
-                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
                 else if (this.control.publish === 'market') {
@@ -542,10 +564,10 @@
                                 });
                         })
                         .then(() => {
-                            showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(err => {
-                            showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
+                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                         });
                 }
                 else if (this.control.publish === 'contract') {
@@ -554,133 +576,4 @@
             }
         }
     });
-
-
-    function get_unit_price(num) {
-        return parseFloat(num).toFixed(4) + ' EOS';
-    }
-
-    function PollTransactions() {
-        $.getJSON('/token/@Model.Id/buy-data', { min: $('#min').val(), max: $('#max').val() }, function (data) {
-            var html = '';
-            for (var i = 0; i < data.length; i++) {
-                html += `<tr id='tx-${data[i].id}'><td class='tx-id'>${data[i].id}</td><td>${data[i].account}</td><td class='tx-bid'>${data[i].bid}</td><td class='tx-ask'>${data[i].ask}</td><td>${get_unit_price(data[i].unit_price)}</td><td>${(new Date(data[i].timestamp * 1000)).Format('yyyy-MM-dd hh:mm')}</td><td><a href="javascript:${account && data[i].owner === account.name ? 'cancel' : 'take'}(${data[i].id})">${account && data[i].owner === account.name ? 'Cancel' : 'Take' }</a></td></tr>`;
-            }
-            $('#lstTransactions').html(html);
-        });
-    }
-
-    $('#min').keyup(PollTransactions);
-    $('#max').keyup(PollTransactions);
-
-    setTimeout(PollTransactions, 1000);
-    setTimeout(PollTransactions, 2000);
-    setTimeout(PollTransactions, 3000);
-    setInterval(PollTransactions, 5000);
-
-    var current_unit_price;
-
-    var slider1 = $('#slider1')
-        .on('slide', function (slideEvt) {
-            $('#value1').val(parseFloat(slider1.val()).toFixed(4));
-            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
-            $('#value2').keyup();
-        });
-    slider1.bootstrapSlider();
-    var slider2 = $('#slider2');
-    slider2.bootstrapSlider()
-        .on('slide', function (slideEvt) {
-            $('#value2').val(parseFloat(slider2.val()).toFixed(4));
-            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toFloor(4));
-            $('#value1').keyup();
-        });
-    var _id;
-
-    function take(id) {
-        _id = id;
-        var bid = $('#tx-' + id).find('.tx-bid').text();
-        var max1 = parseFloat(bid.split(' ')[0]).toFixed(4);
-        var symbol1 = bid.split(' ')[1];
-        $('#symbol1').text(symbol1);
-        var ask = $('#tx-' + id).find('.tx-ask').text();
-        var max2 = parseFloat(ask.split(' ')[0]).toFixed(4);
-        var symbol2 = ask.split(' ')[1];
-        $('#symbol2').text(symbol2);
-
-        current_unit_price = parseFloat(max2 / max1).toCeil(4);
-        $('#unit').text(current_unit_price);
-
-        slider1.bootstrapSlider('setAttribute', 'step', 0.0001);
-        slider1.bootstrapSlider('setAttribute', 'min', 0);
-        slider1.bootstrapSlider('setAttribute', 'max', max1);
-        slider1.bootstrapSlider('setValue', parseFloat(max1), true);
-        slider1.bootstrapSlider('relayout');
-
-        $('#value1').val(max1);
-        $('#value1').unbind('keyup').keyup(function () {
-            var val = parseFloat($('#value1').val()).toFixed(4);
-            slider1.bootstrapSlider('setValue', parseFloat(val));
-            $('#value2').val(parseFloat(slider1.val() * current_unit_price).toCeil(4));
-            val = parseFloat($('#value2').val()).toFixed(4);
-            slider2.bootstrapSlider('setValue', parseFloat(val));
-        });
-
-        slider2.bootstrapSlider('setAttribute', 'step', 0.0001);
-        slider2.bootstrapSlider('setAttribute', 'min', 0);
-        slider2.bootstrapSlider('setAttribute', 'max', max2);
-        slider2.bootstrapSlider('setValue', parseFloat(max2), true);
-        slider2.bootstrapSlider('relayout');
-
-        $('#value2').val(max2);
-        $('#value2').unbind('keyup').keyup(function () {
-            var val = parseFloat($('#value2').val()).toFixed(4);
-            slider2.bootstrapSlider('setValue', parseFloat(val));
-            $('#value1').val(parseFloat(slider2.val() / current_unit_price).toCeil(4));
-            val = parseFloat($('#value1').val()).toFixed(4);
-            slider1.bootstrapSlider('setValue', parseFloat(val));
-        });
-
-        $('#modalTake').modal('show');
-    }
-
-    function take2() {
-        var bid = parseFloat($('#value1').val()).toFixed(4) + ' ' + $('#symbol1').text();
-        var ask = parseFloat($('#value2').val()).toFixed(4) + ' ' + $('#symbol2').text();
-        eos.contract('@Model.Contract', { requiredFields })
-            .then(contract => {
-                return contract.transfer(
-                    account.name,
-                    '@ViewBag.OtcContract',
-                    ask,
-                    bid,
-                    {
-                        authorization: [`${account.name}@@${account.authority}`]
-                    });
-            })
-            .then(() => {
-                showModal('@SR["Transaction Succeeded"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
-            })
-            .catch(err => {
-                showModal('@SR["Transaction Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
-            });
-    }
-
-    function cancel(id) {
-        eos.contract('@ViewBag.OtcContract', { requiredFields })
-            .then(contract => {
-                return contract.cancelsell(
-                    account.name,
-                    '@Model.Id',
-                    id,
-                    {
-                        authorization: [`${account.name}@@${account.authority}`]
-                    });
-            })
-            .then(() => {
-                showModal('@SR["Transaction Cancelled"]', '@SR["You can confirm the result in your wallet"], @SR["Please contact us if you have any questions"]');
-            })
-            .catch(err => {
-                showModal('@SR["Transaction Cancel Failed"]', error.message + '@SR["Please contact us if you have any questions"]');
-            });
-    }
 </script>

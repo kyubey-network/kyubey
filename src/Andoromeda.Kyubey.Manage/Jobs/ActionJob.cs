@@ -148,7 +148,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
                             Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
                             TokenId = tokenId,
-                            UnitPrice = x.unit_price
+                            UnitPrice = x.unit_price / 10000.0
                         });
                     }
                     await db.SaveChangesAsync();
@@ -165,7 +165,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
                             Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
                             TokenId = tokenId,
-                            UnitPrice = x.unit_price
+                            UnitPrice = x.unit_price / 10000.0
                         });
                     }
                 }
