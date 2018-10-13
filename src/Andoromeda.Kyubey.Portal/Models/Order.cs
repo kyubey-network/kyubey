@@ -81,8 +81,14 @@ namespace Andoromeda.Kyubey.Portal.Models
     }
 
     public class OrderTable<T>
-        where T : Order
     {
         public IEnumerable<T> rows { get; set; }
+    }
+
+    public class UserOrder
+    {
+        public long orderid { get; set; }
+
+        public string symbol { get; set; }
     }
 }

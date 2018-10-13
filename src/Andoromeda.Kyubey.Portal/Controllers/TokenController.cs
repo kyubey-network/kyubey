@@ -201,41 +201,70 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{account}/current-order")]
         public async Task<IActionResult> CurrentOrder(string id, string account, bool only = false, CancellationToken token = default)
         {
-            IQueryable<DexBuyOrder> buyOrders = DB.DexBuyOrders
-                .Where(x => x.Account == account);
-            if (only)
+            using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
+            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                buyOrders = buyOrders.Where(x => x.TokenId == id);
+                code = Configuration["Contract:Otc"],
+                scope = account,
+                table = "userorder",
+                json = true,
+                limit = 65535
+            }))
+            {
+                var table = await response.Content.ReadAsAsync<OrderTable<UserOrder>>();
+                var tasks = table.rows.Select(x => GetOrder(client, x.orderid, x.symbol, token));
+                await Task.WhenAll(tasks);
+                var ret = new List<CurrentOrder>(tasks.Count());
+                foreach(var x in tasks)
+                {
+                    ret.Add(await x);
+                }
+                return Json(ret);
             }
-            
-            IQueryable<DexSellOrder> sellOrders = DB.DexSellOrders
-                .Where(x => x.Account == account);
-            if (only)
+        }
+
+        private async Task<CurrentOrder> GetOrder(HttpClient client, long id, string token, CancellationToken cancellationToken = default)
+        {
+            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                sellOrders = sellOrders.Where(x => x.TokenId == id);
+                code = Configuration["Contract:Otc"],
+                scope = token,
+                table = id > 0 ? "buyorder" : "sellorder",
+                json = true,
+                index_position = 1,
+                lower_bound = Math.Abs(id),
+                limit = 1
+            }))
+            {
+                var table = await response.Content.ReadAsAsync<OrderTable<Models.DexOrder>>();
+                var order = table.rows.FirstOrDefault();
+                if (id > 0)
+                {
+                    return new CurrentOrder
+                    {
+                        id = Math.Abs(id),
+                        token = token,
+                        amount = Convert.ToDouble(order.ask.Split(' ')[0]),
+                        price = order.unit_price / 10000.0,
+                        time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
+                        type = "Buy"
+                    };
+
+                }
+                else
+                {
+                    return new CurrentOrder
+                    {
+                        id = Math.Abs(id),
+                        token = token,
+                        amount = Convert.ToDouble(order.bid.Split(' ')[0]),
+                        price = order.unit_price / 10000.0,
+                        time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
+                        type = "Sell"
+                    };
+
+                }
             }
-
-            var ret = new List<CurrentOrder>(buyOrders.Count() + sellOrders.Count());
-            ret.AddRange((await buyOrders.ToListAsync(token)).Select(x => new CurrentOrder
-            {
-                id = Convert.ToInt64(x.Id),
-                token = x.TokenId,
-                amount = x.Ask,
-                price = x.UnitPrice,
-                time = x.Time,
-                type = "Buy"
-            }));
-            ret.AddRange((await sellOrders.ToListAsync(token)).Select(x => new CurrentOrder
-            {
-                id = Convert.ToInt64(x.Id),
-                token = x.TokenId,
-                amount = x.Bid,
-                price = x.UnitPrice,
-                time = x.Time,
-                type = "Sell"
-            }));
-
-            return Json(ret.OrderByDescending(x => x.time));
         }
 
         [HttpGet("[controller]/{account}/history-order")]
