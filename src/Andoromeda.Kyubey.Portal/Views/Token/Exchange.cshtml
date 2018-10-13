@@ -68,9 +68,9 @@
                         </thead>
                         <tbody>
                             <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)">
-                                <td>{{ x.unit }}</td>
-                                <td>{{ x.amount }}</td>
-                                <td>{{ x.total }}</td>
+                                <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                <td>{{ parseFloat(x.total).toFixed(4) }}</td>
                             </tr>
                             <tr v-if="buyOrders.length === 0">
                                 <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
@@ -288,7 +288,9 @@
                                 <td>{{ x.time }}</td>
                                 <td>{{ x.price }}</td>
                                 <td>{{ x.amount }}</td>
-                                <td></td>
+                                <td>
+                                    <a v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -635,6 +637,36 @@
                 else if (this.control.publish === 'contract') {
                     sell(parseFloat(this.inputs.sellAmount));
                 }
+            },
+            cancel: function (token, type, id) {
+                    eos.contract('@ViewBag.OtcContract', { requiredFields })
+                        .then(contract => {
+                            if (type === 'Buy') {
+                                return contract.cancelbuy(
+                                    account.name,
+                                    token,
+                                    id,
+                                    {
+                                        authorization: [`${account.name}@@${account.authority}`]
+                                    });
+                            } else {
+                                return contract.cancelsell(
+                                    account.name,
+                                    token,
+                                    id,
+                                    {
+                                        authorization: [`${account.name}@@${account.authority}`]
+                                    });
+                            }
+                        })
+                        .then(() => {
+                            self.getCurrentOrders();
+                            self.getOrders();
+                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
+                        })
+                        .catch(error => {
+                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
+                        });
             }
         }
     });
