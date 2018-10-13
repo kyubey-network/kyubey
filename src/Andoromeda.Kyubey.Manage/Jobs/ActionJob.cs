@@ -133,16 +133,14 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 json = true
             }))
             {
-                var txt = await response.Content.ReadAsStringAsync();
                 var table = await response.Content.ReadAsAsync<OrderTable>();
                 if (isSell)
                 {
-                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
+                    var orders = new List<DexSellOrder>(table.rows.Count());
                     foreach (var x in table.rows)
                     {
-                        db.DexSellOrders.Add(new DexSellOrder
+                        orders.Add(new DexSellOrder
                         {
-                            Id = x.id.ToString(),
                             Account = x.account,
                             Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
                             Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
@@ -151,14 +149,17 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             UnitPrice = x.unit_price / 10000.0
                         });
                     }
+                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
+                    await db.SaveChangesAsync();
+                    db.DexSellOrders.AddRange(orders);
                     await db.SaveChangesAsync();
                 }
                 else
                 {
-                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
+                    var orders = new List<DexBuyOrder>(table.rows.Count());
                     foreach (var x in table.rows)
                     {
-                        db.DexSellOrders.Add(new DexSellOrder
+                        db.DexBuyOrders.Add(new DexBuyOrder
                         {
                             Account = x.account,
                             Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
@@ -168,8 +169,11 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             UnitPrice = x.unit_price / 10000.0
                         });
                     }
+                    db.DexBuyOrders.RemoveRange(db.DexBuyOrders.Where(x => x.TokenId == tokenId));
+                    await db.SaveChangesAsync();
+                    db.DexBuyOrders.AddRange(orders);
+                    await db.SaveChangesAsync();
                 }
-                await db.SaveChangesAsync();
             }
         }
     }
