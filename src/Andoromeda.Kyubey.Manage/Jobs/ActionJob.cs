@@ -156,7 +156,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 }
                 else
                 {
-                    var orders = new List<DexBuyOrder>(table.rows.Count());
+                    db.DexBuyOrders.RemoveRange(db.DexBuyOrders.Where(x => x.TokenId == tokenId));
                     foreach (var x in table.rows)
                     {
                         db.DexBuyOrders.Add(new DexBuyOrder
@@ -169,11 +169,8 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             UnitPrice = x.unit_price / 10000.0
                         });
                     }
-                    db.DexBuyOrders.RemoveRange(db.DexBuyOrders.Where(x => x.TokenId == tokenId));
-                    await db.SaveChangesAsync();
-                    db.DexBuyOrders.AddRange(orders);
-                    await db.SaveChangesAsync();
                 }
+                await db.SaveChangesAsync();
             }
         }
     }
