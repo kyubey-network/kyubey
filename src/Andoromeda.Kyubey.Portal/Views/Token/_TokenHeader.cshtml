@@ -23,14 +23,6 @@
         {
             <a class="brand-menu-item @(ViewBag.Current == "token-holders" ? "active" : "")" asp-action="Holders" asp-route-id="@Model.Id">@SR["Holders"]</a>
         }
-        @if (!string.IsNullOrEmpty(Model.CurveId))
-        {
-            <a class="brand-menu-item @(ViewBag.Current == "token-curve" ? "active" : "")" asp-action="Curve" asp-route-id="@Model.Id">@SR["Curve"] (@Model.CurveId)</a>
-        }
-        @if (bancor != null)
-        {
-            <a class="brand-menu-item @(ViewBag.Current == "token-k" ? "active" : "")" asp-action="KyubeyCandlestick" asp-route-id="@Model.Id">@SR["Candlestick"]</a>
-        }
         @if (otc != null || bancor != null)
         {
             <a class="brand-menu-item @(ViewBag.Current == "token-exchange" ? "active" : "")" asp-action="Exchange" asp-route-id="@Model.Id">@SR["Exchange"]</a>

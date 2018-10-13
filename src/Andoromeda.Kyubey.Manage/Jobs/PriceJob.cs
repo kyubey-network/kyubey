@@ -101,18 +101,18 @@ namespace Andoromeda.Kyubey.Manage.Jobs
 
         private async Task CalculateOTCAsync(IConfiguration config, KyubeyContext db)
         {
-            using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
+            using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
             {
                 foreach (var x in await db.Otcs.ToListAsync())
                 {
                     try
                     {
                         var last = await db.MatchReceipts
-                            .Where(y => y.Id == x.Id)
+                            .Where(y => y.TokenId == x.Id)
                             .LastOrDefaultAsync();
 
                         var last24 = await db.MatchReceipts
-                            .Where(y => y.Id == x.Id)
+                            .Where(y => y.TokenId == x.Id)
                             .Where(y => y.Time < DateTime.UtcNow.AddDays(-1))
                             .LastOrDefaultAsync();
 

@@ -4,10 +4,22 @@
     ViewBag.Current = "token-exchange";
     Bancor bancor = ViewBag.Bancor;
     Otc otc = ViewBag.Otc;
+    Curve curve = ViewBag.Curve;
+    var constJs = "";
+    if (curve != null)
+    {
+        for (var i = 0; i < curve.Arguments.Object.Count(); i++)
+        {
+            constJs += $"var {curve.Arguments.Object.ElementAt(i).Id} = {Model.CurveArguments.Object.ElementAt(i)};";
+        }
+    }
 }
 @await Html.PartialAsync("_TokenHeader")
 <script src="~/js/moment.js"></script>
 <script src="~/js/echarts.js"></script>
+<script src="~/js/d3.min.js"></script>
+<script src="~/js/function-plot.min.js"></script>
+<script src="~/js/eval-expr.js"></script>
 <script src="~/js/kyubey.js"></script>
 @if (bancor != null)
 {
@@ -71,11 +83,45 @@
                 <div class="card exchange-chart-card">
                     <div class="exchange-chart-menu">
                         <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'k' }" v-on:click="control.chart = 'k'">@SR["Candlestick"]</a>
-                        <a class="exchange-chart-menu-item">@SR["Curve"]</a>
+                        @if (curve != null)
+                        {
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'curve' }" v-on:click="control.chart = 'curve'">@SR["Curve"] (@curve.Id)</a>
+                        }
                     </div>
                     <div v-show="control.chart === 'k'">
                         <div id="chart" style="margin: 15px; height:350px; width: 100%"></div>
                     </div>
+                    @if (curve != null)
+                    {
+                        <div v-show="control.chart === 'curve'" class="row curve-panel">
+                            <div class="col-md-3 curve-panel-left">
+                                <ul class="curve-panel-list">
+                                    <li v-bind:class="{ 'active': control.curve === 'price-balance' }" v-on:click="control.curve = 'price-balance'"><a>@SR["Price - Balance"]</a></li>
+                                    <li v-bind:class="{ 'active': control.curve === 'price-supply' }" v-on:click="control.curve = 'price-supply'"><a>@SR["Price - Supply"]</a></li>
+                                    <li v-bind:class="{ 'active': control.curve === 'supply-balance' }" v-on:click="control.curve = 'supply-balance'"><a>@SR["Supply - Balance"]</a></li>
+                                    <li v-bind:class="{ 'active': control.curve === 'balance-supply' }" v-on:click="control.curve = 'balance-supply'"><a>@SR["Balance - Supply"]</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-9 curve-panel-right">
+                                @if (!string.IsNullOrEmpty(curve.PriceBalanceFunction))
+                                {
+                                    <div id="chartPriceBalance" v-show="control.curve === 'price-balance'"></div>
+                                }
+                                @if (!string.IsNullOrEmpty(curve.PriceSupplyFunction))
+                                {
+                                    <div id="chartPriceSupply" v-show="control.curve === 'price-supply'"></div>
+                                }
+                                @if (!string.IsNullOrEmpty(curve.SupplyBalanceFunction))
+                                {
+                                    <div id="chartSupplyBalance" v-show="control.curve === 'supply-balance'"></div>
+                                }
+                                @if (!string.IsNullOrEmpty(curve.BalanceSupplyFunction))
+                                {
+                                    <div id="chartBalanceSupply" v-show="control.curve === 'balance-supply'"></div>
+                                }
+                            </div>
+                        </div>
+                    }
                 </div>
                 <div class="card exchange-submit-card">
                     <div class="exchange-chart-menu">
@@ -360,7 +406,8 @@
                 order: 'mixed',
                 my: 'current',
                 publish: '@(otc == null ? "contract" : "limit")',
-                chart: 'k'
+                chart: 'k',
+                curve: 'price-balance'
             },
             inputs: {
                 pair: null,
@@ -799,3 +846,85 @@
     });
 
 </script>
+
+@if (curve != null)
+{
+    <script>
+    @(new HtmlString(constJs))
+    eval('@(new HtmlString(!string.IsNullOrEmpty(curve.PriceBalanceFunction) ? $"var funcPriceBalance = `{curve.PriceBalanceFunction}`" : ""))');
+    eval('@(new HtmlString(!string.IsNullOrEmpty(curve.PriceSupplyFunction) ? $"var funcPriceSupply = `{curve.PriceSupplyFunction}`" : ""))');
+    eval('@(new HtmlString(!string.IsNullOrEmpty(curve.SupplyBalanceFunction) ? $"var funcSupplyBalance = `{curve.SupplyBalanceFunction}`" : ""))');
+    eval('@(new HtmlString(!string.IsNullOrEmpty(curve.BalanceSupplyFunction) ? $"var funcBalanceSupply = `{curve.BalanceSupplyFunction}`" : ""))');
+    if ($('#chartPriceBalance').length > 0) {
+        var _funcPriceBalance = (new MathExpression(funcPriceBalance)).toFunction();
+        functionPlot({
+            target: document.querySelector("#chartPriceBalance"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, _funcPriceBalance(1)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: funcPriceBalance
+                }
+            ]
+        });
+    }
+
+    if ($('#chartPriceSupply').length > 0) {
+        var _funcPriceSupply = (new MathExpression(funcPriceSupply)).toFunction();
+        functionPlot({
+            target: document.querySelector("#chartPriceSupply"),
+            xAxis: { domain: [0, 1] },
+            yAxis: { domain: [0, _funcPriceSupply(1)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: funcPriceSupply
+                }
+            ]
+        });
+    }
+
+    if ($('#chartSupplyBalance').length > 0) {
+        var _funcSupplyBalance = (new MathExpression(funcSupplyBalance)).toFunction();
+        functionPlot({
+            target: document.querySelector("#chartSupplyBalance"),
+            xAxis: { domain: [0, 10000] },
+            yAxis: { domain: [0, _funcSupplyBalance(10000)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: funcSupplyBalance
+                }
+            ]
+        });
+    }
+
+    if ($('#chartBalanceSupply').length > 0) {
+        var _funcBalanceSupply = (new MathExpression(funcBalanceSupply)).toFunction();
+        functionPlot({
+            target: document.querySelector("#chartBalanceSupply"),
+            xAxis: { domain: [0, 10000000] },
+            yAxis: { domain: [0, _funcBalanceSupply(10000000)] },
+            tip: {
+                renderer: function () { }
+            },
+            grid: true,
+            data: [
+                {
+                    fn: funcBalanceSupply
+                }
+            ]
+        });
+    }
+    </script>
+}

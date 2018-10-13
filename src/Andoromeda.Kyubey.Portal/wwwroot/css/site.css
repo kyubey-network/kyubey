@@ -522,6 +522,7 @@ section {
 
     .exchange-pair-table thead {
         background: rgb(247,247,247);
+        color: #888;
     }
 
     .exchange-pair-table thead {
@@ -603,4 +604,39 @@ section {
 
     .red {
         color: red;
+    }
+
+.curve-panel {
+    margin-left: -25px;
+    margin-right: -25px;
+    margin-bottom: -25px;
+    height: 379.33px;
+}
+
+.curve-panel-left {
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 0;
+}
+
+.curve-panel-right {
+    border-top: 1px solid #ddd;
+}
+
+.curve-panel-list {
+    padding-left: 0px;
+    list-style: none;
+    font-size: 12px;
+    color: #888;
+}
+
+.curve-panel-list li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+    .curve-panel-list li.active {
+        background: rgb(247,247,247);
+        color: #ee0979;
     }
