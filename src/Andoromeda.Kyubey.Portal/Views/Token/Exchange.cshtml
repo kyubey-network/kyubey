@@ -431,23 +431,41 @@
         },
         watch: {
             'inputs.buyPrice': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 this.inputs.buyTotal = val * this.inputs.buyAmount;
             },
             'inputs.buyAmount': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 this.inputs.buyTotal = val * this.inputs.buyPrice;
             },
             'inputs.buyTotal': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 if (this.control.publish === 'limit') {
                     this.inputs.buyPrice = val / (this.inputs.buyAmount || 1);
                 }
             },
             'inputs.sellPrice': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 this.inputs.sellTotal = val * this.inputs.sellAmount;
             },
             'inputs.sellAmount': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 this.inputs.sellTotal = val * this.inputs.sellPrice;
             },
             'inputs.sellTotal': function (val) {
+                if (isNaN(val)) {
+                    return;
+                }
                 if (this.control.publish === 'limit') {
                     this.inputs.sellPrice = val / (this.inputs.sellAmount || 1);
                 }
