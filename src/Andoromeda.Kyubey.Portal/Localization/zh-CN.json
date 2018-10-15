@@ -14,6 +14,9 @@
   "BUY PRICE EOS": "买入单价(EOS)",
   "SELL PRICE EOS": "售出单价(EOS)",
   "TOKEN": "通行证",
+  "PRICE": "单价",
+  "EXCHANGE VIA DEX": "通过DEX交易",
+  "EXCHANGE VIA CONTRACT": "通过合约交易",
   "Token": "通行证",
   "White Paper": "白皮书",
   "OTC": "场外交易所",
@@ -27,7 +30,6 @@
   "Price EOS (Total)": "售价EOS (总价)",
   "Publish Buy Order {0}": "挂单购买 {0}",
   "Publish Sell Order {0}": "挂单出售 {0}",
-  "Kyubey Exchange": "Kyubey 交易所",
   "IBO": "IBO",
   "They are bidding {0} in OTC": "他们正在场外交易所出售{0}",
   "They are asking {0} in OTC": "他们正在场外交易所求购{0}",
@@ -88,5 +90,10 @@
   "No more orders": "没有更多订单",
   "Best Matches": "最佳匹配",
   "Exchange": "交易",
-  "Loading...": "加载中..."
+  "Loading...": "加载中...",
+  "Kyubey Exchange": "秋比交易所",
+  "Real decentralized": "真正去中心化",
+  "Open source": "开放源代码",
+  "Fee free to exchange": "无需手续费",
+  "The first open source decentralized EOS based exchange in the world": "世界首个开源的EOS去中心化交易所"
 }

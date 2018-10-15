@@ -446,7 +446,7 @@ section {
     font-size: 14px;
     color: #888;
     height: 32.6px;
-    width: calc(100% - 65px);
+    width: calc(100% - 55px);
     float: left;
     border-right: none;
     display: inline-block;
@@ -640,3 +640,72 @@ section {
         background: rgb(247,247,247);
         color: #ee0979;
     }
+
+.exchange-sell-text-right {
+    float: right;
+}
+
+.exchange-percentage-outer {
+    margin: 0 -3px 10px -3px;
+    height: 20px;
+}
+
+.exchange-percentage {
+    width: calc(25% - 6px);
+    float: left;
+    border: 1px solid #ddd;
+    display: inline-block;
+    padding: 2px 0;
+    margin: 0 3px;
+    text-align: center;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+    .exchange-percentage:hover {
+        border-color: #ee0979;
+        color: #ee0979!important;
+    }
+
+
+.token-search {
+    text-align: center;
+}
+
+.token-search-inner {
+    width: 250px;
+    display: inline-block;
+    height: 40px;
+}
+
+.token-search-textbox {
+    width: 180px;
+    display: inline-block;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: #fff;
+    line-height: 40px;
+    padding: 0 15px;
+    border-radius: 20px 0 0 20px;
+    border-right: none;
+}
+
+.token-search-button {
+    display: inline-block;
+    border-radius: 0 20px 20px 0;
+    border: 1px solid #ee0979;
+    background: #ee0979;
+    border-left: none;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+    color: #fff;
+}
+
+.home-container {
+    text-align: left;
+}
+
+.home-description {
+    font-size: 20px;
+}

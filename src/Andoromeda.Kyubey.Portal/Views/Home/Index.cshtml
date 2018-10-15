@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Bancor>
+﻿@model IEnumerable<TokenDisplay>
 @{
     ViewBag.Title = SR["Kyubey Exchange"];
     ViewBag.Current = "home-kyubey";
@@ -13,31 +13,54 @@
                     <th>@SR["TOKEN"]</th>
                     <th>@SR["PROTOCOL"]</th>
                     <th>@SR["24H CHANGE"]</th>
-                    <th>@SR["BUY PRICE EOS"]</th>
-                    <th>@SR["SELL PRICE EOS"]</th>
-                    <th></th>
+                    <th>@SR["PRICE"]</th>
+                    <th>@SR["EXCHANGE VIA DEX"]</th>
+                    <th>@SR["EXCHANGE VIA CONTRACT"]</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var x in Model)
                 {
-                    <tr>
-                        <td>
-                            <img src="/token/@(x.Id).png" class="table-icon" />
-                            <div class="table-currency">
-                                <a class="table-currency-symbol" asp-action="Index" asp-controller="Token" asp-route-id="@x.Id">@x.Id</a>
-                                <div class="table-currency-name">@x.Token.Name</div>
-                            </div>
-                        </td>
-                        <td>@(x.Token.CurveId ?? SR["Unknown"])</td>
-                        <td>@((x.Change * 100.0).ToString("0.0000"))%</td>
-                        <td>@x.BuyPrice.ToString("0.0000") EOS</td>
-                        <td>@x.SellPrice.ToString("0.0000") EOS</td>
-                        <td class="table-currency-exchange">
-                            <a asp-action="Buy" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">Buy</a>
-                            <a asp-action="Sell" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">Sell</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <img src="/token/@(x.Id).png" class="table-icon" />
+                        <div class="table-currency">
+                            <a class="table-currency-symbol" asp-action="Index" asp-controller="Token" asp-route-id="@x.Id">@x.Id</a>
+                            <div class="table-currency-name">@x.Name</div>
+                        </div>
+                    </td>
+                    <td>@x.Protocol</td>
+                    @if (x.Change > 0)
+                    {
+                        <td class="green">@((x.Change * 100.0).ToString("0.0000"))%</td>
+                        <td class="green">@x.Price.ToString("0.0000") EOS</td>
+                    }
+                    else
+                    {
+                        <td class="red">@((x.Change * 100.0).ToString("0.0000"))%</td>
+                        <td class="red">@x.Price.ToString("0.0000") EOS</td>
+                    }
+                    <td>
+                        @if (x.ExchangeInDex)
+                        {
+                            <a asp-action="Exchange" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">@SR["Exchange"]</a>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                    <td>
+                        @if (x.ExchangeInContract)
+                        {
+                            <a asp-action="Exchange" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">@SR["Exchange"]</a>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>

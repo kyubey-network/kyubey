@@ -1,9 +1,11 @@
 ﻿<header class="masthead text-center text-white">
     <div class="masthead-content">
         <div class="container">
-            <h1 class="masthead-heading mb-0">Give the Power</h1>
-            <h2 class="masthead-subheading mb-0">Back to Users</h2>
-            <a href="~/KBY.pdf" class="btn btn-primary btn-xl rounded-pill mt-5" target="_blank">@SR["White Paper"]</a>
+            <div class="home-container">
+                <h1>@SR["Kyubey Exchange"]</h1>
+                <div class="home-description">@SR["The first open source decentralized EOS based exchange in the world"]</div>
+                <div class="home-description">@SR["Fee free to exchange"] / @SR["Real decentralized"] / @SR["Open source"]</div>
+            </div>
         </div>
     </div>
     <div class="bg-circle-1 bg-circle"></div>
@@ -13,7 +15,7 @@
 </header>
 
 <section style="text-align: center">
-    <a class="area-item @(ViewBag.Current == "home-kyubey" ? "active" : "")" asp-action="Index">@SR["Kyubey"]</a>
-    <a class="area-item @(ViewBag.Current == "home-otc" ? "active" : "")" asp-action="OTC">@SR["DEX"]</a>
-    <a href="https://ibo.kyubey.network" target="_blank" class="area-item">@SR["IBO"]</a>
+    <form method="get" class="token-search">
+        <input type="text" name="token" value="@ViewBag.SearchToken" class="token-search-textbox" placeholder="@SR["Token"]" /><input type="submit" value="@SR["Search"]" class="token-search-button" />
+    </form>
 </section>

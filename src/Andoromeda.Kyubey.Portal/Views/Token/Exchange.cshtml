@@ -137,7 +137,10 @@
                     </div>
                     <div class="row exchange-panel">
                         <div class="col-md-6">
-                            <div class="exchange-buy-text">@SR["Buy {0}", Model.Id]</div>
+                            <div class="exchange-buy-text">
+                                <span>@SR["Buy {0}", Model.Id]</span>
+                                <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ eosBalance.toFixed(4) }} EOS</span>
+                            </div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Price"]</div>
                                 <div class="col-sm-8" v-if="control.publish === 'limit'">
@@ -158,6 +161,19 @@
                                     <div class="exchange-textbox-unit">@Model.Id</div>
                                 </div>
                             </div>
+
+                            <div class="row"  v-if="control.publish === 'limit'">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8">
+                                    <div class="exchange-percentage-outer">
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                 <div class="col-sm-8">
@@ -165,12 +181,28 @@
                                     <div class="exchange-textbox-unit">EOS</div>
                                 </div>
                             </div>
+
+                            <div class="row" v-if="control.publish !== 'limit'">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8">
+                                    <div class="exchange-percentage-outer">
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
+                                        <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div>
                                 <input type="button" class="btn btn-primary btn-full-width" value="@SR["Buy {0}", Model.Id]" v-on:click="buy()" />
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="exchange-sell-text">@SR["Sell {0}", Model.Id]</div>
+                            <div class="exchange-sell-text">
+                                <span>@SR["Sell {0}", Model.Id]</span>
+                                <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ tokenBalance.toFixed(4) }} @Model.Id</span>
+                            </div>
                             <div class="row exchange-form-input">
                                 <div class="col-sm-4 exchange-label">@SR["Price"]</div>
                                 <div class="col-sm-8" v-if="control.publish === 'limit'">
@@ -191,6 +223,19 @@
                                     <div class="exchange-textbox-unit">@Model.Id</div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-8">
+                                    <div class="exchange-percentage-outer">
+                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.25)">25%</a>
+                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.5)">50%</a>
+                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.75)">75%</a>
+                                        <a class="exchange-percentage" v-on:click="setSellTotal(1)">100%</a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row exchange-form-input" v-if="control.publish === 'limit'">
                                 <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                 <div class="col-sm-8">
@@ -263,7 +308,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="isSignedIn">
             <div class="col-md-12">
                 <div class="card">
                     <div class="exchange-chart-menu">
@@ -427,7 +472,10 @@
             pairs: [],
             contractBuy: null,
             contractSell: null,
-            fav: []
+            fav: [],
+            eosBalance: 0.0000,
+            tokenBalance: 0.0000,
+            isSignedIn: false
         },
         watch: {
             'inputs.buyPrice': function (val) {
@@ -473,8 +521,16 @@
             deep: true
         },
         created: function () {
+            var self = this;
             this.init();
             setInterval(this.init, 1000 * 60);
+            setInterval(function () {
+                if (account && account.name) {
+                    self.isSignedIn = true;
+                } else {
+                    self.isSignedIn = false;
+                }
+            }, 5000);
         },
         methods: {
             init: function () {
@@ -484,6 +540,7 @@
                 this.getHistoryOrders();
                 this.getContractPrices();
                 this.getPairs();
+                this.getBalances();
             },
             moment: function (time) {
                 return moment(time);
@@ -547,6 +604,22 @@
                     self.pairs = data;
                 });
             },
+            getBalances: function () {
+                if (account && account.name) {
+                    this.getBalance(account.name, 'EOS');
+                    this.getBalance(account.name, '@Model.Id');
+                }
+            },
+            getBalance: function (account_name, token) {
+                var self = this;
+                $.get(`/token/${account_name}/balance/${token}`, {}, function (data) {
+                    if (token === 'EOS') {
+                        self.eosBalance = parseFloat(data);
+                    } else {
+                        self.tokenBalance = parseFloat(data);
+                    }
+                });
+            },
             redirectToToken: function (id) {
                 window.location = `/token/${id}/exchange`;
             },
@@ -555,6 +628,12 @@
                 this.inputs.buyAmount = amount;
                 this.inputs.sellPrice = price;
                 this.inputs.sellAmount = amount;
+            },
+            setBuyTotal: function (rate) {
+                this.inputs.buyTotal = this.eosBalance * parseFloat(rate);
+            },
+            setSellTotal: function (rate) {
+                this.inputs.sellAmount = this.tokenBalance * parseFloat(rate);
             },
             buy: function () {
                 var self = this;
@@ -580,6 +659,7 @@
                         .then(() => {
                             self.getCurrentOrders();
                             self.getOrders();
+                            self.getBalances();
                             self.buyOrders.push({ unit: price, amount: bid, total: ask });
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
@@ -602,6 +682,7 @@
                         .then(() => {
                             self.getCurrentOrders();
                             self.getOrders();
+                            self.getBalances();
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(error => {
@@ -636,6 +717,7 @@
                         .then(() => {
                             self.getCurrentOrders();
                             self.getOrders();
+                            self.getBalances();
                             self.sellOrders.push({ unit: price, amount: bid, total: ask });
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
@@ -658,6 +740,7 @@
                         .then(() => {
                             self.getCurrentOrders();
                             self.getOrders();
+                            self.getBalances();
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(error => {

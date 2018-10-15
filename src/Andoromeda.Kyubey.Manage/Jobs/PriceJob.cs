@@ -67,7 +67,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
 
                             if (k24h != 0.0)
                             {
-                                x.Change = (x.BuyPrice - k24h) / k24h;
+                                x.Change = x.BuyPrice / k24h - 1.0;
                             }
                             else
                             {

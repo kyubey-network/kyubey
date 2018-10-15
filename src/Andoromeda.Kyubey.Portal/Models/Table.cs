@@ -2,8 +2,12 @@
 
 namespace Andoromeda.Kyubey.Portal.Models
 {
-    public class Table
+    public class Table : Table<IDictionary<string, object>>
     {
-        public IEnumerable<IDictionary<string, object>> rows { get; set; }
+    }
+
+    public class Table<T>
+    {
+        public IEnumerable<T> rows { get; set; }
     }
 }

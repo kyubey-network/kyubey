@@ -282,6 +282,33 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
         }
 
+        [HttpGet("[controller]/{account}/balance/{token}")]
+        public async Task<IActionResult> AccountBalance(string token, string account, CancellationToken cancellationToken = default)
+        {
+            var t = DB.Tokens.Single(x => x.Id == token);
+            using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
+            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
+            {
+                code = t.Contract,
+                table = "accounts",
+                scope = account,
+                json = true,
+                limit = 65535
+            }))
+            {
+                var result = await response.Content.ReadAsAsync<Table>();
+                var balance = result.rows.Select(x => x.Values.ToString()).Where(x => x.EndsWith(" " + token)).FirstOrDefault();
+                if (string.IsNullOrEmpty(balance))
+                {
+                    return Content("0.0000");
+                }
+                else
+                {
+                    return Content(balance.Split(' ')[0]);
+                }
+            }
+        }
+
         [HttpGet("[controller]/{account}/history-order")]
         public async Task<IActionResult> HistoryOrder(string id, string account, bool only = false, CancellationToken token = default)
         {
