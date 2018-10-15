@@ -213,23 +213,30 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 var txt = await response.Content.ReadAsStringAsync();
                 var table = await response.Content.ReadAsAsync<OrderTable<UserOrder>>();
-                var tasks = table.rows.Select(x => GetOrder(client, x.orderid, x.symbol, token));
-                await Task.WhenAll(tasks);
-                var ret = new List<CurrentOrder>(tasks.Count());
-                foreach(var x in tasks)
+                var ret = new List<CurrentOrder>(table.rows.Count());
+                foreach (var x in table.rows)
                 {
-                    var result = await x;
-                    if (result != null)
+                    ret.Add(new CurrentOrder
                     {
-                        ret.Add(result);
-                    }
+                        id = Math.Abs(x.orderid),
+                        token = x.symbol,
+                        type = x.orderid > 0 ? "Buy" : "Sell"
+                    });
                 }
                 return Json(ret);
             }
         }
 
-        private async Task<CurrentOrder> GetOrder(HttpClient client, long id, string token, CancellationToken cancellationToken = default)
+        [HttpGet("[controller]/{account}/order-detail")]
+        public async Task<IActionResult> OrderDetail(long id, string token, CancellationToken cancellationToken = default)
         {
+            var order = await GetOrderAsync(id, token, cancellationToken);
+            return Json(order);
+        }
+
+        private async Task<CurrentOrder> GetOrderAsync(long id, string token, CancellationToken cancellationToken = default)
+        {
+            using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
             using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
                 code = Configuration["Contracts:Otc"],
