@@ -199,25 +199,30 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{account}/current-order")]
-        public async Task<IActionResult> CurrentOrder(string id, string account, bool only = false, CancellationToken token = default)
+        public async Task<IActionResult> CurrentOrder(string account, bool only = false, CancellationToken token = default)
         {
             using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
             using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = Configuration["Contract:Otc"],
+                code = Configuration["Contracts:Otc"],
                 scope = account,
                 table = "userorder",
                 json = true,
                 limit = 65535
             }))
             {
+                var txt = await response.Content.ReadAsStringAsync();
                 var table = await response.Content.ReadAsAsync<OrderTable<UserOrder>>();
                 var tasks = table.rows.Select(x => GetOrder(client, x.orderid, x.symbol, token));
                 await Task.WhenAll(tasks);
                 var ret = new List<CurrentOrder>(tasks.Count());
                 foreach(var x in tasks)
                 {
-                    ret.Add(await x);
+                    var result = await x;
+                    if (result != null)
+                    {
+                        ret.Add(result);
+                    }
                 }
                 return Json(ret);
             }
@@ -227,7 +232,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         {
             using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = Configuration["Contract:Otc"],
+                code = Configuration["Contracts:Otc"],
                 scope = token,
                 table = id > 0 ? "buyorder" : "sellorder",
                 json = true,
@@ -238,32 +243,35 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 var table = await response.Content.ReadAsAsync<OrderTable<Models.DexOrder>>();
                 var order = table.rows.FirstOrDefault();
-                if (id > 0)
+                try
                 {
-                    return new CurrentOrder
+                    if (id > 0)
                     {
-                        id = Math.Abs(id),
-                        token = token,
-                        amount = Convert.ToDouble(order.ask.Split(' ')[0]),
-                        price = order.unit_price / 10000.0,
-                        time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
-                        type = "Buy"
-                    };
+                        return new CurrentOrder
+                        {
+                            id = Math.Abs(id),
+                            token = token,
+                            amount = Convert.ToDouble(order.ask.Split(' ')[0]),
+                            price = order.unit_price / 10000.0,
+                            time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
+                            type = "Buy"
+                        };
 
-                }
-                else
-                {
-                    return new CurrentOrder
+                    }
+                    else
                     {
-                        id = Math.Abs(id),
-                        token = token,
-                        amount = Convert.ToDouble(order.bid.Split(' ')[0]),
-                        price = order.unit_price / 10000.0,
-                        time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
-                        type = "Sell"
-                    };
-
+                        return new CurrentOrder
+                        {
+                            id = Math.Abs(id),
+                            token = token,
+                            amount = Convert.ToDouble(order.bid.Split(' ')[0]),
+                            price = order.unit_price / 10000.0,
+                            time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
+                            type = "Sell"
+                        };
+                    }
                 }
+                catch { return null; }
             }
         }
 
