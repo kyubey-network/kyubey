@@ -282,7 +282,7 @@
                                     <tr v-for="x in pairs" v-on:click="redirectToToken(x.id)">
                                         <td><i class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i> {{ x.id }}</td>
                                         <td>{{ parseFloat(x.price).toFixed(4) }}</td>
-                                        <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change / 100.0).toFixed(2) }}%</td>
+                                        <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change / 100.0) >= 0 ? '+' : '' }}{{ parseFloat(x.change / 100.0).toFixed(2) }}%</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -304,7 +304,7 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="x in recentTransactions">
-                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td>{{ parseFloat(x.price / 10000.0).toFixed(4) }}</td>
                                         <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                         <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
                                     </tr>

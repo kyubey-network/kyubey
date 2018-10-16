@@ -178,7 +178,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 return Content("0.0000");
             }
-            return Content(last.UnitPrice.ToString());
+            return Content((last.UnitPrice / 10000.0).ToString("0.0000"));
         }
 
         [HttpGet("[controller]/{id}/recent-transaction")]

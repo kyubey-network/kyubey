@@ -44,9 +44,6 @@
     <Content Update="Views\Token\Sell.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Home\OTC.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\OTC\Publish.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

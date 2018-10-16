@@ -32,12 +32,12 @@
                     <td class="mobile-hidden">@x.Protocol</td>
                     @if (x.Change >= 0)
                     {
-                        <td class="green">@((x.Change * 100.0).ToString("0.0000"))%</td>
+                        <td class="green">+@((x.Change * 100.0).ToString("0.00"))%</td>
                         <td class="green">@x.Price.ToString("0.0000") EOS</td>
                     }
                     else
                     {
-                        <td class="red">@((x.Change * 100.0).ToString("0.0000"))%</td>
+                        <td class="red">@((x.Change * 100.0).ToString("0.00"))%</td>
                         <td class="red">@x.Price.ToString("0.0000") EOS</td>
                     }
                     <td class="mobile-hidden">
