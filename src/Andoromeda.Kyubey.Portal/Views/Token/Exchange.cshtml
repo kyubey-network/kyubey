@@ -14,7 +14,8 @@
         }
     }
 }
-@await Html.PartialAsync("_TokenHeader")
+<script src="~/js/eos.js"></script>
+<script src="~/js/common.js"></script>
 <script src="~/js/moment.js"></script>
 <script src="~/js/echarts.js"></script>
 <script src="~/js/d3.min.js"></script>
@@ -26,281 +27,349 @@
     <script src="/token/@(Model.Id).js"></script>
 }
 <script src="~/js/vue.js"></script>
-<section id="app">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card exchange-order-card">
-                    <div class="exchange-orders-header">
-                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'mixed' }" v-on:click="control.order = 'mixed'"><img src="~/img/order-mixed.png" /></a>
-                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'buy' }" v-on:click="control.order = 'buy'"><img src="~/img/order-buy.png" /></a>
-                        <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'sell' }" v-on:click="control.order = 'sell'"><img src="~/img/order-sell.png" /></a>
+
+<div id="app">
+    @await Html.PartialAsync("_TokenHeader")
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card exchange-order-card">
+                        <div class="exchange-orders-header">
+                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'mixed' }" v-on:click="control.order = 'mixed'"><img src="~/img/order-mixed.png" /></a>
+                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'buy' }" v-on:click="control.order = 'buy'"><img src="~/img/order-buy.png" /></a>
+                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'sell' }" v-on:click="control.order = 'sell'"><img src="~/img/order-sell.png" /></a>
+                        </div>
+                        <table class="exchange-orders-table" id="sell-order-table" v-if="control.order !== 'buy'">
+                            <thead>
+                                <tr>
+                                    <th>@SR["Unit Price"] (EOS)</th>
+                                    <th>@SR["Amount"] (@Model.Id)</th>
+                                    <th>@SR["Total"] (EOS)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="x in sellOrders.sort((a,b) => a < b)" v-on:click="setPublish(x.unit, x.amount)">
+                                    <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.total).toFixed(4) }}</td>
+                                </tr>
+                                <tr v-if="sellOrders.length === 0">
+                                    <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="exchange-orders-split">
+                            {{ lastMatched }}
+                        </div>
+                        <table class="exchange-orders-table" id="buy-order-table" v-if="control.order !== 'sell'">
+                            <thead v-bind:class="{ 'hidden': control.order !== 'buy' }">
+                                <tr>
+                                    <th>@SR["Unit Price"] (EOS)</th>
+                                    <th>@SR["Amount"] (@Model.Id)</th>
+                                    <th>@SR["Total"] (EOS)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="x in buyOrders.sort((a,b) => a > b)" v-on:click="setPublish(x.unit, x.amount)">
+                                    <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.total).toFixed(4) }}</td>
+                                </tr>
+                                <tr v-if="buyOrders.length === 0">
+                                    <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="exchange-orders-table" id="sell-order-table" v-if="control.order !== 'buy'">
-                        <thead>
-                            <tr>
-                                <th>@SR["Unit Price"] (EOS)</th>
-                                <th>@SR["Amount"] (@Model.Id)</th>
-                                <th>@SR["Total"] (EOS)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="x in sellOrders.sort((a,b) => a < b)" v-on:click="setPublish(x.unit, x.amount)">
-                                <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
-                                <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
-                                <td>{{ parseFloat(x.total).toFixed(4) }}</td>
-                            </tr>
-                            <tr v-if="sellOrders.length === 0">
-                                <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="exchange-orders-split">
-                        {{ lastMatched }}
-                    </div>
-                    <table class="exchange-orders-table" id="buy-order-table" v-if="control.order !== 'sell'">
-                        <thead v-bind:class="{ 'hidden': control.order !== 'buy' }">
-                            <tr>
-                                <th>@SR["Unit Price"] (EOS)</th>
-                                <th>@SR["Amount"] (@Model.Id)</th>
-                                <th>@SR["Total"] (EOS)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="x in buyOrders.sort((a,b) => a > b)" v-on:click="setPublish(x.unit, x.amount)">
-                                <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
-                                <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
-                                <td>{{ parseFloat(x.total).toFixed(4) }}</td>
-                            </tr>
-                            <tr v-if="buyOrders.length === 0">
-                                <td colspan="3" style="text-align: center">@SR["No more orders"]</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card exchange-chart-card">
-                    <div class="exchange-chart-menu">
-                        <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'k' }" v-on:click="control.chart = 'k'">@SR["Candlestick"]</a>
+                <div class="col-md-6">
+                    <div class="card exchange-chart-card">
+                        <div class="exchange-chart-menu">
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'k' }" v-on:click="control.chart = 'k'">@SR["Candlestick"]</a>
+                            @if (curve != null)
+                            {
+                                <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'curve' }" v-on:click="control.chart = 'curve'">@SR["Curve"] (@curve.Id)</a>
+                            }
+                        </div>
+                        <div v-show="control.chart === 'k'">
+                            <div id="chart" style="margin: 15px; height:350px; width: 100%"></div>
+                        </div>
                         @if (curve != null)
                         {
-                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.chart === 'curve' }" v-on:click="control.chart = 'curve'">@SR["Curve"] (@curve.Id)</a>
+                            <div v-show="control.chart === 'curve'" class="row curve-panel">
+                                <div class="col-md-3 curve-panel-left">
+                                    <ul class="curve-panel-list">
+                                        <li v-bind:class="{ 'active': control.curve === 'price-balance' }" v-on:click="control.curve = 'price-balance'"><a>@SR["Price - Balance"]</a></li>
+                                        <li v-bind:class="{ 'active': control.curve === 'price-supply' }" v-on:click="control.curve = 'price-supply'"><a>@SR["Price - Supply"]</a></li>
+                                        <li v-bind:class="{ 'active': control.curve === 'supply-balance' }" v-on:click="control.curve = 'supply-balance'"><a>@SR["Supply - Balance"]</a></li>
+                                        <li v-bind:class="{ 'active': control.curve === 'balance-supply' }" v-on:click="control.curve = 'balance-supply'"><a>@SR["Balance - Supply"]</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-9 curve-panel-right">
+                                    @if (!string.IsNullOrEmpty(curve.PriceBalanceFunction))
+                                    {
+                                        <div id="chartPriceBalance" v-show="control.curve === 'price-balance'"></div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(curve.PriceSupplyFunction))
+                                    {
+                                        <div id="chartPriceSupply" v-show="control.curve === 'price-supply'"></div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(curve.SupplyBalanceFunction))
+                                    {
+                                        <div id="chartSupplyBalance" v-show="control.curve === 'supply-balance'"></div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(curve.BalanceSupplyFunction))
+                                    {
+                                        <div id="chartBalanceSupply" v-show="control.curve === 'balance-supply'"></div>
+                                    }
+                                </div>
+                            </div>
                         }
                     </div>
-                    <div v-show="control.chart === 'k'">
-                        <div id="chart" style="margin: 15px; height:350px; width: 100%"></div>
-                    </div>
-                    @if (curve != null)
-                    {
-                        <div v-show="control.chart === 'curve'" class="row curve-panel">
-                            <div class="col-md-3 curve-panel-left">
-                                <ul class="curve-panel-list">
-                                    <li v-bind:class="{ 'active': control.curve === 'price-balance' }" v-on:click="control.curve = 'price-balance'"><a>@SR["Price - Balance"]</a></li>
-                                    <li v-bind:class="{ 'active': control.curve === 'price-supply' }" v-on:click="control.curve = 'price-supply'"><a>@SR["Price - Supply"]</a></li>
-                                    <li v-bind:class="{ 'active': control.curve === 'supply-balance' }" v-on:click="control.curve = 'supply-balance'"><a>@SR["Supply - Balance"]</a></li>
-                                    <li v-bind:class="{ 'active': control.curve === 'balance-supply' }" v-on:click="control.curve = 'balance-supply'"><a>@SR["Balance - Supply"]</a></li>
-                                </ul>
+                    <div class="card exchange-submit-card">
+                        <div class="exchange-chart-menu">
+                            @if (otc != null)
+                            {
+                                <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'limit' }" v-on:click="control.publish = 'limit'">@SR["Limit Order"]</a>
+                                <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'market' }" v-on:click="control.publish = 'market'">@SR["Market Order"]</a>
+                            }
+                            @if (bancor != null)
+                            {
+                                <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'contract' }" v-on:click="control.publish = 'contract'">@SR["Exchange Via Contract"]</a>
+                            }
+                        </div>
+                        <div class="row exchange-panel">
+                            <div class="col-md-6">
+                                <div class="exchange-buy-text">
+                                    <span>@SR["Buy {0}", Model.Id]</span>
+                                    <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ eosBalance.toFixed(4) }} EOS</span>
+                                </div>
+                                <div class="row exchange-form-input">
+                                    <div class="col-sm-4 exchange-label">@SR["Price"]</div>
+                                    <div class="col-sm-8" v-if="control.publish === 'limit'">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.buyPrice" />
+                                        <div class="exchange-textbox-unit">EOS</div>
+                                    </div>
+                                    <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
+                                        @SR["Best Matches"]
+                                    </div>
+                                    <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
+                                        {{ contractBuy }}
+                                    </div>
+                                </div>
+                                <div class="row exchange-form-input" v-if="control.publish === 'limit'">
+                                    <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.buyAmount" />
+                                        <div class="exchange-textbox-unit">@Model.Id</div>
+                                    </div>
+                                </div>
+
+                                <div class="row" v-if="control.publish === 'limit'">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <div class="exchange-percentage-outer">
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row exchange-form-input">
+                                    <div class="col-sm-4 exchange-label">@SR["Total"]</div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.buyTotal" />
+                                        <div class="exchange-textbox-unit">EOS</div>
+                                    </div>
+                                </div>
+
+                                <div class="row" v-if="control.publish !== 'limit'">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <div class="exchange-percentage-outer">
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
+                                            <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <input v-if="isSignedIn" type="button" class="btn btn-primary btn-full-width exchange-button" value="@SR["Buy {0}", Model.Id]" v-on:click="buy()" />
+                                    <input v-else type="button" class="btn btn-primary btn-full-width exchange-button" value="@SR["Login with Scatter"]" v-on:click="login()" />
+                                </div>
                             </div>
-                            <div class="col-md-9 curve-panel-right">
-                                @if (!string.IsNullOrEmpty(curve.PriceBalanceFunction))
-                                {
-                                    <div id="chartPriceBalance" v-show="control.curve === 'price-balance'"></div>
-                                }
-                                @if (!string.IsNullOrEmpty(curve.PriceSupplyFunction))
-                                {
-                                    <div id="chartPriceSupply" v-show="control.curve === 'price-supply'"></div>
-                                }
-                                @if (!string.IsNullOrEmpty(curve.SupplyBalanceFunction))
-                                {
-                                    <div id="chartSupplyBalance" v-show="control.curve === 'supply-balance'"></div>
-                                }
-                                @if (!string.IsNullOrEmpty(curve.BalanceSupplyFunction))
-                                {
-                                    <div id="chartBalanceSupply" v-show="control.curve === 'balance-supply'"></div>
-                                }
+                            <div class="col-md-6">
+                                <div class="exchange-sell-text">
+                                    <span>@SR["Sell {0}", Model.Id]</span>
+                                    <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ tokenBalance.toFixed(4) }} @Model.Id</span>
+                                </div>
+                                <div class="row exchange-form-input">
+                                    <div class="col-sm-4 exchange-label">@SR["Price"]</div>
+                                    <div class="col-sm-8" v-if="control.publish === 'limit'">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.sellPrice" />
+                                        <div class="exchange-textbox-unit">EOS</div>
+                                    </div>
+                                    <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
+                                        @SR["Best Matches"]
+                                    </div>
+                                    <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
+                                        {{ contractSell }}
+                                    </div>
+                                </div>
+                                <div class="row exchange-form-input">
+                                    <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.sellAmount" />
+                                        <div class="exchange-textbox-unit">@Model.Id</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-8">
+                                        <div class="exchange-percentage-outer">
+                                            <a class="exchange-percentage" v-on:click="setSellTotal(0.25)">25%</a>
+                                            <a class="exchange-percentage" v-on:click="setSellTotal(0.5)">50%</a>
+                                            <a class="exchange-percentage" v-on:click="setSellTotal(0.75)">75%</a>
+                                            <a class="exchange-percentage" v-on:click="setSellTotal(1)">100%</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row exchange-form-input" v-if="control.publish === 'limit'">
+                                    <div class="col-sm-4 exchange-label">@SR["Total"]</div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="exchange-textbox" v-model="inputs.sellTotal" />
+                                        <div class="exchange-textbox-unit">EOS</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <input v-if="isSignedIn" type="button" class="btn btn-primary btn-full-width exchange-button" value="@SR["Sell {0}", Model.Id]" v-on:click="sell()" />
+                                    <input v-else type="button" class="btn btn-primary btn-full-width exchange-button" value="@SR["Login with Scatter"]" v-on:click="login()" />
+                                </div>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
-                <div class="card exchange-submit-card">
-                    <div class="exchange-chart-menu">
-                        @if (otc != null)
-                        {
-                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'limit' }" v-on:click="control.publish = 'limit'">@SR["Limit Order"]</a>
-                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'market' }" v-on:click="control.publish = 'market'">@SR["Market Order"]</a>
-                        }
-                        @if (bancor != null)
-                        {
-                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'contract' }" v-on:click="control.publish = 'contract'">@SR["Exchange Via Contract"]</a>
-                        }
-                    </div>
-                    <div class="row exchange-panel">
-                        <div class="col-md-6">
-                            <div class="exchange-buy-text">
-                                <span>@SR["Buy {0}", Model.Id]</span>
-                                <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ eosBalance.toFixed(4) }} EOS</span>
-                            </div>
-                            <div class="row exchange-form-input">
-                                <div class="col-sm-4 exchange-label">@SR["Price"]</div>
-                                <div class="col-sm-8" v-if="control.publish === 'limit'">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.buyPrice" />
-                                    <div class="exchange-textbox-unit">EOS</div>
+                <div class="col-md-3">
+                    <div class="card exchange-pair-card">
+                        <div class="exchange-pair-menu">
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <a class="exchange-pair-menu-item active"><i class="fa fa-list"></i> @SR["All"]</a>
+                                    <a class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
                                 </div>
-                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
-                                    @SR["Best Matches"]
+                                <div class="col-lg-5">
+                                    <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" />
                                 </div>
-                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
-                                    {{ contractBuy }}
-                                </div>
-                            </div>
-                            <div class="row exchange-form-input" v-if="control.publish === 'limit'">
-                                <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.buyAmount" />
-                                    <div class="exchange-textbox-unit">@Model.Id</div>
-                                </div>
-                            </div>
-
-                            <div class="row"  v-if="control.publish === 'limit'">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-8">
-                                    <div class="exchange-percentage-outer">
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row exchange-form-input">
-                                <div class="col-sm-4 exchange-label">@SR["Total"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.buyTotal" />
-                                    <div class="exchange-textbox-unit">EOS</div>
-                                </div>
-                            </div>
-
-                            <div class="row" v-if="control.publish !== 'limit'">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-8">
-                                    <div class="exchange-percentage-outer">
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.25)">25%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.5)">50%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(0.75)">75%</a>
-                                        <a class="exchange-percentage" v-on:click="setBuyTotal(1)">100%</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Buy {0}", Model.Id]" v-on:click="buy()" />
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="exchange-sell-text">
-                                <span>@SR["Sell {0}", Model.Id]</span>
-                                <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ tokenBalance.toFixed(4) }} @Model.Id</span>
-                            </div>
-                            <div class="row exchange-form-input">
-                                <div class="col-sm-4 exchange-label">@SR["Price"]</div>
-                                <div class="col-sm-8" v-if="control.publish === 'limit'">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.sellPrice" />
-                                    <div class="exchange-textbox-unit">EOS</div>
-                                </div>
-                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'market'">
-                                    @SR["Best Matches"]
-                                </div>
-                                <div class="col-sm-8 exchange-text" v-if="control.publish === 'contract'">
-                                    {{ contractSell }}
-                                </div>
-                            </div>
-                            <div class="row exchange-form-input">
-                                <div class="col-sm-4 exchange-label">@SR["Amount"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.sellAmount" />
-                                    <div class="exchange-textbox-unit">@Model.Id</div>
-                                </div>
-                            </div>
+                        <div class="exchange-pair-table-outer">
+                            <table class="exchange-pair-table">
+                                <thead>
+                                    <tr>
+                                        <th>@SR["Token"]</th>
+                                        <th>@SR["Last Price"]</th>
+                                        <th>@SR["Change"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="x in pairs" v-on:click="redirectToToken(x.id)">
+                                        <td><i class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i> {{ x.id }}</td>
+                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change / 100.0).toFixed(2) }}%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                            <div class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-8">
-                                    <div class="exchange-percentage-outer">
-                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.25)">25%</a>
-                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.5)">50%</a>
-                                        <a class="exchange-percentage" v-on:click="setSellTotal(0.75)">75%</a>
-                                        <a class="exchange-percentage" v-on:click="setSellTotal(1)">100%</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row exchange-form-input" v-if="control.publish === 'limit'">
-                                <div class="col-sm-4 exchange-label">@SR["Total"]</div>
-                                <div class="col-sm-8">
-                                    <input type="text" class="exchange-textbox" v-model="inputs.sellTotal" />
-                                    <div class="exchange-textbox-unit">EOS</div>
-                                </div>
-                            </div>
-                            <div>
-                                <input type="button" class="btn btn-primary btn-full-width" value="@SR["Sell {0}", Model.Id]" v-on:click="sell()" />
-                            </div>
+                    <div class="card exchange-transaction-card">
+                        <div class="exchange-transaction-menu">
+                            @SR["Recent Transactions"]
+                        </div>
+                        <div class="exchange-transaction-table-outer">
+                            <table class="exchange-transaction-table">
+                                <thead>
+                                    <tr>
+                                        <th>@SR["Price"] (EOS)</th>
+                                        <th>@SR["Amount"] (@Model.Id)</th>
+                                        <th>@SR["Time"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="x in recentTransactions">
+                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
+                                        <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card exchange-pair-card">
-                    <div class="exchange-pair-menu">
-                        <div class="row">
-                            <div class="col-lg-7">
-                                <a class="exchange-pair-menu-item active"><i class="fa fa-list"></i> @SR["All"]</a>
-                                <a class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
-                            </div>
-                            <div class="col-lg-5">
-                                <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" />
-                            </div>
+            <div class="row" v-if="isSignedIn">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="exchange-chart-menu">
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'current' }" v-on:click="control.my = 'current'">@SR["Opening Orders"]</a>
+                            <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'history' }" v-on:click="control.my = 'history'">@SR["History Orders"]</a>
                         </div>
-                    </div>
-                    <div class="exchange-pair-table-outer">
-                        <table class="exchange-pair-table">
+                        <table class="exchange-order-state-table" v-if="control.my === 'current'">
                             <thead>
                                 <tr>
                                     <th>@SR["Token"]</th>
-                                    <th>@SR["Last Price"]</th>
-                                    <th>@SR["Change"]</th>
+                                    <th>@SR["Type"]</th>
+                                    <th>@SR["Unit price"]</th>
+                                    <th>@SR["Amount"]</th>
+                                    <th>@SR["Action"]</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in pairs" v-on:click="redirectToToken(x.id)">
-                                    <td><i class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i> {{ x.id }}</td>
-                                    <td>{{ parseFloat(x.price).toFixed(4) }}</td>
-                                    <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change / 100.0).toFixed(2) }}%</td>
+                                <tr v-for="x in currentOrders">
+                                    <td>{{ x.token }}</td>
+                                    <td>{{ x.type }}</td>
+                                    <td>{{ x.price || '@SR["Loading..."]' }} </td>
+                                    <td>{{ x.amount || '@SR["Loading..."]' }}</td>
+                                    <td>
+                                        <a v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
+                                    </td>
+                                </tr>
+                                <tr v-if="currentOrders.length === 0">
+                                    <td colspan="5">@SR["No more data"]</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <div class="card exchange-transaction-card">
-                    <div class="exchange-transaction-menu">
-                        @SR["Recent Transactions"]
-                    </div>
-                    <div class="exchange-transaction-table-outer">
-                        <table class="exchange-transaction-table">
+                        <table class="exchange-order-state-table" v-if="control.my === 'history'">
                             <thead>
                                 <tr>
-                                    <th>@SR["Price"] (EOS)</th>
-                                    <th>@SR["Amount"] (@Model.Id)</th>
-                                    <th>@SR["Time"]</th>
+                                    <th>@SR["Token"]</th>
+                                    <th>@SR["Bidder"]</th>
+                                    <th>@SR["Asker"]</th>
+                                    <th>@SR["Matched at"]</th>
+                                    <th>@SR["Unit price"]</th>
+                                    <th>@SR["Amount"]</th>
+                                    <th>@SR["Total"]</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in recentTransactions">
-                                    <td>{{ parseFloat(x.price).toFixed(4) }}</td>
-                                    <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
-                                    <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
+                                <tr v-for="x in historyOrders">
+                                    <td>{{ x.tokenId }}</td>
+                                    <td>{{ x.bidder }}</td>
+                                    <td>{{ x.asker }}</td>
+                                    <td>{{ x.time }}</td>
+                                    <td>{{ x.unitPrice }} EOS</td>
+                                    <td>{{ parseFloat(x.ask).toFixed(4) }} {{ x.tokenId }}</td>
+                                    <td>{{ parseFloat(x.bid).toFixed(4) }} EOS</td>
+                                </tr>
+                                <tr v-if="historyOrders.length === 0">
+                                    <td colspan="7">@SR["No more data"]</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -308,136 +377,80 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-if="isSignedIn">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="exchange-chart-menu">
-                        <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'current' }" v-on:click="control.my = 'current'">@SR["Opening Orders"]</a>
-                        <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.my === 'history' }" v-on:click="control.my = 'history'">@SR["History Orders"]</a>
-                    </div>
-                    <table class="exchange-order-state-table" v-if="control.my === 'current'">
-                        <thead>
-                            <tr>
-                                <th>@SR["Token"]</th>
-                                <th>@SR["Type"]</th>
-                                <th>@SR["Unit price"]</th>
-                                <th>@SR["Amount"]</th>
-                                <th>@SR["Action"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="x in currentOrders">
-                                <td>{{ x.token }}</td>
-                                <td>{{ x.type }}</td>
-                                <td>{{ x.price || '@SR["Loading..."]' }} </td>
-                                <td>{{ x.amount || '@SR["Loading..."]' }}</td>
-                                <td>
-                                    <a v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="exchange-order-state-table" v-if="control.my === 'history'">
-                        <thead>
-                            <tr>
-                                <th>@SR["Token"]</th>
-                                <th>@SR["Bidder"]</th>
-                                <th>@SR["Asker"]</th>
-                                <th>@SR["Matched at"]</th>
-                                <th>@SR["Unit price"]</th>
-                                <th>@SR["Amount"]</th>
-                                <th>@SR["Total"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="x in currentOrders">
-                                <td>{{ x.tokenId }}</td>
-                                <td>{{ x.bidder }}</td>
-                                <td>{{ x.asker }}</td>
-                                <td>{{ x.time }}</td>
-                                <td>{{ x.unitPrice }} EOS</td>
-                                <td>{{ parseFloat(x.ask).toFixed(4) }} {{ x.tokenId }}</td>
-                                <td>{{ parseFloat(x.bid).toFixed(4) }} EOS</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    </section>
+
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalContent"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-</section>
-
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalContent"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
-<div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@SR["Transaction"]</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        @SR["Outgoing"]
+    <div class="modal fade" id="modalTake" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@SR["Transaction"]</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            @SR["Outgoing"]
+                        </div>
+                        <div class="col-md-4">
+                            <input id="slider1" data-slider-id="slider1" type="text" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" id="value1" />
+                        </div>
+                        <div class="col-md-2" id="symbol1">
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input id="slider1" data-slider-id="slider1" type="text" />
+                    <div class="row" style="margin-top: 30px">
+                        <div class="col-md-2">
+                            @SR["Incoming"]
+                        </div>
+                        <div class="col-md-4">
+                            <input id="slider2" data-slider-id="slider2" type="text" />
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control" id="value2" />
+                        </div>
+                        <div class="col-md-2" id="symbol2">
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input class="form-control" id="value1" />
-                    </div>
-                    <div class="col-md-2" id="symbol1">
+                    <div class="row" style="margin-top: 30px">
+                        <div class="col-md-4" style="text-align: center">
+                            @SR["Unit Price"]
+                        </div>
+                        <div class="col-md-2">
+                            ≈
+                        </div>
+                        <div class="col-md-4" id="unit">
+                        </div>
+                        <div class="col-md-2">
+                            EOS
+                        </div>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 30px">
-                    <div class="col-md-2">
-                        @SR["Incoming"]
-                    </div>
-                    <div class="col-md-4">
-                        <input id="slider2" data-slider-id="slider2" type="text" />
-                    </div>
-                    <div class="col-md-4">
-                        <input class="form-control" id="value2" />
-                    </div>
-                    <div class="col-md-2" id="symbol2">
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">@SR["Take"]</button>
                 </div>
-                <div class="row" style="margin-top: 30px">
-                    <div class="col-md-4" style="text-align: center">
-                        @SR["Unit Price"]
-                    </div>
-                    <div class="col-md-2">
-                        ≈
-                    </div>
-                    <div class="col-md-4" id="unit">
-                    </div>
-                    <div class="col-md-2">
-                        EOS
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="take2()">@SR["Take"]</button>
             </div>
         </div>
     </div>
@@ -533,6 +546,46 @@
             }, 5000);
         },
         methods: {
+            switchAccount: function () {
+                var self = this;
+                scatter.forgetIdentity()
+                    .then(() => {
+                        self.isSignedIn = false;
+                        self.login();
+                    })
+                    .catch(() => {
+                        self.isSignedIn = false;
+                    });
+            },
+            getAccountName: function () {
+                if (this.isSignedIn) {
+                    return account.name;
+                } else {
+                    return '@(new HtmlString(SR["Login with Scatter"]))';
+                }
+            },
+            login: function () {
+                if (!('scatter' in window)) {
+                    showModal('Scatter插件没有找到', 'Scatter是一款EOS钱包，运行在Chrome浏览器中，请您确定已经安装Scatter插件. 参考：https://www.jianshu.com/p/a2e1e6204023');
+                } else {
+                    var self = this;
+
+                    var network = {
+                        blockchain: 'eos',
+                        host: host,
+                        port: 443,
+                        protocol: 'https',
+                        chainId: chain_id
+                    };
+
+                    scatter.getIdentity({ accounts: [network] }).then(identity => {
+                        account = identity.accounts.find(acc => acc.blockchain === 'eos');
+                        eos = scatter.eos(network, Eos, {});
+                        requiredFields = { accounts: [network] };
+                        self.isSignedIn = true;
+                    });
+                }
+            },
             init: function () {
                 this.getOrders();
                 this.getRecentTransaction();

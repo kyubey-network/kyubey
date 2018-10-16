@@ -162,8 +162,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .Select(x => new
                 {
                     unit = x.UnitPrice,
-                    amount = x.Ask,
-                    total = x.Bid
+                    amount = x.Bid,
+                    total = x.Ask
                 });
 
             return Json(ret);

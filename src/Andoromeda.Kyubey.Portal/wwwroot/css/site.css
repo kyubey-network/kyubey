@@ -709,3 +709,78 @@ section {
 .home-description {
     font-size: 20px;
 }
+
+.brand-menu-item-right {
+    float: right;
+    color: #888!important;
+    cursor: pointer;
+}
+
+@media(max-width: 768px) {
+    .exchange-submit-card {
+        height: auto;
+    }
+
+    .exchange-panel .col-md-6 {
+        border-right: none !important;
+    }
+
+    .exchange-panel .col-md-6:first-child {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+    }
+
+    .mobile-hidden {
+        display: none;
+    }
+
+    #containId {
+        padding-left: 15px!important;
+    }
+
+    .brand-menu {
+        margin-top: -10px;
+    }
+
+    .brand {
+        margin-top: -180px;
+    }
+
+    .brand-section {
+        margin-bottom: 0;
+    }
+
+    .brand-icon {
+        width: 100px;
+        height: 100px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .exchange-order-card {
+        height: auto;
+    }
+
+    .exchange-transaction-card, .exchange-transaction-table-outer {
+        height: auto;
+    }
+}
+
+@media (max-width: 576px)
+{
+    .exchange-label {
+        text-align: left;
+    }
+
+    .exchange-form-input {
+        height: auto;
+    }
+
+    .exchange-percentage-outer {
+        margin-top: 15px;
+    }
+
+    .exchange-button {
+        margin-top: 15px;
+    }
+}
