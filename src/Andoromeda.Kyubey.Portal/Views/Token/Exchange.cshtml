@@ -13,6 +13,7 @@
             constJs += $"var {curve.Arguments.Object.ElementAt(i).Id} = {Model.CurveArguments.Object.ElementAt(i)};";
         }
     }
+    bool isContractExchange = Context.Request.Query.ContainsKey("contract");
 }
 <script src="~/js/eos.js"></script>
 <script src="~/js/common.js"></script>
@@ -463,8 +464,8 @@
             control: {
                 order: 'mixed',
                 my: 'current',
-                publish: '@(otc == null ? "contract" : "limit")',
-                chart: 'k',
+                publish: '@(otc == null || isContractExchange ? "contract" : "limit")',
+                chart: '@(curve != null && isContractExchange ? "curve": "k")',
                 curve: 'price-balance'
             },
             inputs: {
