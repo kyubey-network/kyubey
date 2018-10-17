@@ -285,11 +285,11 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{account}/balance/{token}")]
         public async Task<IActionResult> AccountBalance(string token, string account, CancellationToken cancellationToken = default)
         {
-            var t = DB.Tokens.Single(x => x.Id == token);
+            var t = DB.Tokens.SingleOrDefault(x => x.Id == token);
             using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
             using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = t.Contract,
+                code = t?.Contract ?? "eosio.token",
                 table = "accounts",
                 scope = account,
                 json = true,
@@ -297,7 +297,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }))
             {
                 var result = await response.Content.ReadAsAsync<Table>();
-                var balance = result.rows.Select(x => x.Values.ToString()).Where(x => x.EndsWith(" " + token)).FirstOrDefault();
+                var balance = result.rows.SelectMany(x => x.Values.Select(y => y.ToString())).Where(x => x.EndsWith(" " + token)).FirstOrDefault();
                 if (string.IsNullOrEmpty(balance))
                 {
                     return Content("0.0000");

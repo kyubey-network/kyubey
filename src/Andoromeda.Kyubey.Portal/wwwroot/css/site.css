@@ -784,3 +784,15 @@ section {
         margin-top: 15px;
     }
 }
+
+.btn-cancel {
+    border: 1px solid #ddd;
+    color: #888!important;
+    padding: 3px 5px;
+    cursor: pointer;
+}
+
+    .btn-cancel:hover {
+        border-color: #ee0979;
+        color: #ee0979;
+    }

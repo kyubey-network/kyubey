@@ -36,9 +36,9 @@
                 <div class="col-md-3">
                     <div class="card exchange-order-card">
                         <div class="exchange-orders-header">
-                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'mixed' }" v-on:click="control.order = 'mixed'"><img src="~/img/order-mixed.png" /></a>
-                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'buy' }" v-on:click="control.order = 'buy'"><img src="~/img/order-buy.png" /></a>
-                            <a class="order-filter-button" v-bind:class="{ 'active': control.order === 'sell' }" v-on:click="control.order = 'sell'"><img src="~/img/order-sell.png" /></a>
+                            <a class="order-filter-button" title="@SR["Deep"]" v-bind:class="{ 'active': control.order === 'mixed' }" v-on:click="control.order = 'mixed'"><img src="~/img/order-mixed.png" /></a>
+                            <a class="order-filter-button" title="@SR["Buy"]" v-bind:class="{ 'active': control.order === 'buy' }" v-on:click="control.order = 'buy'"><img src="~/img/order-buy.png" /></a>
+                            <a class="order-filter-button" title="@SR["Sell"]" v-bind:class="{ 'active': control.order === 'sell' }" v-on:click="control.order = 'sell'"><img src="~/img/order-sell.png" /></a>
                         </div>
                         <table class="exchange-orders-table" id="sell-order-table" v-if="control.order !== 'buy'">
                             <thead>
@@ -338,7 +338,7 @@
                                     <td>{{ x.price || '@SR["Loading..."]' }} </td>
                                     <td>{{ x.amount || '@SR["Loading..."]' }}</td>
                                     <td>
-                                        <a v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
+                                        <a class="btn-cancel" v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
                                     </td>
                                 </tr>
                                 <tr v-if="currentOrders.length === 0">
@@ -583,6 +583,7 @@
                         eos = scatter.eos(network, Eos, {});
                         requiredFields = { accounts: [network] };
                         self.isSignedIn = true;
+                        self.init();
                     });
                 }
             },

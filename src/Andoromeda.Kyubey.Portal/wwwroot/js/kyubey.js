@@ -33,15 +33,3 @@ function showModal(title, content) {
     $('#modalContent').text(content);
     $('#modal').modal('show');
 }
-
-setInterval(function () {
-    if (eos && account) {
-        eos.getCurrencyBalance('eosio.token', account.name).then(x => {
-            var html = '';
-            for (var i = 0; i < x.length; i++) {
-                html += '<tr><td>' + x[i] + '</td></tr>';
-            }
-            $('#lstAssets').html(html);
-        });
-    }
-}, 2000);
