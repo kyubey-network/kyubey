@@ -8,7 +8,6 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 
@@ -201,30 +200,26 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{account}/current-order")]
         public async Task<IActionResult> CurrentOrder(string account, bool only = false, CancellationToken token = default)
         {
-            using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
+            var buy = await DB.DexBuyOrders.Where(x => x.Account == account).ToListAsync(token);
+            var sell = await DB.DexSellOrders.Where(x => x.Account == account).ToListAsync(token);
+            var ret = new List<CurrentOrder>(buy.Count + sell.Count);
+            ret.AddRange(buy.Select(x => new CurrentOrder
             {
-                code = Configuration["Contracts:Otc"],
-                scope = account,
-                table = "userorder",
-                json = true,
-                limit = 65535
-            }))
+                id = x.Id,
+                token = x.TokenId,
+                type = "Buy",
+                amount = x.Ask,
+                price = x.UnitPrice
+            }));
+            ret.AddRange(sell.Select(x => new CurrentOrder
             {
-                var txt = await response.Content.ReadAsStringAsync();
-                var table = await response.Content.ReadAsAsync<OrderTable<UserOrder>>();
-                var ret = new List<CurrentOrder>(table.rows.Count());
-                foreach (var x in table.rows)
-                {
-                    ret.Add(new CurrentOrder
-                    {
-                        id = Math.Abs(x.orderid),
-                        token = x.symbol,
-                        type = x.orderid > 0 ? "Buy" : "Sell"
-                    });
-                }
-                return Json(ret);
-            }
+                id = x.Id,
+                token = x.TokenId,
+                type = "Sell",
+                amount = x.Bid,
+                price = x.UnitPrice
+            }));
+            return Json(ret);
         }
 
         [HttpGet("[controller]/{account}/order-detail")]

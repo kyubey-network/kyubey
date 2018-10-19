@@ -335,8 +335,8 @@
                                 <tr v-for="x in currentOrders">
                                     <td>{{ x.token }}</td>
                                     <td>{{ x.type }}</td>
-                                    <td>{{ x.price || '@SR["Loading..."]' }} </td>
-                                    <td>{{ x.amount || '@SR["Loading..."]' }}</td>
+                                    <td>{{ parseFloat(x.price).toFixed(4) || '@SR["Loading..."]' }} </td>
+                                    <td>{{ parseFloat(x.amount).toFixed(4) || '@SR["Loading..."]' }}</td>
                                     <td>
                                         <a class="btn-cancel" v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
                                     </td>
@@ -536,7 +536,7 @@
         created: function () {
             var self = this;
             this.init();
-            setInterval(this.init, 1000 * 60);
+            setInterval(this.init, 1000 * 5);
             setInterval(function () {
                 if (account && account.name) {
                     self.isSignedIn = true;
@@ -621,19 +621,7 @@
                 if (account && account.name) {
                     var self = this;
                     $.getJSON(`/token/${account.name}/current-order`, {}, function (data) {
-                        for (var i = 0; i < data.length; ++i) {
-                            var old = self.currentOrders.filter(x => x.id === data[i].id && x.token === data[i].token)[0];
-                            if (old) {
-                                data[i].amount = old.amount;
-                                data[i].price = old.price;
-                            }
-                        }
                         self.currentOrders = data;
-                        for (var i = 0; i < self.currentOrders.length; ++i) {
-                            $.getJSON(`/token/${account.name}/order-detail`, { id: self.currentOrders[i].id, token: self.currentOrders[i].token }, function (data) {
-                                self.currentOrders[i] = data;
-                            });
-                        }
                     });
                 }
             },

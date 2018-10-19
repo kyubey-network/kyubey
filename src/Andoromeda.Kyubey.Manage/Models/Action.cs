@@ -45,11 +45,17 @@ namespace Andoromeda.Kyubey.Manage.Models
     public class ActionDataWrap
     {
         public ActionData t { get; set; }
+
+        public ActionData o { get; set; }
+
+        public ActionData data { get => t ?? o; }
     }
 
     public class ActionData
     {
         public long id { get; set; }
+
+        public string account { get; set; }
 
         public string asker { get; set; }
 
@@ -60,5 +66,7 @@ namespace Andoromeda.Kyubey.Manage.Models
         public string bid { get; set; }
 
         public long unit_price { get; set; }
+
+        public long timestamp { get; set; }
     }
 }

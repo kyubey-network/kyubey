@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Pomelo.AspNetCore.TimedJob;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Manage.Models;
@@ -13,165 +15,213 @@ namespace Andoromeda.Kyubey.Manage.Jobs
 {
     public class ActionJob : Job
     {
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 5, SkipWhileExecuting = true)]
         public void PollActions(IConfiguration config, KyubeyContext db)
         {
             TryHandleActionAsync(config, db).Wait();
         }
-
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
-        public void PollOrders(IConfiguration config, KyubeyContext db)
+        
+        private async Task TryHandleActionAsync(IConfiguration config, KyubeyContext db)
         {
-            PollOrdersAsync(config, db).Wait();
-        }
-
-        private async Task<int> TryHandleActionAsync(IConfiguration config, KyubeyContext db)
-        {
-            var cnt = 0;
             while(true)
             {
-                var act = await LookupActionAsync(config, db);
-                if (act == null)
+                var actions = await LookupActionAsync(config, db);
+                foreach (var act in actions)
                 {
-                    return cnt;
-                }
-                if (act.action_trace.act.name != "matchreceipt")
-                {
-                    continue;
+                    Console.WriteLine($"Handling action log {act.account_action_seq} {act.action_trace.act.name}");
+                    switch (act.action_trace.act.name)
+                    {
+                        case "sellmatch":
+                            await HandleSellMatchAsync(db, act.action_trace.act.data);
+                            break;
+                        case "buymatch":
+                            await HandleBuyMatchAsync(db, act.action_trace.act.data);
+                            break;
+                        case "sellreceipt":
+                            await HandleSellReceiptAsync(db, act.action_trace.act.data);
+                            break;
+                        case "buyreceipt":
+                            await HandleBuyReceiptAsync(db, act.action_trace.act.data);
+                            break;
+                        default:
+                            continue;
+                    }
                 }
 
-                var data = act.action_trace.act.data.t;
-                var bid = Convert.ToDouble(data.bid.Split(' ')[0]);
-                var ask = Convert.ToDouble(data.ask.Split(' ')[0]);
-                var unit_price = (double)bid / (double)ask;
-                var tokenId = data.ask.Split(' ')[1];
-                
-                db.MatchReceipts.Add(new MatchReceipt
+                if (actions.Count() < 20)
                 {
-                    Id = act.global_action_seq.ToString(),
-                    Ask = ask,
-                    Bid = bid,
-                    Asker = data.asker,
-                    Bidder = data.bidder,
-                    Time = act.block_time,
-                    TokenId = tokenId,
-                    UnitPrice = unit_price
-                });
-
-                await db.SaveChangesAsync();
-                ++cnt;
+                    break;
+                }
             }
         }
 
-        private async Task<EosAction> LookupActionAsync(IConfiguration config, KyubeyContext db)
+        private async Task HandleSellReceiptAsync(KyubeyContext db, ActionDataWrap data)
+        {
+            try
+            {
+                var token = data.data.bid.Split(' ')[1];
+                var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                if (order != null)
+                {
+                    db.DexSellOrders.Remove(order);
+                    await db.SaveChangesAsync();
+                }
+                order = new DexSellOrder
+                {
+                    Id = data.data.id,
+                    Account = data.data.account,
+                    Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
+                    Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
+                    UnitPrice = data.data.unit_price / 10000.0,
+                    Time = new DateTime(1970, 1, 1).AddMilliseconds(data.data.timestamp),
+                    TokenId = token
+                };
+                db.DexSellOrders.Add(order);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task HandleBuyReceiptAsync(KyubeyContext db, ActionDataWrap data)
+        {
+            try
+            {
+                var token = data.data.bid.Split(' ')[1];
+                var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                if (order != null)
+                {
+                    db.DexBuyOrders.Remove(order);
+                    await db.SaveChangesAsync();
+                }
+                order = new DexBuyOrder
+                {
+                    Id = data.data.id,
+                    Account = data.data.account,
+                    Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
+                    Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
+                    UnitPrice = data.data.unit_price / 10000.0,
+                    Time = new DateTime(1970, 1, 1).AddMilliseconds(data.data.timestamp),
+                    TokenId = token
+                };
+                db.DexBuyOrders.Add(order);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task HandleSellMatchAsync(KyubeyContext db, ActionDataWrap data)
+        {
+            try
+            {
+                var token = data.data.bid.Split(' ')[1];
+                var bid = Convert.ToDouble(data.data.bid.Split(' ')[0]);
+                var ask = Convert.ToDouble(data.data.ask.Split(' ')[0]);
+                var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                if (order != null)
+                {
+                    order.Bid -= bid;
+                    order.Ask -= ask;
+                    if (order.Ask == 0)
+                    {
+                        db.DexSellOrders.Remove(order);
+                    }
+                    await db.SaveChangesAsync();
+                }
+                db.MatchReceipts.Add(new MatchReceipt
+                {
+                    Ask = ask,
+                    Bid = bid,
+                    Asker = data.data.asker,
+                    Bidder = data.data.bidder,
+                    Time = DateTime.UtcNow,
+                    TokenId = token,
+                    UnitPrice = data.data.unit_price / 10000.0
+                });
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task HandleBuyMatchAsync(KyubeyContext db, ActionDataWrap data)
+        {
+            try
+            {
+                var token = data.data.ask.Split(' ')[1];
+                var bid = Convert.ToDouble(data.data.bid.Split(' ')[0]);
+                var ask = Convert.ToDouble(data.data.ask.Split(' ')[0]);
+                var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                if (order != null)
+                {
+                    order.Bid -= bid;
+                    order.Ask -= ask;
+                    if (order.Ask == 0)
+                    {
+                        db.DexBuyOrders.Remove(order);
+                    }
+                    await db.SaveChangesAsync();
+                }
+                db.MatchReceipts.Add(new MatchReceipt
+                {
+                    Ask = ask,
+                    Bid = bid,
+                    Asker = data.data.asker,
+                    Bidder = data.data.bidder,
+                    Time = DateTime.UtcNow,
+                    TokenId = token,
+                    UnitPrice = data.data.unit_price / 10000.0
+                });
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task<IEnumerable<EosAction>> LookupActionAsync(IConfiguration config, KyubeyContext db)
         {
             var row = await db.Constants.SingleAsync(x => x.Id == "action_pos");
             var position = Convert.ToInt64(row.Value);
-            ++position;
-            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
+            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
             using (var response = await client.PostAsJsonAsync("/v1/history/get_actions", new
             {
                 account_name = "kyubeydex.bp",
 	            pos = position,
-	            offset= 0
+	            offset = 100
             }))
             {
                 var txt = await response.Content.ReadAsStringAsync();
-                var result = await response.Content.ReadAsAsync<EosActionWrap>();
+                var result = JsonConvert.DeserializeObject<EosActionWrap>(txt, new JsonSerializerSettings
+                {
+                    Error = HandleDeserializationError
+                });
                 if (result.actions.Count() == 0)
                 {
                     return null;
                 }
+                if (result.actions.Count() > 0)
+                {
+                    row.Value = result.actions.Last().account_action_seq.ToString();
+                    await db.SaveChangesAsync();
+                }
 
-                row.Value = position.ToString();
-                await db.SaveChangesAsync();
-
-                return result.actions.First();
+                return result.actions;
             }
         }
 
-        private async Task PollOrdersAsync(IConfiguration config, KyubeyContext db)
+        private void HandleDeserializationError(object sender, ErrorEventArgs errorArgs)
         {
-            var tokens = await db.Otcs
-                .Where(x => x.Status == Status.Active)
-                .ToListAsync();
-
-            foreach(var x in tokens)
-            {
-                try
-                {
-                    Console.WriteLine($"Polling {x.Id} sell orders...");
-                    await PollOrdersOfTokenAsync(config, db, x.Id, true);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-
-
-                try
-                {
-                    Console.WriteLine($"Polling {x.Id} buy orders...");
-                    await PollOrdersOfTokenAsync(config, db, x.Id, false);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-            }
-        }
-
-        private async Task PollOrdersOfTokenAsync(IConfiguration config, KyubeyContext db, string tokenId, bool isSell = false)
-        {
-            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
-            {
-                code = config["DexContract"],
-                table = isSell ? "sellorder" : "buyorder",
-                limit = 65535,
-                scope = tokenId,
-                json = true
-            }))
-            {
-                var table = await response.Content.ReadAsAsync<OrderTable>();
-                if (isSell)
-                {
-                    var orders = new List<DexSellOrder>(table.rows.Count());
-                    foreach (var x in table.rows)
-                    {
-                        orders.Add(new DexSellOrder
-                        {
-                            Account = x.account,
-                            Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
-                            Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
-                            Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
-                            TokenId = tokenId,
-                            UnitPrice = x.unit_price / 10000.0
-                        });
-                    }
-                    db.DexSellOrders.RemoveRange(db.DexSellOrders.Where(x => x.TokenId == tokenId));
-                    await db.SaveChangesAsync();
-                    db.DexSellOrders.AddRange(orders);
-                    await db.SaveChangesAsync();
-                }
-                else
-                {
-                    db.DexBuyOrders.RemoveRange(db.DexBuyOrders.Where(x => x.TokenId == tokenId));
-                    foreach (var x in table.rows)
-                    {
-                        db.DexBuyOrders.Add(new DexBuyOrder
-                        {
-                            Account = x.account,
-                            Ask = Convert.ToDouble(x.ask.Split(' ')[0]),
-                            Bid = Convert.ToDouble(x.bid.Split(' ')[0]),
-                            Time = new DateTime(1970, 1, 1).AddSeconds(x.timestamp),
-                            TokenId = tokenId,
-                            UnitPrice = x.unit_price / 10000.0
-                        });
-                    }
-                }
-                await db.SaveChangesAsync();
-            }
+            var currentError = errorArgs.ErrorContext.Error.Message;
+            errorArgs.ErrorContext.Handled = true;
         }
     }
 }

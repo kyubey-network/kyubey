@@ -5,8 +5,7 @@ namespace Andoromeda.Kyubey.Models
 {
     public class DexOrder
     {
-        [MaxLength(64)]
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         [MaxLength(16)]
         public string Account { get; set; }
