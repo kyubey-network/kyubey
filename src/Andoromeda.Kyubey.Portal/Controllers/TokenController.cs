@@ -236,7 +236,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 total = x.Ask,
                 time = x.Time
             }));
-            return Json(ret);
+            return Json(ret.OrderByDescending(x => x.time));
         }
 
         [HttpGet("[controller]/{account}/balance/{token}")]
