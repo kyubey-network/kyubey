@@ -67,7 +67,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             try
             {
                 var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == data.data.symbol);
-                if (order != null && order.Account == data.data.account)
+                if (order != null)
                 {
                     db.DexSellOrders.Remove(order);
                     await db.SaveChangesAsync();
@@ -84,7 +84,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             try
             {
                 var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == data.data.symbol);
-                if (order != null && order.Account == data.data.account)
+                if (order != null)
                 {
                     db.DexBuyOrders.Remove(order);
                     await db.SaveChangesAsync();
