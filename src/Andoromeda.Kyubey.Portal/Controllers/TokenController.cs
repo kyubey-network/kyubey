@@ -227,61 +227,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             return Json(ret);
         }
 
-        [HttpGet("[controller]/{account}/order-detail")]
-        public async Task<IActionResult> OrderDetail(long id, string token, CancellationToken cancellationToken = default)
-        {
-            var order = await GetOrderAsync(id, token, cancellationToken);
-            return Json(order);
-        }
-
-        private async Task<CurrentOrder> GetOrderAsync(long id, string token, CancellationToken cancellationToken = default)
-        {
-            using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
-            {
-                code = Configuration["Contracts:Otc"],
-                scope = token,
-                table = id > 0 ? "buyorder" : "sellorder",
-                json = true,
-                index_position = 1,
-                lower_bound = Math.Abs(id),
-                limit = 1
-            }))
-            {
-                var table = await response.Content.ReadAsAsync<OrderTable<Models.DexOrder>>();
-                var order = table.rows.FirstOrDefault();
-                try
-                {
-                    if (id > 0)
-                    {
-                        return new CurrentOrder
-                        {
-                            id = Math.Abs(id),
-                            token = token,
-                            amount = Convert.ToDouble(order.ask.Split(' ')[0]),
-                            price = order.unit_price / 10000.0,
-                            time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
-                            type = "Buy"
-                        };
-
-                    }
-                    else
-                    {
-                        return new CurrentOrder
-                        {
-                            id = Math.Abs(id),
-                            token = token,
-                            amount = Convert.ToDouble(order.bid.Split(' ')[0]),
-                            price = order.unit_price / 10000.0,
-                            time = new DateTime(1970, 1, 1).AddSeconds(order.timestamp),
-                            type = "Sell"
-                        };
-                    }
-                }
-                catch { return null; }
-            }
-        }
-
         [HttpGet("[controller]/{account}/balance/{token}")]
         public async Task<IActionResult> AccountBalance(string token, string account, CancellationToken cancellationToken = default)
         {

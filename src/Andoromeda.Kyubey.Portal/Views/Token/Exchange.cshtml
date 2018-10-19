@@ -305,7 +305,7 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="x in recentTransactions">
-                                        <td>{{ parseFloat(x.price / 10000.0).toFixed(4) }}</td>
+                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
                                         <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                         <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
                                     </tr>
@@ -327,8 +327,8 @@
                                 <tr>
                                     <th>@SR["Token"]</th>
                                     <th>@SR["Type"]</th>
-                                    <th>@SR["Unit price"]</th>
-                                    <th>@SR["Amount"]</th>
+                                    <th class="text-right">@SR["Unit price"]</th>
+                                    <th class="text-right">@SR["Amount"]</th>
                                     <th>@SR["Action"]</th>
                                 </tr>
                             </thead>
@@ -336,8 +336,8 @@
                                 <tr v-for="x in currentOrders">
                                     <td>{{ x.token }}</td>
                                     <td>{{ x.type }}</td>
-                                    <td>{{ parseFloat(x.price).toFixed(4) || '@SR["Loading..."]' }} </td>
-                                    <td>{{ parseFloat(x.amount).toFixed(4) || '@SR["Loading..."]' }}</td>
+                                    <td class="text-right">{{ parseFloat(x.price).toFixed(4) || '@SR["Loading..."]' }} </td>
+                                    <td class="text-right">{{ parseFloat(x.amount).toFixed(4) || '@SR["Loading..."]' }}</td>
                                     <td>
                                         <a class="btn-cancel" v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
                                     </td>

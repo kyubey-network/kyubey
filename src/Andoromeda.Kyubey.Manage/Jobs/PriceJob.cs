@@ -121,8 +121,8 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                             continue;
                         }
 
-                        var price = last.UnitPrice / 10000.0;
-                        var price24 = last24?.UnitPrice / 10000.0;
+                        var price = last.UnitPrice;
+                        var price24 = last24?.UnitPrice;
 
                         try
                         {
