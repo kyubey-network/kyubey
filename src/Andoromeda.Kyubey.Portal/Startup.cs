@@ -13,11 +13,7 @@ namespace Andoromeda.Kyubey.Portal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddConfiguration(out var Config);
-            services.AddMvc()
-               .AddJsonOptions(options =>
-               {
-                   options.SerializerSettings.DateTimeZoneHandling = "MM/dd/yyyy HH:mm:ss";
-               }); 
+            services.AddMvc();
             services.AddEntityFrameworkMySql()
                 .AddDbContext<KyubeyContext>(x =>
                 {
