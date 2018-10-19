@@ -29,19 +29,20 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 foreach (var act in actions)
                 {
                     Console.WriteLine($"Handling action log {act.account_action_seq} {act.action_trace.act.name}");
+                    var blockTime = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(act.block_time + 'Z'));
                     switch (act.action_trace.act.name)
                     {
                         case "sellmatch":
-                            await HandleSellMatchAsync(db, act.action_trace.act.data);
+                            await HandleSellMatchAsync(db, act.action_trace.act.data, blockTime);
                             break;
                         case "buymatch":
-                            await HandleBuyMatchAsync(db, act.action_trace.act.data);
+                            await HandleBuyMatchAsync(db, act.action_trace.act.data, blockTime);
                             break;
                         case "sellreceipt":
-                            await HandleSellReceiptAsync(db, act.action_trace.act.data);
+                            await HandleSellReceiptAsync(db, act.action_trace.act.data, blockTime);
                             break;
                         case "buyreceipt":
-                            await HandleBuyReceiptAsync(db, act.action_trace.act.data);
+                            await HandleBuyReceiptAsync(db, act.action_trace.act.data, blockTime);
                             break;
                         default:
                             continue;
@@ -55,7 +56,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             }
         }
 
-        private async Task HandleSellReceiptAsync(KyubeyContext db, ActionDataWrap data)
+        private async Task HandleSellReceiptAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
         {
             try
             {
@@ -73,7 +74,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                     Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
                     Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
                     UnitPrice = data.data.unit_price / 10000.0,
-                    Time = new DateTime(1970, 1, 1).AddMilliseconds(data.data.timestamp),
+                    Time = time,
                     TokenId = token
                 };
                 db.DexSellOrders.Add(order);
@@ -85,7 +86,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             }
         }
 
-        private async Task HandleBuyReceiptAsync(KyubeyContext db, ActionDataWrap data)
+        private async Task HandleBuyReceiptAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
         {
             try
             {
@@ -103,7 +104,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                     Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
                     Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
                     UnitPrice = data.data.unit_price / 10000.0,
-                    Time = new DateTime(1970, 1, 1).AddMilliseconds(data.data.timestamp),
+                    Time = time,
                     TokenId = token
                 };
                 db.DexBuyOrders.Add(order);
@@ -115,7 +116,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             }
         }
 
-        private async Task HandleSellMatchAsync(KyubeyContext db, ActionDataWrap data)
+        private async Task HandleSellMatchAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
         {
             try
             {
@@ -127,7 +128,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 {
                     order.Bid -= bid;
                     order.Ask -= ask;
-                    if (order.Ask == 0)
+                    if (order.Ask <= 0 || order.Bid <= 0)
                     {
                         db.DexSellOrders.Remove(order);
                     }
@@ -139,7 +140,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                     Bid = bid,
                     Asker = data.data.asker,
                     Bidder = data.data.bidder,
-                    Time = DateTime.UtcNow,
+                    Time = time,
                     TokenId = token,
                     UnitPrice = data.data.unit_price / 10000.0
                 });
@@ -151,7 +152,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
             }
         }
 
-        private async Task HandleBuyMatchAsync(KyubeyContext db, ActionDataWrap data)
+        private async Task HandleBuyMatchAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
         {
             try
             {
@@ -163,7 +164,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 {
                     order.Bid -= bid;
                     order.Ask -= ask;
-                    if (order.Ask == 0)
+                    if (order.Ask <= 0 || order.Bid <= 0)
                     {
                         db.DexBuyOrders.Remove(order);
                     }
@@ -175,7 +176,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                     Bid = bid,
                     Asker = data.data.asker,
                     Bidder = data.data.bidder,
-                    Time = DateTime.UtcNow,
+                    Time = time,
                     TokenId = token,
                     UnitPrice = data.data.unit_price / 10000.0
                 });

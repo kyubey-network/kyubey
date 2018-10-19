@@ -14,7 +14,7 @@ namespace Andoromeda.Kyubey.Manage.Models
 
         public long account_action_seq { get; set; }
 
-        public DateTime block_time { get; set; }
+        public string block_time { get; set; }
 
         public ActionTrace action_trace { get; set; }
     }

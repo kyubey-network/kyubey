@@ -329,6 +329,8 @@
                                     <th>@SR["Type"]</th>
                                     <th class="text-right">@SR["Unit price"]</th>
                                     <th class="text-right">@SR["Amount"]</th>
+                                    <th class="text-right">@SR["Total"]</th>
+                                    <th>@SR["Published at"]</th>
                                     <th>@SR["Action"]</th>
                                 </tr>
                             </thead>
@@ -338,12 +340,14 @@
                                     <td>{{ x.type }}</td>
                                     <td class="text-right">{{ parseFloat(x.price).toFixed(4) || '@SR["Loading..."]' }} </td>
                                     <td class="text-right">{{ parseFloat(x.amount).toFixed(4) || '@SR["Loading..."]' }}</td>
+                                    <td class="text-right">{{ parseFloat(x.total).toFixed(4) || '@SR["Loading..."]' }}</td>
+                                    <td>{{ moment(x.time + 'Z').format('MM-DD HH:mm:ss') }}</td>
                                     <td>
                                         <a class="btn-cancel" v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
                                     </td>
                                 </tr>
                                 <tr v-if="currentOrders.length === 0">
-                                    <td colspan="5">@SR["No more data"]</td>
+                                    <td colspan="7">@SR["No more data"]</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -364,7 +368,7 @@
                                     <td>{{ x.tokenId }}</td>
                                     <td>{{ x.bidder }}</td>
                                     <td>{{ x.asker }}</td>
-                                    <td>{{ x.time }}</td>
+                                    <td>{{ moment(x.time + 'Z').format('MM-DD HH:mm:ss') }}</td>
                                     <td>{{ x.unitPrice }} EOS</td>
                                     <td>{{ parseFloat(x.ask).toFixed(4) }} {{ x.tokenId }}</td>
                                     <td>{{ parseFloat(x.bid).toFixed(4) }} EOS</td>
