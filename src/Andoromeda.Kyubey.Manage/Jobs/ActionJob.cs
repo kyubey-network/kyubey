@@ -44,6 +44,12 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                         case "buyreceipt":
                             await HandleBuyReceiptAsync(db, act.action_trace.act.data, blockTime);
                             break;
+                        case "cancelbuy":
+                            await HandleCancelBuyAsync(db, act.action_trace.act.data, blockTime);
+                            break;
+                        case "cancelsell":
+                            await HandleCancelSellAsync(db, act.action_trace.act.data, blockTime);
+                            break;
                         default:
                             continue;
                     }
@@ -53,6 +59,40 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 {
                     break;
                 }
+            }
+        }
+
+        private async Task HandleCancelSellAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
+        {
+            try
+            {
+                var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == data.data.symbol);
+                if (order != null && order.Account == data.data.account)
+                {
+                    db.DexSellOrders.Remove(order);
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task HandleCancelBuyAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
+        {
+            try
+            {
+                var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == data.data.symbol);
+                if (order != null && order.Account == data.data.account)
+                {
+                    db.DexBuyOrders.Remove(order);
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
 

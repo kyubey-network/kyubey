@@ -50,7 +50,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in sellOrders.sort((a,b) => a < b)" v-on:click="setPublish(x.unit, x.amount)">
+                                <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
@@ -72,7 +72,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in buyOrders.sort((a,b) => a > b)" v-on:click="setPublish(x.unit, x.amount)">
+                                <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
@@ -725,7 +725,6 @@
                             self.getCurrentOrders();
                             self.getOrders();
                             self.getBalances();
-                            self.buyOrders.push({ unit: price, amount: bid, total: ask });
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(error => {
@@ -783,7 +782,6 @@
                             self.getCurrentOrders();
                             self.getOrders();
                             self.getBalances();
-                            self.sellOrders.push({ unit: price, amount: bid, total: ask });
                             showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
                         })
                         .catch(error => {
@@ -817,34 +815,35 @@
                 }
             },
             cancel: function (token, type, id) {
-                    eos.contract('@ViewBag.OtcContract', { requiredFields })
-                        .then(contract => {
-                            if (type === 'Buy') {
-                                return contract.cancelbuy(
-                                    account.name,
-                                    token,
-                                    id,
-                                    {
-                                        authorization: [`${account.name}@@${account.authority}`]
-                                    });
-                            } else {
-                                return contract.cancelsell(
-                                    account.name,
-                                    token,
-                                    id,
-                                    {
-                                        authorization: [`${account.name}@@${account.authority}`]
-                                    });
-                            }
-                        })
-                        .then(() => {
-                            self.getCurrentOrders();
-                            self.getOrders();
-                            showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
-                        })
-                        .catch(error => {
-                            showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
-                        });
+                var self = this;
+                eos.contract('@ViewBag.OtcContract', { requiredFields })
+                    .then(contract => {
+                        if (type === 'Buy') {
+                            return contract.cancelbuy(
+                                account.name,
+                                token,
+                                id,
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        } else {
+                            return contract.cancelsell(
+                                account.name,
+                                token,
+                                id,
+                                {
+                                    authorization: [`${account.name}@@${account.authority}`]
+                                });
+                        }
+                    })
+                    .then(() => {
+                        self.getCurrentOrders();
+                        self.getOrders();
+                        showModal('@(new HtmlString(SR["Transaction Succeeded"]))', '@(new HtmlString(SR["You can confirm the result in your wallet"])), @(new HtmlString(SR["Please contact us if you have any questions"]))');
+                    })
+                    .catch(error => {
+                        showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
+                    });
             }
         }
     });

@@ -65,6 +65,8 @@ namespace Andoromeda.Kyubey.Manage.Models
 
         public string bid { get; set; }
 
+        public string symbol { get; set; }
+
         public long unit_price { get; set; }
 
         public long timestamp { get; set; }
