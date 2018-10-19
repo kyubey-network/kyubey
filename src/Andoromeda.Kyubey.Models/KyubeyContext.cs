@@ -118,6 +118,8 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<DexSellOrder> DexSellOrders { get; set; }
 
+        public DbSet<Favorite> Favorites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -158,6 +160,11 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.TokenId);
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.UnitPrice);
+            });
+
+            builder.Entity<Favorite>(e => 
+            {
+                e.HasKey(x => new { x.Account, x.TokenId });
             });
         }
     }

@@ -810,3 +810,11 @@ section {
         border-color: #ee0979;
         color: #ee0979;
     }
+
+.text-right {
+    text-align: right;
+}
+
+.exchange-pair-id:hover {
+    text-decoration: underline;
+}

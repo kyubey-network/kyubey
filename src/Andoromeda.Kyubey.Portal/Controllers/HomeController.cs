@@ -17,6 +17,10 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
         {
+            if (token != null)
+            {
+                token = token.ToUpper();
+            }
             ViewBag.SearchToken = token;
             IEnumerable<Bancor> bancors = db.Bancors.Include(x => x.Token);
             if (!string.IsNullOrEmpty(token))
