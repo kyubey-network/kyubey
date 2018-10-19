@@ -13,6 +13,7 @@
             constJs += $"var {curve.Arguments.Object.ElementAt(i).Id} = {Model.CurveArguments.Object.ElementAt(i)};";
         }
     }
+    bool isContractExchange = Context.Request.Query.ContainsKey("contract");
 }
 <script src="~/js/eos.js"></script>
 <script src="~/js/common.js"></script>
@@ -261,11 +262,11 @@
                         <div class="exchange-pair-menu">
                             <div class="row">
                                 <div class="col-lg-7">
-                                    <a class="exchange-pair-menu-item active"><i class="fa fa-list"></i> @SR["All"]</a>
-                                    <a class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
+                                    <a class="exchange-pair-menu-item" v-bind:class="{ 'active': control.pair === 'all' }" v-on:click="control.pair = 'all'"><i class="fa fa-list"></i> @SR["All"]</a>
+                                    <a v-if="isSignedIn" v-bind:class="{ 'active': control.pair === 'fav' }" v-on:click="control.pair = 'fav'" class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
                                 </div>
                                 <div class="col-lg-5">
-                                    <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" />
+                                    <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" v-model="inputs.pair" />
                                 </div>
                             </div>
                         </div>
@@ -274,15 +275,15 @@
                                 <thead>
                                     <tr>
                                         <th>@SR["Token"]</th>
-                                        <th>@SR["Last Price"]</th>
-                                        <th>@SR["Change"]</th>
+                                        <th class="text-right">@SR["Last Price"]</th>
+                                        <th class="text-right">@SR["Change"]</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="x in pairs" v-on:click="redirectToToken(x.id)">
-                                        <td><i class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i> {{ x.id }}</td>
-                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
-                                        <td v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change * 100.0) >= 0 ? '+' : '' }}{{ parseFloat(x.change * 100.0).toFixed(2) }}%</td>
+                                    <tr v-for="x in (control.pair === 'all' ? pairs : pairs.filter(y => fav.indexOf(y.id) >= 0))">
+                                        <td><a v-on:click="toggleFav(x.id)"><i v-if="isSignedIn" class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i></a> <a v-on:click="redirectToToken(x.id)" class="exchange-pair-id">{{ x.id }}</a></td>
+                                        <td class="text-right">{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td class="text-right" v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change * 100.0) >= 0 ? '+' : '' }}{{ parseFloat(x.change * 100.0).toFixed(2) }}%</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -463,9 +464,10 @@
             control: {
                 order: 'mixed',
                 my: 'current',
-                publish: '@(otc == null ? "contract" : "limit")',
-                chart: 'k',
-                curve: 'price-balance'
+                publish: '@(otc == null || isContractExchange ? "contract" : "limit")',
+                chart: '@(curve != null && isContractExchange ? "curve": "k")',
+                curve: 'price-balance',
+                pair: 'all'
             },
             inputs: {
                 pair: null,
@@ -491,6 +493,9 @@
             isSignedIn: false
         },
         watch: {
+            'inputs.pair': function () {
+                this.getPairs();
+            },
             'inputs.buyPrice': function (val) {
                 if (isNaN(val)) {
                     return;
@@ -546,6 +551,18 @@
             }, 5000);
         },
         methods: {
+            toggleFav: function (id) {
+                var self = this;
+                $.post(`/token/${account.name}/favorite/${id}`, {}, function (data) {
+                    self.getFavorites();
+                });
+            },
+            getFavorites: function () {
+                var self = this;
+                $.getJSON(`/token/${account.name}/favorite`, {}, function (data) {
+                    self.fav = data;
+                });
+            },
             switchAccount: function () {
                 var self = this;
                 scatter.forgetIdentity()
@@ -555,6 +572,7 @@
                     })
                     .catch(() => {
                         self.isSignedIn = false;
+                        self.fav = [];
                     });
             },
             getAccountName: function () {
@@ -584,6 +602,7 @@
                         requiredFields = { accounts: [network] };
                         self.isSignedIn = true;
                         self.init();
+                        self.getFavorites();
                     });
                 }
             },

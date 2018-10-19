@@ -43,7 +43,7 @@
                     <td class="mobile-hidden">
                         @if (x.ExchangeInDex)
                         {
-                            <a asp-action="Exchange" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">@SR["Exchange"]</a>
+                        <a asp-action="Exchange" class="btn btn-go-exchange" asp-route-id="@x.Id" asp-controller="Token">@SR["EXCHANGE VIA DEX"]</a>
                         }
                         else
                         {
@@ -53,7 +53,7 @@
                     <td class="mobile-hidden">
                         @if (x.ExchangeInContract)
                         {
-                            <a asp-action="Exchange" class="btn btn-primary btn-convert-intable" asp-route-id="@x.Id" asp-controller="Token">@SR["Exchange"]</a>
+                        <a asp-action="Exchange" class="btn btn-go-exchange" asp-route-id="@x.Id" asp-route-contract="1" asp-controller="Token">@SR["EXCHANGE VIA CONTRACT"]</a>
                         }
                         else
                         {

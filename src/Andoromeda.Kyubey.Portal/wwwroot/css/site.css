@@ -787,12 +787,34 @@ section {
 
 .btn-cancel {
     border: 1px solid #ddd;
-    color: #888!important;
+    color: #888 !important;
     padding: 3px 5px;
     cursor: pointer;
+    font-size: 12px;
 }
 
     .btn-cancel:hover {
         border-color: #ee0979;
         color: #ee0979;
     }
+
+.btn-go-exchange {
+    color: #888;
+    padding: 3px 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+    .btn-go-exchange:hover {
+        border-color: #ee0979;
+        color: #ee0979;
+    }
+
+.text-right {
+    text-align: right;
+}
+
+.exchange-pair-id:hover {
+    text-decoration: underline;
+}

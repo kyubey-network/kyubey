@@ -25,6 +25,11 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/pair")]
         public async Task<IActionResult> Pair([FromServices] KyubeyContext db, string token, CancellationToken cancellationToken)
         {
+            if (token != null)
+            {
+                token = token.ToUpper();
+            }
+
             IQueryable<Otc> ret = db.Otcs
                 .Where(x => x.Status == Status.Active);
 
@@ -363,6 +368,40 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+        }
+        
+        [HttpGet("[controller]/{account}/favorite")]
+        public async Task<IActionResult> GetFavorite(string account, CancellationToken cancellationToken)
+        {
+            var ret = await DB.Favorites
+                .Where(x => x.Account == account)
+                .Select(x => x.TokenId.ToUpper())
+                .ToListAsync(cancellationToken);
+
+            return Json(ret);
+        }
+
+        [HttpPost("[controller]/{account}/favorite/{id}")]
+        public async Task<IActionResult> PostFavorite(string account, string id, CancellationToken cancellationToken)
+        {
+            var favorite = await DB.Favorites
+                .SingleOrDefaultAsync(x => x.Account == account && x.TokenId == id, cancellationToken);
+
+            if (favorite == null)
+            {
+                DB.Favorites.Add(new Favorite
+                {
+                    Account = account,
+                    TokenId = id
+                });
+            }
+            else
+            {
+                DB.Favorites.Remove(favorite);
+            }
+
+            await DB.SaveChangesAsync();
+            return Content("ok");
         }
     }
 }
