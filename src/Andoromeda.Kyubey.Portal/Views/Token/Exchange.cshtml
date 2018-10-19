@@ -307,7 +307,7 @@
                                     <tr v-for="x in recentTransactions">
                                         <td>{{ parseFloat(x.price).toFixed(4) }}</td>
                                         <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
-                                        <td>{{ moment(x.time).format('MM-DD hh:mm:ss') }}</td>
+                                        <td>{{ moment(x.time + 'Z').format('MM-DD hh:mm:ss') }}</td>
                                     </tr>
                                 </tbody>
                             </table>

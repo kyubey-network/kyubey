@@ -89,7 +89,7 @@ namespace Andoromeda.Kyubey.Manage.Jobs
         {
             try
             {
-                var token = data.data.bid.Split(' ')[1];
+                var token = data.data.ask.Split(' ')[1];
                 var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
                 if (order != null)
                 {
