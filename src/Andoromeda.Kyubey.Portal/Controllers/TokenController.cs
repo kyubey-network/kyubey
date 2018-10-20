@@ -129,12 +129,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             string id,
             CancellationToken token)
         {
-            var last = (await DB.MatchReceipts
-                .LastOrDefaultAsync(x => x.TokenId == id, token))?.UnitPrice ?? 999999999999999.9999;
-
             var orders = await db.DexBuyOrders
                 .Where(x => x.TokenId == id)
-                .Where(x => x.UnitPrice <= last)
                 .OrderByDescending(x => x.UnitPrice)
                 .Take(15)
                 .ToListAsync();
@@ -159,12 +155,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             string id,
             CancellationToken token)
         {
-            var last = (await DB.MatchReceipts
-                .LastOrDefaultAsync(x => x.TokenId == id, token))?.UnitPrice;
-
             var orders = await db.DexSellOrders
                 .Where(x => x.TokenId == id)
-                .Where(x => x.UnitPrice >= last)
                 .OrderBy(x => x.UnitPrice)
                 .Take(15)
                 .ToListAsync();
