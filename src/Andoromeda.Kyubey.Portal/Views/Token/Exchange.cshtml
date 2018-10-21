@@ -50,7 +50,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)">
+                                <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to right, white ' + getcolorOccupationRatio(x.unit,x.amount,x.total) + ', #F3F9EC ' + getcolorOccupationRatio(x.unit,x.amount,x.total) + ')'">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
@@ -72,7 +72,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)">
+                                <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to right, white ' + getcolorOccupationRatio(x.unit,x.amount,x.total) + ', #F8EBF1 ' + getcolorOccupationRatio(x.unit,x.amount,x.total) + ')'">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
@@ -844,6 +844,9 @@
                     .catch(error => {
                         showModal('@(new HtmlString(SR["Transaction Failed"]))', error.message + '@(new HtmlString(SR["Please contact us if you have any questions"]))');
                     });
+            },
+            getcolorOccupationRatio: function (unit, amount, total) {
+                return "50%"
             }
         }
     });
