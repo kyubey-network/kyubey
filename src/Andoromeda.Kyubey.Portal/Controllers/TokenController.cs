@@ -134,13 +134,16 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .OrderByDescending(x => x.UnitPrice)
                 .Take(15)
                 .ToListAsync();
-
+            
             var ret = orders
                 .Select(x => new
                 {
                     unit = x.UnitPrice,
                     amount = x.Ask,
-                    total = x.Bid
+                    total = x.Bid,
+                    totalMax = db.DexBuyOrders
+                    .Where(y => y.Account == x.Account)
+                    .Max(y => y.Bid)
                 });
 
             return Json(ret);
@@ -167,7 +170,10 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 {
                     unit = x.UnitPrice,
                     amount = x.Bid,
-                    total = x.Ask
+                    total = x.Ask,
+                    totalMax = db.DexSellOrders
+                    .Where(y => y.Account == x.Account)
+                    .Max(y => y.Bid)
                 });
 
             return Json(ret);
