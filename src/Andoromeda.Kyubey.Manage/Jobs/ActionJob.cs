@@ -163,14 +163,14 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 var token = data.data.bid.Split(' ')[1];
                 var bid = Convert.ToDouble(data.data.bid.Split(' ')[0]);
                 var ask = Convert.ToDouble(data.data.ask.Split(' ')[0]);
-                var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
                 if (order != null)
                 {
                     order.Bid -= bid;
                     order.Ask -= ask;
                     if (order.Ask <= 0 || order.Bid <= 0)
                     {
-                        db.DexSellOrders.Remove(order);
+                        db.DexBuyOrders.Remove(order);
                     }
                     await db.SaveChangesAsync();
                 }
@@ -199,14 +199,14 @@ namespace Andoromeda.Kyubey.Manage.Jobs
                 var token = data.data.ask.Split(' ')[1];
                 var bid = Convert.ToDouble(data.data.bid.Split(' ')[0]);
                 var ask = Convert.ToDouble(data.data.ask.Split(' ')[0]);
-                var order = await db.DexBuyOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
+                var order = await db.DexSellOrders.SingleOrDefaultAsync(x => x.Id == data.data.id && x.TokenId == token);
                 if (order != null)
                 {
                     order.Bid -= bid;
                     order.Ask -= ask;
                     if (order.Ask <= 0 || order.Bid <= 0)
                     {
-                        db.DexBuyOrders.Remove(order);
+                        db.DexSellOrders.Remove(order);
                     }
                     await db.SaveChangesAsync();
                 }
