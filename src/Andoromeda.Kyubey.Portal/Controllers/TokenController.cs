@@ -51,7 +51,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         {
             var token = await db.Tokens
                 .Include(x => x.Curve)
-                .SingleOrDefaultAsync(x => x.Id == id 
+                .SingleOrDefaultAsync(x => x.Id == id
                     && x.Status == TokenStatus.Active, cancellationToken);
 
             if (token == null)
@@ -70,7 +70,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
-        
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
         public async Task<IActionResult> Exchange([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -82,7 +82,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         {
             return await Index(db, id, cancellationToken);
         }
-        
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.png")]
         public async Task<IActionResult> Icon([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -96,7 +96,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 return File(token.Icon, "image/png", "icon.png");
             }
         }
-        
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.js")]
         public async Task<IActionResult> Javascript([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -134,7 +134,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .OrderByDescending(x => x.UnitPrice)
                 .Take(15)
                 .ToListAsync();
-            
+
             var ret = orders
                 .Select(x => new
                 {
@@ -173,7 +173,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     total = x.Ask,
                     totalMax = db.DexSellOrders
                     .Where(y => y.Account == x.Account)
-                    .Max(y => y.Bid)
+                    .Max(y => y.Ask)
                 });
 
             return Json(ret);
@@ -279,8 +279,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Holders(
-            [FromServices] KyubeyContext db, 
-            string id, 
+            [FromServices] KyubeyContext db,
+            string id,
             CancellationToken cancellationToken)
         {
             var token = await db.Tokens
@@ -324,7 +324,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
-        
+
         [HttpGet("[controller]/{account}/favorite")]
         public async Task<IActionResult> GetFavorite(string account, CancellationToken cancellationToken)
         {
