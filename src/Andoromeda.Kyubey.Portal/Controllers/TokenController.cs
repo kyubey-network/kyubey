@@ -135,15 +135,22 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .Take(15)
                 .ToListAsync();
 
+            var totalMax = 0.0;
+            if (orders.Count > 0)
+            {
+                totalMax = await db.DexBuyOrders
+                    .Where(x => x.TokenId == id)
+                    .Select(x => x.Bid)
+                    .MaxAsync(token);
+            }
+
             var ret = orders
                 .Select(x => new
                 {
                     unit = x.UnitPrice,
                     amount = x.Ask,
                     total = x.Bid,
-                    totalMax = db.DexBuyOrders
-                    .Where(y => y.Account == x.Account)
-                    .Max(y => y.Bid)
+                    totalMax = totalMax
                 });
 
             return Json(ret);
@@ -165,15 +172,22 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .ToListAsync();
             orders.Reverse();
 
+            var totalMax = 0.0;
+            if (orders.Count > 0)
+            {
+                totalMax = await db.DexSellOrders
+                    .Where(x => x.TokenId == id)
+                    .Select(x => x.Bid)
+                    .MaxAsync(token);
+            }
+
             var ret = orders
                 .Select(x => new
                 {
                     unit = x.UnitPrice,
                     amount = x.Bid,
                     total = x.Ask,
-                    totalMax = db.DexSellOrders
-                    .Where(y => y.Account == x.Account)
-                    .Max(y => y.Ask)
+                    totalMax = totalMax
                 });
 
             return Json(ret);
