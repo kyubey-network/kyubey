@@ -120,6 +120,8 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Favorite> Favorites { get; set; }
 
+        public DbSet<Login> Logins { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -167,6 +169,11 @@ namespace Andoromeda.Kyubey.Models
             builder.Entity<Favorite>(e => 
             {
                 e.HasKey(x => new { x.Account, x.TokenId });
+            });
+
+            builder.Entity<Login>(e =>
+            {
+                e.HasKey(x => new { x.Id, x.TokenId, x.Account, x.Time });
             });
         }
     }

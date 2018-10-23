@@ -48,7 +48,6 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 
         private async Task HandleLoginAsync(KyubeyContext db, ActionDataWrap data, DateTime time)
         {
-          
         }
 
         private async Task<IEnumerable<EosAction>> LookupActionAsync(IConfiguration config, KyubeyContext db)
