@@ -18,7 +18,31 @@
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/bootstrap-slider.min.js"></script>
     <script src="~/js/common.js"></script>
+
+    <style type="text/css">
+        #box {
+            display: none;
+            position: absolute;
+            left: 480px;
+            height: 5px;
+            width: 300px;
+            height: 50px;
+            background: black;
+            text-align: center;
+            z-index: 5;
+            background-color: rgba(0,0,0,0)
+        }
+    </style>
+    <script type="text/javascript">
+        function display() {
+            document.getElementById("box").style.display = "block";
+        }
+        function disappear() {
+            document.getElementById("box").style.display = "none";
+        }
+    </script>
 </head>
+
 
 <body>
     <!-- Navigation -->
@@ -46,9 +70,59 @@
     <!-- Footer -->
     <footer class="py-5 bg-black">
         <div class="@(ViewBag.Flex ? "container-fluid" : "container")">
+            <div style="padding :30px">
+                <div id="box" onmouseover="display()" onmouseout="disappear()">
+                   <p align="right" style="padding-right :20px"> <font color="white" size="2"> Please contact us through : kyubeynetwork@gmail.com </font></p>
+                </div>
+                <table align="center">
+                    <tr>
+                        <td width="100">
+                            <div align="center">
+                                <div align="center">
+                                    <a onmouseover="display()" onmouseout="disappear()"><img src="~/img/email_L.png" /></a>
+                                </div>
+                                <div align="center">
+                                    <a onmouseover="display()" onmouseout="disappear()"><font color="#737373"> Mail </font></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td width="100">
+                            <div align="center">
+                                <div align="center">
+                                    <a href="https://medium.com/@@kyubeynetwork/" target="_blank" style="color:red;text-decoration:none;"><img src="~/img/medium.png" /></a>
+                                </div>
+                                <div align="center">
+                                    <a href="https://medium.com/@@kyubeynetwork/" target="_blank" style="color:red;text-decoration:none;"> <font color="#737373"> medium </font></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td width="100">
+                            <div align="center">
+                                <div align="center">
+                                    <a href="https://t.me/Kyubey_Network" target="_blank" style="color:red;text-decoration:none;"><img src="~/img/telegram.png" /></a>
+                                </div>
+                                <div align="center">
+                                    <a href="https://t.me/Kyubey_Network" target="_blank" style="color:red;text-decoration:none;"> <font color="#737373"> TG group</font></a>
+                                </div>
+                            </div>
+                        </td>
+                        <td width="100">
+                            <div align="center">
+                                <div align="center">
+                                    <a href="https://t.me/Kyubey_Network_Announcement" target="_blank" style="color:red;text-decoration:none;"><img src="~/img/telegram.png" /></a>
+                                </div>
+                                <div align="center">
+                                    <a href="https://t.me/Kyubey_Network_Announcement" target="_blank" style="color:red;text-decoration:none;"><font color="#737373"> TG channel </font></a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <p></p>
             <p class="m-0 text-center text-white small">Copyright &copy; Kyubey @DateTime.Now.Year</p>
         </div>
     </footer>
 </body>
-
 </html>
