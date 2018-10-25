@@ -2,16 +2,25 @@
 @{
     ViewBag.Current = "token-about";
     ViewBag.Title = Model.Id;
+    Andoromeda.Kyubey.Models.Hatcher.TokenHatcher handerInfo = ViewBag.Handler;
 }
 @await Html.PartialAsync("_TokenHeader")
 
 <section>
     <div class="container-fluid">
         <div class="row">
-            @await  Html.PartialAsync("_TokenSidebar")
+            @await Html.PartialAsync("_TokenSidebar")
             <div class="col-md-8">
                 <div class="card">
                     @Html.Marked(Model.Description)
+                </div>
+                <div class="card">
+                    @SR["Start Time"]:@Html.Marked(handerInfo.StartTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
+                    @SR["Deadline"]:@Html.Marked(handerInfo.Deadline.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
+                    @SR["Target Credits"]:@Html.Marked(handerInfo.TargetCredits.ToString("N"))
+                </div>
+                <div class="card">
+                    @SR["Token Detail"]:@Html.Marked(handerInfo.Detail)
                 </div>
             </div>
         </div>

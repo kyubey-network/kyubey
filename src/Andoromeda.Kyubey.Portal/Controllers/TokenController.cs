@@ -67,6 +67,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
+            ViewBag.Handler= await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id, cancellationToken);
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }

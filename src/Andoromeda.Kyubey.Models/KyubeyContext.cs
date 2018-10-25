@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 using Newtonsoft.Json;
 using Andoromeda.Kyubey.Models;
+using Andoromeda.Kyubey.Models.Hatcher;
 
 namespace Andoromeda.Kyubey.Models
 {
@@ -100,6 +101,8 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Token> Tokens { get; set; }
 
+        public DbSet<TokenHatcher> TokenHatchers { get; set; }
+
         public DbSet<Otc> Otcs { get; set; }
 
         public DbSet<Bancor> Bancors { get; set; }
@@ -131,6 +134,7 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.Priority);
                 e.HasIndex(x => x.Name).ForMySqlIsFullText();
             });
+
 
             builder.Entity<Bancor>(e =>
             {
