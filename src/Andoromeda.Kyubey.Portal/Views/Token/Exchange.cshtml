@@ -550,7 +550,6 @@
                 if (isNaN(val)) {
                     return;
                 }
-                this.inputs.vaildsellTotalInput = val;
                 if (this.control.publish === 'limit') {
                     this.inputs.sellPrice = val / (this.inputs.sellAmount || 1);
                 }
