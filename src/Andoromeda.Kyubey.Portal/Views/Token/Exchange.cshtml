@@ -50,7 +50,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F3F9EC ' + getcolorOccupationRatio(x.amount,x.totalMax) + ', white ' + getcolorOccupationRatio(x.amount,x.totalMax) + ')'">
+                                <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F8EBF1 ' + getcolorOccupationRatio(x.amount,x.totalMax) + ', white ' + getcolorOccupationRatio(x.amount,x.totalMax) + ')'">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
@@ -72,7 +72,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F8EBF1 ' + getcolorOccupationRatio(x.total,x.totalMax) + ', white ' + getcolorOccupationRatio(x.total,x.totalMax) + ')'">
+                                <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F3F9EC ' + getcolorOccupationRatio(x.total,x.totalMax) + ', white ' + getcolorOccupationRatio(x.total,x.totalMax) + ')'">
                                     <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
