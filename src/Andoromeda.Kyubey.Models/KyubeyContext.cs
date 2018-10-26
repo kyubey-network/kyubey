@@ -29,7 +29,7 @@ namespace Andoromeda.Kyubey.Models
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task InitializeDatabaseAsync(
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             RoleManager<UserRole> roleManager,
             CancellationToken token = default)
         {
@@ -39,12 +39,26 @@ namespace Andoromeda.Kyubey.Models
             {
                 await roleManager.CreateAsync(new UserRole { Name = "ROOT", NormalizedName = "ROOT" });
             }
+            if (await roleManager.FindByNameAsync("COMMONUSER") == null)
+            {
+                await roleManager.CreateAsync(new UserRole { Name = "COMMONUSER", NormalizedName = "COMMONUSER" });
+            }
 
             if (await userManager.FindByNameAsync("root") == null)
             {
                 var user = new User { UserName = "root" };
                 await userManager.CreateAsync(user, "123456");
                 await userManager.AddToRoleAsync(user, "ROOT");
+            }
+            for (var i = 1; i <= 10; i++)
+            {
+                var userName = "user" + i;
+                if (await userManager.FindByNameAsync(userName) == null)
+                {
+                    var user = new User { UserName = userName };
+                    await userManager.CreateAsync(user, "123456");
+                    await userManager.AddToRoleAsync(user, "COMMONUSER");
+                }
             }
 
             if (!await Curves.AnyAsync(x => x.Id == "bancor", token))
@@ -103,6 +117,14 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<TokenHatcher> TokenHatchers { get; set; }
 
+        public DbSet<TokenBanner> TokenBanners { get; set; }
+
+        public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }
+
+        public DbSet<TokenComment> TokenComments { get; set; }
+
+        public DbSet<TokenCommentPraise> TokenCommentPraises { get; set; }
+
         public DbSet<Otc> Otcs { get; set; }
 
         public DbSet<Bancor> Bancors { get; set; }
@@ -146,7 +168,7 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.Status);
             });
 
-            builder.Entity<MatchReceipt>(e => 
+            builder.Entity<MatchReceipt>(e =>
             {
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.TokenId);
@@ -168,7 +190,7 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.UnitPrice);
             });
 
-            builder.Entity<Favorite>(e => 
+            builder.Entity<Favorite>(e =>
             {
                 e.HasKey(x => new { x.Account, x.TokenId });
             });

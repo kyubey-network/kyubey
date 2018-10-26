@@ -1,5 +1,5 @@
 ﻿{
-  "MySQL": "",
+  "MySQL": "Server=localhost;database=kyubeydb;uid=root;pwd=Qxw123123;SslMode=None",
   "TransactionNode": "http://node.eosflare.io/v1/history/get_actions",
   "TransactionNodeBackup": "http://api1.eosasia.one",
   "Kdata": "https://dasdaq-webapi.chinacloudsites.cn",

@@ -3,6 +3,8 @@
     ViewBag.Current = "token-about";
     ViewBag.Title = Model.Id;
     Andoromeda.Kyubey.Models.Hatcher.TokenHatcher handerInfo = ViewBag.Handler;
+    List<Guid> TokenBannerIds = ViewBag.TokenBannerIds;
+    List<Andoromeda.Kyubey.Models.Hatcher.TokenRecentUpdate> recentUpdates = ViewBag.RecentUpdates;
 }
 @await Html.PartialAsync("_TokenHeader")
 
@@ -11,9 +13,19 @@
         <div class="row">
             @await Html.PartialAsync("_TokenSidebar")
             <div class="col-md-8">
+
                 <div class="card">
                     @Html.Marked(Model.Description)
                 </div>
+                @if (TokenBannerIds != null)
+                {
+                    foreach (var bannerId in TokenBannerIds)
+                    {
+                        <img src="/token/tokenbanner/@(bannerId).png" />
+                    }
+
+                }
+
                 <div class="card">
                     @SR["Start Time"]:@Html.Marked(handerInfo.StartTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
                     @SR["Deadline"]:@Html.Marked(handerInfo.Deadline.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
@@ -22,6 +34,17 @@
                 <div class="card">
                     @SR["Token Detail"]:@Html.Marked(handerInfo.Detail)
                 </div>
+
+                @if (TokenBannerIds != null)
+                {
+                <div class="card">
+                    @foreach (var up in recentUpdates)
+                    {
+                        @up.Content<br />
+                    }
+                </div>
+                }
+
             </div>
         </div>
     </div>

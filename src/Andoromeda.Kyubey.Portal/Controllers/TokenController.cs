@@ -68,6 +68,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
             ViewBag.Handler= await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id, cancellationToken);
+            ViewBag.TokenBannerIds = await db.TokenBanners.Where(x=>x.TokenId==id).OrderBy(x=>x.BannerOrder).Select(x=>x.Id).ToListAsync(cancellationToken);
+            ViewBag.RecentUpdates = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).ToListAsync(cancellationToken);
 
             return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
         }
@@ -95,6 +97,19 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             else
             {
                 return File(token.Icon, "image/png", "icon.png");
+            }
+        }
+        [HttpGet("[controller]/tokenbanner/{id}.png")]
+        public async Task<IActionResult> Banner([FromServices] KyubeyContext db, Guid id, CancellationToken cancellationToken)
+        {
+            var tokenBaner = await db.TokenBanners.SingleAsync(x => x.Id == id , cancellationToken);
+            if (tokenBaner.Banner == null || tokenBaner.Banner.Length == 0)
+            {
+                return File(System.IO.File.ReadAllBytes(Path.Combine("wwwroot", "img", "null.png")), "image/png", "icon.png");
+            }
+            else
+            {
+                return File(tokenBaner.Banner, "image/png", "icon.png");
             }
         }
 
