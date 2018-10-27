@@ -10,6 +10,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class AnalysisController : BaseController
     {
+        public override void Prepare()
+        {
+            base.Prepare();
+
+            ViewBag.NavActive = "ANALYSIS";
+        }
         [HttpGet]
         [Route("[controller]/{id?}")]
         public async Task<IActionResult> Index(string id, CancellationToken cancellationToken)

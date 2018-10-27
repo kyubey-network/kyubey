@@ -21,6 +21,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             base.Prepare();
 
             ViewBag.Flex = true;
+            ViewBag.NavActive = "KYUBEYDEX";
         }
 
         [HttpGet("[controller]/pair")]
@@ -50,6 +51,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
+            ViewBag.Flex = false;
             var token = await db.Tokens
                 .Include(x => x.Curve)
                 .SingleOrDefaultAsync(x => x.Id == id

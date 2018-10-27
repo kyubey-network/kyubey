@@ -146,14 +146,23 @@ section {
 }
 
 .brand {
-    margin-top: -140px;
+    margin-top: -150px;
+}
+.brand-description {
+    /*display: inline-block;*/
+    font-size: 14px;
+    color: #fff;
+}
+.brand-wording {
+    display: inline-block;
+    margin-left: 30px;
 }
 
 .brand-name {
     font-size: 32px;
     color: #fff;
-    display: inline-block;
-    margin-left: 30px;
+    /*display: inline-block;*/
+   
 }
 
 .brand-header {
