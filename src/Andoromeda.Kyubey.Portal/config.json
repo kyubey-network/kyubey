@@ -1,5 +1,5 @@
 {
-  "MySQL": "",
+  "MySQL": "Server=localhost;database=kyubeydb;uid=root;pwd=Qxw123123;SslMode=None",
   "TransactionNode": "https://api.helloeos.com.cn",
   "Kdata": "https://dasdaq-webapi.chinacloudsites.cn",
   "Contracts": {

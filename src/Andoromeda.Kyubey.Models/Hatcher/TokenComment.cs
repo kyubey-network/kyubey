@@ -13,12 +13,12 @@ namespace Andoromeda.Kyubey.Models.Hatcher
         public string TokenId { get; set; }
         public Guid? ParentCommentId { get; set; }
         public DateTimeOffset CreateTime { get; set; }
-        [ForeignKey("User")]
+
         public long UserId { get; set; }
-        public virtual User User { get; set; }
-        [ForeignKey("ReplyUser")]
+        public  User User { get; set; }
+
         public long? ReplyUserId { get; set; }
-        public virtual User ReplyUser { get; set; }
+        public  User ReplyUser { get; set; }
         public bool IsDelete { get; set; }
         public DateTimeOffset? DeleteTime { get; set; }
         public string Content { get; set; }

@@ -148,8 +148,27 @@ namespace Andoromeda.Kyubey.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            //builder.ApplyConfiguration(new TokenCommentConfiguration());
 
             builder.SetupBlobStorage();
+
+
+
+
+
+            //builder.Entity<TokenComment>().HasKey(p => p.ReplyUserId);
+
+            builder.Entity<TokenComment>().HasOne<User>(s => s.ReplyUser)
+                .WithOne().HasForeignKey<TokenComment>(s => s.ReplyUserId);
+
+            builder.Entity<TokenComment>().HasOne<User>(s => s.User)
+                .WithOne().HasForeignKey<TokenComment>(s => s.UserId);
+
+
+
+
+
+
 
             builder.Entity<Token>(e =>
             {
