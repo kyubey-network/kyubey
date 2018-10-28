@@ -40,6 +40,9 @@ namespace Andoromeda.Kyubey.Models
 
         public string Description { get; set; }
 
+        public long? DeliveryAmount { get; set; }
+
+
         //public string Detail { get; set; }
 
         [MaxLength(16)]

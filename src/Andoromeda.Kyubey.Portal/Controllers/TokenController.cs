@@ -70,9 +70,18 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
-            ViewBag.Handler = await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id, cancellationToken);
-            ViewBag.TokenBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken);
-            ViewBag.RecentUpdates = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).ToListAsync(cancellationToken);
+            ViewBag.Token = token;
+
+            var handler = await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id, cancellationToken);
+
+            if (handler == null)
+            {
+                return View("IndexOld",token);
+            }
+
+
+            //ViewBag.TokenBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken);
+            //ViewBag.RecentUpdates = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).ToListAsync(cancellationToken);
 
             //just one query db
 
@@ -118,7 +127,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                                         where c.IsDelete == false && c.TokenId == id
                                         select p).ToListAsync(cancellationToken);
 
-            ViewBag.Comments = comments.Where(x => x.ReplyUserId == null).OrderByDescending(x => x.CreateTime).Select(x => new TokenCommentViewModel()
+            var commentsVM = comments.Where(x => x.ReplyUserId == null).OrderByDescending(x => x.CreateTime).Select(x => new TokenCommentViewModel()
             {
                 Content = x.Content,
                 CreateTime = x.CreateTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture),
@@ -139,7 +148,41 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             }).ToList();
 
-            return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+            
+
+            var handlerVM = new TokenHandlerViewModel()
+            {
+                TokenInfo = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken),
+                //Providers=
+                HandlerInfo = new HandlerInfo()
+                {
+                    //CurrentRaised= 
+                    Detail = handler.Detail,
+                    Introduction = handler.Introduction,
+                    RemainingDay = (handler.Deadline - DateTime.Now).Days,
+                    TargetCredits = handler.TargetCredits,
+                    CurrentRaised = handler.CurrentRaisedSum,
+                    CurrentRaisedCount = handler.CurrentRaisedCount
+                },
+                HandlerBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken),
+                Providers = await db.TokenProviders.Include(x => x.User).Where(x => x.TokenId == id).Select(x => new TokenProviderVM()
+                {
+                    RoleType = x.RoleType.ToString("G"),
+                    UserName = x.User.UserName,
+                    IsSponsor = x.RoleType == TokenProviderRole.Sponsor
+                }).ToListAsync(cancellationToken),
+                PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),
+                Comments = commentsVM,
+                RecentUpdate = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).Select(x => new RecentUpdateVM()
+                {
+                    Content = x.Content,
+                    OperateTime = x.OperateTime
+                }).ToListAsync(cancellationToken)
+            };
+
+            ViewBag.HandlerView = handlerVM;
+
+            return View(token);
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]

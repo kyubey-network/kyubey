@@ -117,6 +117,10 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<TokenHatcher> TokenHatchers { get; set; }
 
+        public DbSet<TokenProvider> TokenProviders { get; set; }
+
+        public DbSet<TokenHatcherPraise> TokenHatcherPraises { get; set; }
+
         public DbSet<TokenBanner> TokenBanners { get; set; }
 
         public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }

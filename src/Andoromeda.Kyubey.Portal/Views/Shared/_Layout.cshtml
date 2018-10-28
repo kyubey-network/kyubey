@@ -33,6 +33,7 @@
             background-color: rgba(0,0,0,0)
         }
     </style>
+    @RenderSection("Style", required: false)
     <script type="text/javascript">
         function display() {
             document.getElementById("box").style.display = "block";
@@ -72,17 +73,17 @@
                             @SR["Language"]
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">English</a>
-                            <a class="dropdown-item" href="#">简体中文</a>
-                            <a class="dropdown-item" href="#">繁體中文</a>
-                            <a class="dropdown-item" href="#">日本語</a>
+                            <a class="dropdown-item" href="javascript:setLang('en-US')">English</a>
+                            <a class="dropdown-item" href="javascript:setLang('zh-CN')">简体中文</a>
+                            @*<a class="dropdown-item" href="javascript:setLang('zh-TW')">繁體中文</a>
+                            <a class="dropdown-item" href="javascript:setLang('ja-JP')">日本語</a>*@
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-  
+
 
     @RenderBody()
 
