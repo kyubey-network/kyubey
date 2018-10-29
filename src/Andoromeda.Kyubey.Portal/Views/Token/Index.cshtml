@@ -1,19 +1,211 @@
-﻿@model Token
-@{
+﻿@{
+    TokenHandlerViewModel Model = ViewBag.HandlerView;
+    Token token = ViewBag.Token;
     ViewBag.Current = "token-about";
-    ViewBag.Title = Model.Id;
+    ViewBag.Title = token.Id;
+    //Andoromeda.Kyubey.Models.Hatcher.TokenHatcher handerInfo = ViewBag.Handler;
+    //List<Guid> TokenBannerIds = ViewBag.TokenBannerIds;
+    //List<Andoromeda.Kyubey.Models.Hatcher.TokenRecentUpdate> recentUpdates = ViewBag.RecentUpdates;
+    //List<TokenCommentViewModel> tokenCommentView = ViewBag.Comments;
+    Bancor bancor = ViewBag.Bancor;
 }
-@await Html.PartialAsync("_TokenHeader")
 
-<section>
-    <div class="container-fluid">
+@section Style{
+    <style>
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            border: 0;
+        }
+
+        .nav-tabs {
+            border: 0;
+        }
+
+            .nav-tabs .nav-link {
+                border: 0;
+            }
+    </style>
+}
+
+
+<section style="margin-top:90px;">
+    <div class="container">
         <div class="row">
-            @await  Html.PartialAsync("_TokenSidebar")
-            <div class="col-md-8">
-                <div class="card">
-                    @Html.Marked(Model.Description)
+
+            <div class="col-md-7 token-banner">
+                @if (Model.HandlerBannerIds != null && Model.HandlerBannerIds.Count > 0)
+                {
+                    @*foreach (var bannerId in TokenBannerIds)
+                        {
+                            <img src="/token/tokenbanner/@(bannerId).png" />
+                        }*@
+                    <img class="img-fluid " style="height:450px;width:100%;" alt="Responsive image" src="/token/tokenbanner/@(Model.HandlerBannerIds.FirstOrDefault()).png" />
+                }
+                <p>
+                    @Html.Marked(Model.HandlerInfo.Introduction)
+                </p>
+
+            </div>
+
+            <div class="col-md-5" style="height:450px;">
+                @if (Model.Providers != null && Model.Providers.Count > 0)
+                {
+                    <details style="margin-bottom:10px;">
+                        <summary><strong>@SR[@Model.Providers.FirstOrDefault(x => x.IsSponsor).RoleType] @Model.Providers.FirstOrDefault(x => x.IsSponsor).UserName</strong></summary>
+                        <p>
+                            @foreach (var p in Model.Providers)
+                            {
+                                <div>@($"{SR[p.RoleType]} {SR[p.UserName]}")</div>
+                            }
+                        </p>
+                    </details>
+                }
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="h2">@($"{Model.HandlerInfo.CurrentRaised.ToString("N")} {token.Id} {SR["Raised"]}")</p>
+                        <div class="progress" style="background-color:darkgray;height:30px;">
+                            @{
+                                int raisedPercent = (Model.HandlerInfo.CurrentRaised == 0 || Model.HandlerInfo.TargetCredits == 0) ? 0 : (int)(Model.HandlerInfo.CurrentRaised / Model.HandlerInfo.TargetCredits);
+
+                            }
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
+                        </div>
+                        <p class="h6" style="margin-top:4px; text-align:right;">@($"{SR["Goal"]}:{Model.HandlerInfo.TargetCredits.ToString("N")} {token.Id}")</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="h6"><strong>@SR["Remain Time"]</strong></p>
+                        <p class="h1">@($"{Model.HandlerInfo.RemainingDay}{SR["Day"]}")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="h6"><strong>@SR["Total Need"]</strong></p>
+                        <p><span class="h1 ">@($"{ (Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised).ToString("N")}")</span><span class="h6" style="margin-left:4px;">@token.Id</span></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="h6"><strong>@SR["Supporter Count"]</strong></p>
+                        <p class="h1"> @($"{Model.HandlerInfo.CurrentRaisedCount}{SR["User"]}")</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Crowdfunding purchase Volume">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon2">= EOS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="padding:14px 20px;">
+                        <a href="#" class="btn btn-success col-md-12">@SR["Login with Scatter & Buy"]</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6" style="padding:0px 10px 0 20px;">
+                        <a href="/Token/@token.Id/exchange" class="btn btn-success col-md-12">@SR["Exchange"]</a>
+                    </div>
+                    <div class="col-md-6" style="padding:0px 20px 0 0px;">
+                        <a href="/Token/@token.Id/whitepaper" class="btn btn-success col-md-12">@SR["Whitepaper"]</a>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
+@await Html.PartialAsync("_TokenInfoBox")
+<section>
+    <div class="container">
+        <div class="row ">
+
+            <div class="col-md-12">
+
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active show" href="#tab-1" data-toggle="tab" role="tab" aria-selected="true">@SR["Detail"]</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false">@SR["Update History"]</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false">@SR["Comments"]</a></li>
+                </ul>
+
+
+                <div class="tab-content" style="background-color:#fff; padding:20px;">
+                    <div class="tab-pane active show" id="tab-1" role="tabpanel">
+                        <p>
+                            @Html.Marked(Model.HandlerInfo.Detail)
+                        </p>
+
+                    </div>
+                    <div class="tab-pane" id="tab-2" role="tabpanel">
+                        @if (Model.RecentUpdate != null)
+                        {
+                            var i = Model.RecentUpdate.Count;
+                            @foreach (var up in Model.RecentUpdate)
+                            {
+                                <h4>@(SR["Recent Update"] + i):</h4>
+                                <p>@up.OperateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+                                <p>@up.Content</p>
+                                i--;
+                            }
+                        }
+                    </div>
+                    <div class="tab-pane" id="tab-3" role="tabpanel">
+                        @if (Model.Comments != null)
+                        {
+                            foreach (var c in Model.Comments)
+                            {
+                                <p>
+                                    <span>@($"{c.UserName}:{c.Content}")</span>
+                                    <a href="#">@SR["reply"]</a>
+                                </p>
+
+                                if (c.ChildComments != null)
+                                {
+                                    foreach (var cc in c.ChildComments)
+                                    {
+                                        <p style=" margin-left:30px;"><span> @($"{cc.UserName} {@SR["to"]} {cc.ReplyUserName}:{cc.Content}")</span><a href="#">@SR["reply"]</a></p>
+                                    }
+                                }
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+@*<section>
+        <div class="container">
+
+            <div class="row">
+                @await Html.PartialAsync("_TokenSidebar")
+                <div class="col-md-8">
+
+                    <div class="card">
+                        @Html.Marked(Model.Description)
+                    </div>
+
+
+                    <div class="card">
+                        @SR["Start Time"]:@Html.Marked(handerInfo.StartTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
+                        @SR["Deadline"]:@Html.Marked(handerInfo.Deadline.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture))<br />
+                        @SR["Target Credits"]:@Html.Marked(handerInfo.TargetCredits.ToString("N"))
+                    </div>
+                    <div class="card">
+                        @SR["Token Detail"]:@Html.Marked(handerInfo.Detail)
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </section>*@

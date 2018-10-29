@@ -1,0 +1,19 @@
+﻿@model Token
+@{
+    ViewBag.Current = "token-about";
+    ViewBag.Title = Model.Id;
+}
+@await Html.PartialAsync("_TokenHeader")
+
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            @await Html.PartialAsync("_TokenSidebar")
+            <div class="col-md-8">
+                <div class="card">
+                    @Html.Marked(Model.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
