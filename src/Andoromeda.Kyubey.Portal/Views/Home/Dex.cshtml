@@ -1,0 +1,68 @@
+﻿@model IEnumerable<TokenDisplay>
+@{
+    ViewBag.Title = SR["Kyubey Exchange"];
+    ViewBag.Current = "home-kyubey";
+}
+@await Html.PartialAsync("_Header")
+
+<section>
+    <div class="container currency-table-outer">
+        <table class="currency-table">
+            <thead>
+                <tr>
+                    <th>@SR["TOKEN"]</th>
+                    <th class="mobile-hidden">@SR["PROTOCOL"]</th>
+                    <th>@SR["24H CHANGE"]</th>
+                    <th>@SR["PRICE"]</th>
+                    <th class="mobile-hidden">@SR["EXCHANGE VIA DEX"]</th>
+                    <th class="mobile-hidden">@SR["EXCHANGE VIA CONTRACT"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                <tr>
+                    <td>
+                        <img src="/token/@(x.Id).png" class="table-icon" />
+                        <div class="table-currency">
+                            <a class="table-currency-symbol" asp-action="Index" asp-controller="Token" asp-route-id="@x.Id">@x.Id</a>
+                            <div class="table-currency-name">@x.Name</div>
+                        </div>
+                    </td>
+                    <td class="mobile-hidden">@x.Protocol</td>
+                    @if (x.Change >= 0)
+                    {
+                        <td class="green">+@((x.Change * 100.0).ToString("0.00"))%</td>
+                        <td class="green">@x.Price.ToString("0.0000") EOS</td>
+                    }
+                    else
+                    {
+                        <td class="red">@((x.Change * 100.0).ToString("0.00"))%</td>
+                        <td class="red">@x.Price.ToString("0.0000") EOS</td>
+                    }
+                    <td class="mobile-hidden">
+                        @if (x.ExchangeInDex)
+                        {
+                        <a asp-action="Exchange" class="btn btn-go-exchange" asp-route-id="@x.Id" asp-controller="Token">@SR["EXCHANGE VIA DEX"]</a>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                    <td class="mobile-hidden">
+                        @if (x.ExchangeInContract)
+                        {
+                        <a asp-action="Exchange" class="btn btn-go-exchange" asp-route-id="@x.Id" asp-route-contract="1" asp-controller="Token">@SR["EXCHANGE VIA CONTRACT"]</a>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

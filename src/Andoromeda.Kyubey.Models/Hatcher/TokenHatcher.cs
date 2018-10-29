@@ -9,10 +9,12 @@ namespace Andoromeda.Kyubey.Models.Hatcher
     public class TokenHatcher
     {
         [Key]
-        //public Guid Id { get; set; }
-        //[ForeignKey("Token")]
         [MaxLength(16)]
+        [ForeignKey("Token")]
         public string TokenId { get; set; }
+
+        public virtual Token Token { get; set; }
+
         [ForeignKey("User")]
         public long UserId { get; set; }
         public virtual User User { get; set; }
