@@ -6,7 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 using Newtonsoft.Json;
+<<<<<<< HEAD
+=======
 using Andoromeda.Kyubey.Models;
+using Andoromeda.Kyubey.Models.Hatcher;
+>>>>>>> 67c6ac70c9756eff22cd8b8f33c40719e8a5ad85
 
 namespace Andoromeda.Kyubey.Models
 {
@@ -28,7 +32,7 @@ namespace Andoromeda.Kyubey.Models
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task InitializeDatabaseAsync(
-            UserManager<User> userManager, 
+            UserManager<User> userManager,
             RoleManager<UserRole> roleManager,
             CancellationToken token = default)
         {
@@ -38,12 +42,26 @@ namespace Andoromeda.Kyubey.Models
             {
                 await roleManager.CreateAsync(new UserRole { Name = "ROOT", NormalizedName = "ROOT" });
             }
+            if (await roleManager.FindByNameAsync("COMMONUSER") == null)
+            {
+                await roleManager.CreateAsync(new UserRole { Name = "COMMONUSER", NormalizedName = "COMMONUSER" });
+            }
 
             if (await userManager.FindByNameAsync("root") == null)
             {
                 var user = new User { UserName = "root" };
                 await userManager.CreateAsync(user, "123456");
                 await userManager.AddToRoleAsync(user, "ROOT");
+            }
+            for (var i = 1; i <= 10; i++)
+            {
+                var userName = "user" + i;
+                if (await userManager.FindByNameAsync(userName) == null)
+                {
+                    var user = new User { UserName = userName };
+                    await userManager.CreateAsync(user, "123456");
+                    await userManager.AddToRoleAsync(user, "COMMONUSER");
+                }
             }
 
             if (!await Curves.AnyAsync(x => x.Id == "bancor", token))
@@ -100,6 +118,20 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Token> Tokens { get; set; }
 
+        public DbSet<TokenHatcher> TokenHatchers { get; set; }
+
+        public DbSet<TokenProvider> TokenProviders { get; set; }
+
+        public DbSet<TokenHatcherPraise> TokenHatcherPraises { get; set; }
+
+        public DbSet<TokenBanner> TokenBanners { get; set; }
+
+        public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }
+
+        public DbSet<TokenComment> TokenComments { get; set; }
+
+        public DbSet<TokenCommentPraise> TokenCommentPraises { get; set; }
+
         public DbSet<Otc> Otcs { get; set; }
 
         public DbSet<Bancor> Bancors { get; set; }
@@ -120,17 +152,39 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Favorite> Favorites { get; set; }
 
+        public DbSet<Login> Logins { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            //builder.ApplyConfiguration(new TokenCommentConfiguration());
 
             builder.SetupBlobStorage();
+
+
+
+
+
+            //builder.Entity<TokenComment>().HasKey(p => p.ReplyUserId);
+
+            builder.Entity<TokenComment>().HasOne<User>(s => s.ReplyUser)
+                .WithOne().HasForeignKey<TokenComment>(s => s.ReplyUserId);
+
+            builder.Entity<TokenComment>().HasOne<User>(s => s.User)
+                .WithOne().HasForeignKey<TokenComment>(s => s.UserId);
+
+
+
+
+
+
 
             builder.Entity<Token>(e =>
             {
                 e.HasIndex(x => x.Priority);
                 e.HasIndex(x => x.Name).ForMySqlIsFullText();
             });
+
 
             builder.Entity<Bancor>(e =>
             {
@@ -142,7 +196,7 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.Status);
             });
 
-            builder.Entity<MatchReceipt>(e => 
+            builder.Entity<MatchReceipt>(e =>
             {
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.TokenId);
@@ -164,9 +218,15 @@ namespace Andoromeda.Kyubey.Models
                 e.HasIndex(x => x.UnitPrice);
             });
 
-            builder.Entity<Favorite>(e => 
+            builder.Entity<Favorite>(e =>
             {
                 e.HasKey(x => new { x.Account, x.TokenId });
+            });
+
+            builder.Entity<Login>(e =>
+            {
+                e.HasIndex(x => x.Account);
+                e.HasIndex(x => x.Time);
             });
         }
     }

@@ -14,8 +14,18 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class HomeController : BaseController
     {
+<<<<<<< HEAD
+        [Route("/Dex")]
+        public async Task<IActionResult> Dex([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
+=======
+        public override void Prepare()
+        {
+            base.Prepare();
+            ViewBag.NavActive = "KYUBEYDEX";
+        }
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
+>>>>>>> 67c6ac70c9756eff22cd8b8f33c40719e8a5ad85
         {
             if (token != null)
             {

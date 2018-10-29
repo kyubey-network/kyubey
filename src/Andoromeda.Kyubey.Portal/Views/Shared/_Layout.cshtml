@@ -33,6 +33,7 @@
             background-color: rgba(0,0,0,0)
         }
     </style>
+    @RenderSection("Style", required: false)
     <script type="text/javascript">
         function display() {
             document.getElementById("box").style.display = "block";
@@ -52,17 +53,37 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item @(ViewBag.NavActive=="KYUBEYDEX"? "active":"")">
+                        <a class="nav-link" href="/">@SR["KyubeyDex"]</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="#">@SR["WhitePaper"]</a>
+                    </li>
+                    <li class="nav-item @(ViewBag.NavActive=="ANALYSIS"? "active":"")">
                         <a class="nav-link" asp-action="Index" asp-controller="Analysis" asp-route-id="">@SR["Curve Analysis"]</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item ">
                         <a class="nav-link" href="//manage.kyubey.network" target="_blank">@SR["Onboard"]</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @SR["Language"]
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="javascript:setLang('en-US')">English</a>
+                            <a class="dropdown-item" href="javascript:setLang('zh-CN')">简体中文</a>
+                            @*<a class="dropdown-item" href="javascript:setLang('zh-TW')">繁體中文</a>
+                            <a class="dropdown-item" href="javascript:setLang('ja-JP')">日本語</a>*@
+                        </div>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
 
     @RenderBody()
 
@@ -71,7 +92,7 @@
         <div class="@(ViewBag.Flex ? "container-fluid" : "container")">
             <div style="padding :30px">
                 <div id="box" onmouseover="display()" onmouseout="disappear()">
-                   <p align="right" style="padding-right :20px"> <font color="white" size="2"> Please contact us through : kyubeynetwork@gmail.com </font></p>
+                    <p align="right" style="padding-right :20px"> <font color="white" size="2"> Please contact us through : kyubeynetwork@gmail.com </font></p>
                 </div>
                 <table align="center">
                     <tr>

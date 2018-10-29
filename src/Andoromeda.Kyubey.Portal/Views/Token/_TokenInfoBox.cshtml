@@ -1,0 +1,73 @@
+﻿@model Token
+@{
+    
+    Otc otc = ViewBag.Otc;
+    Bancor bancor = ViewBag.Bancor;
+}
+<section>
+    <div class="container">
+        <div class="card token-infobox">
+            <div class="row">
+                <div class="col-3 token-infobox-icon">
+                    <img src="/token/@(@Model.Id).png"  />
+                    <span class="h4" style="padding-left:16px;">@Model.Id</>
+                </div>
+                @if (bancor != null)
+                {
+                    <div class="col">
+                        <strong>@SR["Buy"]</strong>
+                        <p>@bancor.BuyPrice.ToString("0.0000") EOS</p>
+                    </div>
+                    <div class="col">
+                        <strong>@SR["Buy"]</strong>
+                        <p>@bancor.BuyPrice.ToString("0.0000") EOS</p>
+                    </div>
+                    <div class="col">
+                        <strong>@SR["24 Hours Change"]</strong>
+                        <p>@((bancor.Change * 100.0).ToString("0.0000"))%</p>
+                    </div>
+                }
+                @if (otc != null)
+                {
+                    <div class="col">
+                        <strong>@SR["Min"]</strong>
+                        <p>@otc.PriceMin.ToString("0.0000") EOS</p>
+                    </div>
+                    <div class="col">
+                        <strong>@SR["Max"]</strong>
+                        <p>@SR["Max"]: @otc.PriceMax.ToString("0.0000") EOS</p>
+                    </div>
+                }
+            </div>
+            <div class="row">
+                <div class="col-7" style="padding-top:12px;">
+                    <h6 style="">@SR["Token Description"]</h6>
+                    <span>@Html.Marked(Model.Description)</span>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <strong>@SR["Delivery Amount"]</strong>
+                            <p>@(Model.DeliveryAmount.HasValue?"": Model.DeliveryAmount.ToString())</p>
+                        </div>
+                        <div class="col">
+                            <strong>@SR["PROTOCOL"]</strong>
+                            <p>@(Model.CurveId ?? SR["Unknown"])</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <strong>@SR["Contract"]</strong>
+                            <p>@Model.Contract</p>
+                        </div>
+                        <div class="col">
+                            <strong>@SR["WebUrl"]</strong>
+                            <p><a href="@Model.WebUrl" target="_blank">@Model.WebUrl</a> </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
