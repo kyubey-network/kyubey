@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 using Newtonsoft.Json;
-<<<<<<< HEAD
-=======
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Models.Hatcher;
->>>>>>> 67c6ac70c9756eff22cd8b8f33c40719e8a5ad85
 
 namespace Andoromeda.Kyubey.Models
 {
