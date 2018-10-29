@@ -20,6 +20,16 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.NavActive = "KYUBEYDEX";
         }
 
+        [Route("/")]
+        public async Task<IActionResult> Index([FromServices] KyubeyContext db)
+        {
+            var tokens = await db.TokenHatchers
+                .Include(x => x.Token)
+                .ToListAsync();
+
+            return View(tokens);
+        }
+
         [Route("/Dex")]
         public async Task<IActionResult> Dex([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
         {
