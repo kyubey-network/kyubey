@@ -55,16 +55,10 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item @(ViewBag.NavActive=="KYUBEYDEX"? "active":"")">
-                        <a class="nav-link" href="/">@SR["KyubeyDex"]</a>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="#">@SR["WhitePaper"]</a>
+                        <a class="nav-link" href="/">@SR["Dex"]</a>
                     </li>
                     <li class="nav-item @(ViewBag.NavActive=="ANALYSIS"? "active":"")">
                         <a class="nav-link" asp-action="Index" asp-controller="Analysis" asp-route-id="">@SR["Curve Analysis"]</a>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="//manage.kyubey.network" target="_blank">@SR["Onboard"]</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ">
