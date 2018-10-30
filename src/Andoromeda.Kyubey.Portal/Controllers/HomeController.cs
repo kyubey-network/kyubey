@@ -14,12 +14,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class HomeController : BaseController
     {
-        public override void Prepare()
-        {
-            base.Prepare();
-            ViewBag.NavActive = "KYUBEYDEX";
-        }
-
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {

@@ -27,6 +27,7 @@ namespace Andoromeda.Kyubey.Portal
             {
                 x.AddCulture(new string[] { "en", "en-US", "en-GB" }, new JsonLocalizedStringStore(Path.Combine("Localization", "en-US.json")));
                 x.AddCulture(new string[] { "zh", "zh-CN", "zh-Hans", "zh-Hans-CN", "zh-cn" }, new JsonLocalizedStringStore(Path.Combine("Localization", "zh-CN.json")));
+                x.AddCulture(new string[] { "zh-Hant", "zh-Hant-TW", "zh-TW", "zh-tw" }, new JsonLocalizedStringStore(Path.Combine("Localization", "zh-TW.json")));
                 x.AddCulture(new string[] { "ja", "ja-JP" }, new JsonLocalizedStringStore(Path.Combine("Localization", "ja-JP.json")));
             });
 
