@@ -149,6 +149,17 @@ section {
     margin-top: -140px;
 }
 
+.brand-description {
+    /*display: inline-block;*/
+    font-size: 14px;
+    color: #fff;
+}
+
+.brand-wording {
+    display: inline-block;
+    margin-left: 30px;
+}
+
 .brand-name {
     font-size: 32px;
     color: #fff;
@@ -348,14 +359,14 @@ section {
         cursor: pointer;
     }
 
-    .exchange-orders-table tbody tr:hover {
-        font-weight: bold;
-        background: #eee;
-    }
+        .exchange-orders-table tbody tr:hover {
+            font-weight: bold;
+            background: #eee;
+        }
 
-    #sell-order-table tr td:first-child {
-        color: red;
-    }
+#sell-order-table tr td:first-child {
+    color: red;
+}
 
 #buy-order-table tr td:first-child {
     color: green;
@@ -403,6 +414,7 @@ section {
     color: green;
     padding: 10px 0;
 }
+
 .exchange-sell-text {
     font-size: 14px;
     color: red;
@@ -414,9 +426,9 @@ section {
     color: #888;
 }
 
-.exchange-panel .col-md-6:first-child {
-    border-right: 1px solid #ddd;
-}
+    .exchange-panel .col-md-6:first-child {
+        border-right: 1px solid #ddd;
+    }
 
 .btn-full-width {
     width: 100%;
@@ -485,20 +497,20 @@ section {
 
 .exchange-pair-menu-item {
     padding: 3px 8px;
-    color: #888!important;
+    color: #888 !important;
     display: inline-block;
     font-size: 12px;
     cursor: pointer;
 }
 
     .exchange-pair-menu-item.active {
-        color: #fff!important;
+        color: #fff !important;
         background: #ee0979;
     }
 
-    .exchange-search-outer {
-        text-align: right;
-    }
+.exchange-search-outer {
+    text-align: right;
+}
 
 .exchange-search-textbox {
     font-size: 12px;
@@ -534,9 +546,9 @@ section {
         cursor: pointer;
     }
 
-    .exchange-pair-table tbody tr:hover {
-        background: #fafafa;
-    }
+        .exchange-pair-table tbody tr:hover {
+            background: #fafafa;
+        }
 
 .exchange-pair-table-outer {
     margin: 0 -25px -25px -25px;
@@ -590,21 +602,21 @@ section {
     color: #888;
 }
 
-.exchange-order-state-table tr {
-    border-bottom: 1px solid #ddd;
-}
+    .exchange-order-state-table tr {
+        border-bottom: 1px solid #ddd;
+    }
 
     .exchange-order-state-table th, .exchange-order-state-table td {
         padding: 10px 15px;
     }
 
-    .green {
-        color: green;
-    }
+.green {
+    color: green;
+}
 
-    .red {
-        color: red;
-    }
+.red {
+    color: red;
+}
 
 .curve-panel {
     margin-left: -25px;
@@ -630,16 +642,16 @@ section {
     color: #888;
 }
 
-.curve-panel-list li {
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-}
-
-    .curve-panel-list li.active {
-        background: rgb(247,247,247);
-        color: #ee0979;
+    .curve-panel-list li {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
     }
+
+        .curve-panel-list li.active {
+            background: rgb(247,247,247);
+            color: #ee0979;
+        }
 
 .exchange-sell-text-right {
     float: right;
@@ -664,7 +676,7 @@ section {
 
     .exchange-percentage:hover {
         border-color: #ee0979;
-        color: #ee0979!important;
+        color: #ee0979 !important;
     }
 
 
@@ -712,9 +724,43 @@ section {
 
 .brand-menu-item-right {
     float: right;
-    color: #888!important;
+    color: #888 !important;
     cursor: pointer;
 }
+
+.tab .nav-tabs .nav-link {
+    background: transparent;
+    color: #343a40;
+    padding: .75rem 1rem;
+    border: 0;
+}
+
+.tab .nav-tabs {
+    border: 0;
+}
+
+.token-banner {
+    border-right: 1px solid #ddd;
+}
+
+.token-infobox {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+    .token-infobox .token-infobox-icon {
+        
+
+    }
+    .token-infobox .token-infobox-icon img {
+
+        border: 3px solid #fff;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #fff;
+    }
 
 @media(max-width: 768px) {
     .exchange-submit-card {
@@ -725,17 +771,17 @@ section {
         border-right: none !important;
     }
 
-    .exchange-panel .col-md-6:first-child {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 15px;
-    }
+        .exchange-panel .col-md-6:first-child {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+        }
 
     .mobile-hidden {
         display: none;
     }
 
     #containId {
-        padding-left: 15px!important;
+        padding-left: 15px !important;
     }
 
     .brand-menu {
@@ -766,8 +812,7 @@ section {
     }
 }
 
-@media (max-width: 576px)
-{
+@media (max-width: 576px) {
     .exchange-label {
         text-align: left;
     }
@@ -817,4 +862,103 @@ section {
 
 .exchange-pair-id:hover {
     text-decoration: underline;
+}
+
+.incubation-card-outer {
+    width: 33.3%;
+    display: inline-block;
+    float: left;
+}
+
+.incubation-card {
+    margin: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    background: #fff;
+}
+
+.incubation-card-img {
+    height: 160px;
+    width: 100%;
+    background-position: center !important;
+    overflow: hidden;
+}
+
+.incubation-card-main {
+    margin-top: -40px;
+    height: 80px;
+}
+
+.incubation-card-icon {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 50%;
+    margin-left: 15px;
+}
+
+.incubation-card-main-text {
+    margin-top: -40px;
+    padding-left: 110px;
+    font-size: 18px;
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+}
+
+.incubation-card-main-description {
+    font-size: 12px;
+    line-height: 30px;
+    color: #888;
+    padding: 15px;
+    height: 120px;
+    overflow-y: hidden;
+}
+
+.incubation-card-underscore {
+    font-size: 12px;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
+    margin: 0 15px;
+    padding: 0 5px;
+}
+
+.incubation-card-progress-outer {
+    padding: 15px;
+}
+
+.incubation-card-progress {
+    height: 20px;
+    line-height: 16px!important;
+    padding: 0 5px;
+    color: #fff;
+    background: #888;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    margin-top: -20px;
+    font-size: 12px;
+    text-align: right;
+}
+
+.incubation-card-progress.done {
+    background: green;
+}
+
+
+.incubation-card-progress.inprogress {
+    background: #5f9fd6;
+}
+
+.incubation-card-progress:first-child {
+    margin-top: 0;
+}
+
+.incubation-card-buttons {
+    text-align: center;
+    padding-bottom: 15px;
+}
+
+.incubation-card-buttons a {
+    color: #fff!important;
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
+using Andoromeda.Kyubey.Models.Hatcher;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
@@ -20,6 +21,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             base.Prepare();
 
             ViewBag.Flex = true;
+            ViewBag.NavActive = "KYUBEYDEX";
         }
 
         [HttpGet("[controller]/pair")]
@@ -49,6 +51,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
+            ViewBag.Flex = false;
             var token = await db.Tokens
                 .Include(x => x.Curve)
                 .SingleOrDefaultAsync(x => x.Id == id
@@ -67,8 +70,119 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
+            ViewBag.Token = token;
 
-            return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+            var handler = await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id, cancellationToken);
+
+            if (handler == null)
+            {
+                return View("IndexOld",token);
+            }
+
+
+            //ViewBag.TokenBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken);
+            //ViewBag.RecentUpdates = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).ToListAsync(cancellationToken);
+
+            //just one query db
+
+
+
+            //var comments =  db.TokenComments
+            //    .Include(x => x.User)
+            //    .Include(x => x.ReplyUserId)
+            //    .Where(x => x.TokenId == id && x.IsDelete == false).ToList();
+
+            //!!!?????????
+            var comments = db.TokenComments
+    .Include(x => x.User)
+    .Include(x => x.ReplyUserId)
+    .Where(x => x.TokenId == id && x.IsDelete == false)
+    .Select(x => new TokenComment()
+    {
+        Id = x.Id,
+        ReplyUserId = x.ReplyUserId,
+        UserId = x.UserId,
+        User = x.User,
+        Content = x.Content,
+        CreateTime = x.CreateTime,
+        DeleteTime = x.DeleteTime,
+        IsDelete = x.IsDelete,
+        ParentCommentId = x.ParentCommentId,
+        ReplyUser = db.Users.FirstOrDefault(u => u.Id == x.ReplyUserId),
+        TokenId = x.TokenId
+    })
+    .ToList();
+
+            //var comments=await (from c in db.TokenComments
+            //                    join cu in db.Users
+            //                    on c.UserId equals cu.Id
+            //                    join ru in db.Users
+            //                    on c.ReplyUserId equals ru.Id
+            //                    on 
+            //                    )
+
+            var commentPraises = await (from p in db.TokenCommentPraises
+                                        join c in db.TokenComments
+                                        on p.CommentId equals c.Id
+                                        where c.IsDelete == false && c.TokenId == id
+                                        select p).ToListAsync(cancellationToken);
+
+            var commentsVM = comments.Where(x => x.ReplyUserId == null).OrderByDescending(x => x.CreateTime).Select(x => new TokenCommentViewModel()
+            {
+                Content = x.Content,
+                CreateTime = x.CreateTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture),
+                PraiseCount = commentPraises.Count(p => p.CommentId == x.Id),
+                //ReplyUserId = x.ReplyUserId,
+                UserId = x.UserId,
+                UserName = x.User.UserName,
+                //ReplyUserName = x.ReplyUser?.UserName,
+                ChildComments = comments.Where(cc => cc.ParentCommentId == x.Id).OrderByDescending(c => c.CreateTime).Select(c => new TokenCommentViewModel()
+                {
+                    Content = c.Content,
+                    CreateTime = c.CreateTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture),
+                    PraiseCount = commentPraises.Count(p => p.CommentId == x.Id),
+                    ReplyUserId = c.ReplyUserId,
+                    UserId = c.UserId,
+                    UserName = c.User.UserName,
+                    ReplyUserName = c.ReplyUser?.UserName
+                }).ToList()
+            }).ToList();
+
+            
+
+            var handlerVM = new TokenHandlerViewModel()
+            {
+                TokenInfo = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken),
+                //Providers=
+                HandlerInfo = new HandlerInfo()
+                {
+                    //CurrentRaised= 
+                    Detail = handler.Detail,
+                    Introduction = handler.Introduction,
+                    RemainingDay = (handler.Deadline - DateTime.Now).Days,
+                    TargetCredits = handler.TargetCredits,
+                    CurrentRaised = handler.CurrentRaisedSum,
+                    CurrentRaisedCount = handler.CurrentRaisedCount
+                },
+                HandlerBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken),
+                Providers = await db.TokenProviders.Include(x => x.User).Where(x => x.TokenId == id).Select(x => new TokenProviderVM()
+                {
+                    RoleType = x.RoleType.ToString("G"),
+                    UserName = x.User.UserName,
+                    IsSponsor = x.RoleType == TokenProviderRole.Sponsor
+                }).ToListAsync(cancellationToken),
+                PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),
+                Comments = commentsVM,
+                RecentUpdate = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).Select(x => new RecentUpdateVM()
+                {
+                    Content = x.Content,
+                    OperateTime = x.OperateTime
+                }).ToListAsync(cancellationToken)
+            };
+
+            ViewBag.HandlerView = handlerVM;
+
+            return View(token);
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
@@ -94,6 +208,19 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             else
             {
                 return File(token.Icon, "image/png", "icon.png");
+            }
+        }
+        [HttpGet("[controller]/tokenbanner/{id}.png")]
+        public async Task<IActionResult> Banner([FromServices] KyubeyContext db, Guid id, CancellationToken cancellationToken)
+        {
+            var tokenBaner = await db.TokenBanners.SingleAsync(x => x.Id == id, cancellationToken);
+            if (tokenBaner.Banner == null || tokenBaner.Banner.Length == 0)
+            {
+                return File(System.IO.File.ReadAllBytes(Path.Combine("wwwroot", "img", "null.png")), "image/png", "icon.png");
+            }
+            else
+            {
+                return File(tokenBaner.Banner, "image/png", "icon.png");
             }
         }
 

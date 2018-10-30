@@ -15,7 +15,27 @@ namespace Andoromeda.Kyubey.Portal.Controllers
     public class HomeController : BaseController
     {
         [Route("/")]
-        public async Task<IActionResult> Index([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Index([FromServices] KyubeyContext db)
+        {
+            //linq 待优化
+            var tokens = await db.TokenHatchers
+                .Include(x => x.Token)
+                .Select(x => new TokenHandlerListVM()
+                {
+                    BannerId = db.TokenBanners.Where(b => b.TokenId == x.TokenId).OrderBy(b => b.BannerOrder).FirstOrDefault().Id.ToString(),
+                    Id = x.TokenId,
+                    Introduction = x.Introduction,
+                    TargetCredits = x.TargetCredits,
+                    CurrentRaised = x.CurrentRaisedSum,
+                    ShowGoExchange = true,
+                })
+                .ToListAsync();
+
+            return View(tokens);
+        }
+
+        [Route("/Dex")]
+        public async Task<IActionResult> Dex([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
         {
             if (token != null)
             {

@@ -480,7 +480,13 @@
                 buyAmount: 0,
                 sellAmount: 0,
                 buyTotal: 0,
-                sellTotal: 0
+                sellTotal: 0,
+                vaildbuyPriceInput: 0,
+                vaildbuyAmountInput: 0,
+                vaildbuyTotalInput: 0,
+                vaildsellPriceInput: 0,
+                vaildsellAmountInput: 0,
+                vaildsellTotalInput: 0
             },
             buyOrders: [],
             sellOrders: [],
@@ -500,16 +506,20 @@
             'inputs.pair': function () {
                 this.getPairs();
             },
-            'inputs.buyPrice': function (val) {
-                if (isNaN(val)) {
-                    return;
+            'inputs.buyPrice': function (val) {        
+                if (!this.isValidInput(val)) {
+                    this.inputs.buyPrice = this.inputs.vaildbuyPriceInput;
+                    val = this.inputs.vaildbuyPriceInput;
                 }
+                this.inputs.vaildbuyPriceInput = val;
                 this.inputs.buyTotal = val * this.inputs.buyAmount;
             },
             'inputs.buyAmount': function (val) {
-                if (isNaN(val)) {
-                    return;
+                if (!this.isValidInput(val)) {
+                    this.inputs.buyAmount = this.inputs.vaildbuyAmountInput;
+                    val = this.inputs.vaildbuyAmountInput;
                 }
+                this.inputs.vaildbuyAmountInput = val;
                 this.inputs.buyTotal = val * this.inputs.buyPrice;
             },
             'inputs.buyTotal': function (val) {
@@ -521,15 +531,19 @@
                 }
             },
             'inputs.sellPrice': function (val) {
-                if (isNaN(val)) {
-                    return;
+                if (!this.isValidInput(val)) {
+                    this.inputs.sellPrice = this.inputs.vaildsellPriceInput;
+                    val = this.inputs.vaildsellPriceInput;
                 }
+                this.inputs.vaildsellPriceInput = val;
                 this.inputs.sellTotal = val * this.inputs.sellAmount;
             },
             'inputs.sellAmount': function (val) {
-                if (isNaN(val)) {
-                    return;
+                if (!this.isValidInput(val)) {  
+                    this.inputs.sellAmount = this.inputs.vaildsellAmountInput;
+                    val = this.inputs.vaildsellAmountInput;
                 }
+                this.inputs.vaildsellAmountInput = val;
                 this.inputs.sellTotal = val * this.inputs.sellPrice;
             },
             'inputs.sellTotal': function (val) {
@@ -850,6 +864,12 @@
                 var history = parseFloat(historyTotalPrice);
                 if (now > history) return "100%";
                 return parseInt(now * 100.0 / history) + "%";
+            },
+            isValidInput: function (value) {
+                if (! /^\d*(?:\.\d{0,4})?$/.test(value)) {
+                    return false;
+                }
+                return true;
             }
         }
     });

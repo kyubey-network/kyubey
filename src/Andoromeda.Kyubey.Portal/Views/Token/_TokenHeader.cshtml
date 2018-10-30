@@ -15,19 +15,19 @@
 
 <section class="brand-menu">
     <div id="containId">
-        <a class="brand-menu-item @(ViewBag.Current == "token-about" ? "active" : "")" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
+        <a class="brand-menu-item @(ViewBag.Current == " token-about" ? "active" : "" )" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
         @if (!string.IsNullOrEmpty(Model.Contract))
         {
-            @*<a class="brand-menu-item @(ViewBag.Current == "token-holders" ? "active" : "")" asp-action="Holders" asp-route-id="@Model.Id">@SR["Holders"]</a>*@
+        @*<a class="brand-menu-item @(ViewBag.Current == " token-holders" ? "active" : "" )" asp-action="Holders" asp-route-id="@Model.Id">@SR["Holders"]</a>*@
         }
         @if (otc != null || bancor != null)
         {
-            <a class="brand-menu-item @(ViewBag.Current == "token-exchange" ? "active" : "")" asp-action="Exchange" asp-route-id="@Model.Id">@SR["Exchange"]</a>
+        <a class="brand-menu-item @(ViewBag.Current == " token-exchange" ? "active" : "" )" asp-action="Exchange" asp-route-id="@Model.Id">@SR["Exchange"]</a>
         }
         @if (ViewBag.Current == "token-exchange")
         {
-            <a class="brand-menu-item brand-menu-item-right" v-if="isSignedIn" v-on:click="switchAccount()">@SR["Switch"]</a>
-            <a class="brand-menu-item brand-menu-item-right" v-on:click="login()">{{ getAccountName() }}</a>
+        <a class="brand-menu-item brand-menu-item-right" v-if="isSignedIn" v-on:click="switchAccount()">@SR["Switch"]</a>
+        <a class="brand-menu-item brand-menu-item-right" v-on:click="login()">{{ getAccountName() }}</a>
         }
     </div>
 </section>
