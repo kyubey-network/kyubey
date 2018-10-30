@@ -12,7 +12,8 @@ namespace Andoromeda.Kyubey.Models.Hatcher
         [MaxLength(16)]
         [ForeignKey("Token")]
         public string TokenId { get; set; }
-
+        [MaxLength(64)]
+        public string Title { get; set; }
         public virtual Token Token { get; set; }
 
         [ForeignKey("User")]
