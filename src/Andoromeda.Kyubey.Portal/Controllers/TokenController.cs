@@ -76,7 +76,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             if (handler == null)
             {
-                return View("IndexOld",token);
+                return View("IndexOld", token);
             }
 
 
@@ -148,7 +148,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             }).ToList();
 
-            
+
 
             var handlerVM = new TokenHandlerViewModel()
             {
@@ -157,6 +157,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 HandlerInfo = new HandlerInfo()
                 {
                     //CurrentRaised= 
+                    Title = handler.Title,
                     Detail = handler.Detail,
                     Introduction = handler.Introduction,
                     RemainingDay = (handler.Deadline - DateTime.Now).Days,
