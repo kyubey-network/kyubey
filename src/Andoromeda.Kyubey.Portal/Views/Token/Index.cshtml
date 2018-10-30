@@ -27,8 +27,15 @@
 }
 
 
-<section style="margin-top:90px;">
+<section style="margin-top:80px;">
     <div class="container">
+        <div class="row">
+            <div class=" col-md-12">
+                <h1 class="hatcher-title">@Model.HandlerInfo.Title</h1>
+                <p class="hatcher-introduction"> @Html.Raw(Model.HandlerInfo.Introduction)</p>
+            </div>
+
+        </div>
         <div class="row">
 
             <div class="col-md-7 token-banner">
@@ -40,14 +47,12 @@
                         }*@
                     <img class="img-fluid " style="height:450px;width:100%;" alt="Responsive image" src="/token/tokenbanner/@(Model.HandlerBannerIds.FirstOrDefault()).png" />
                 }
-                <p>
-                    @Html.Marked(Model.HandlerInfo.Introduction)
-                </p>
+
 
             </div>
 
             <div class="col-md-5" style="height:450px;">
-                @if (Model.Providers != null && Model.Providers.Count > 0)
+                @if (Model.Providers != null && Model.Providers.Count > 1)
                 {
                     <details style="margin-bottom:10px;">
                         <summary><strong>@SR[@Model.Providers.FirstOrDefault(x => x.IsSponsor).RoleType] @Model.Providers.FirstOrDefault(x => x.IsSponsor).UserName</strong></summary>
@@ -59,10 +64,16 @@
                         </p>
                     </details>
                 }
+                else if (Model.Providers.Count == 1)
+                {
+                    var provider = Model.Providers.FirstOrDefault();
+
+                    <h6>@($"{SR[provider.RoleType]} {SR[provider.UserName]}")</h6>
+                }
 
                 <div class="row">
                     <div class="col-md-12">
-                        <p class="h2">@($"{Model.HandlerInfo.CurrentRaised.ToString("N")} {token.Id} {SR["Raised"]}")</p>
+                        <p class="h2">@($"{Model.HandlerInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</p>
                         <div class="progress" style="background-color:darkgray;height:30px;">
                             @{
                                 int raisedPercent = (Model.HandlerInfo.CurrentRaised == 0 || Model.HandlerInfo.TargetCredits == 0) ? 0 : (int)(Model.HandlerInfo.CurrentRaised / Model.HandlerInfo.TargetCredits);
@@ -70,17 +81,17 @@
                             }
                             <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
                         </div>
-                        <p class="h6" style="margin-top:4px; text-align:right;">@($"{SR["Goal"]}:{Model.HandlerInfo.TargetCredits.ToString("N")} {token.Id}")</p>
+                        <p class="h6" style="margin-top:4px; text-align:right;">@($"{SR["Goal"]}:{Model.HandlerInfo.TargetCredits.ToString("N")} EOS")</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row ">
                     <div class="col-md-6">
                         <p class="h6"><strong>@SR["Remain Time"]</strong></p>
                         <p class="h1">@($"{Model.HandlerInfo.RemainingDay}{SR["Day"]}")</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 ">
                         <p class="h6"><strong>@SR["Total Need"]</strong></p>
-                        <p><span class="h1 ">@($"{ (Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised).ToString("N")}")</span><span class="h6" style="margin-left:4px;">@token.Id</span></p>
+                        <p><span class="h1 ">@($"{ (Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised).ToString("N")}")</span><span class="h6" style="margin-left:4px;">EOS</span></p>
                     </div>
                 </div>
 
@@ -91,28 +102,28 @@
                     </div>
                 </div>
                 @*<div class="row">
-                    <div class="col-md-12">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Crowdfunding purchase Volume">
-                            <div class="input-group-append">
-                                <span class="input-group-text" id="basic-addon2">= EOS</span>
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Crowdfunding purchase Volume">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2">= EOS</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-                <div class="row">
-                    <div class="col-md-12" style="padding:14px 20px;">
-                        <a href="#" class="btn btn-success col-md-12">@SR["Login with Scatter & Buy"]</a>
                     </div>
-                </div>*@
+                    <div class="row">
+                        <div class="col-md-12" style="padding:14px 20px;">
+                            <a href="#" class="btn btn-success col-md-12">@SR["Login with Scatter & Buy"]</a>
+                        </div>
+                    </div>*@
                 <div class="row">
-                    <div class="col-md-6" style="padding:0px 10px 0 20px;">
+                    <div class="col" style="padding:0px 10px 0 20px;margin-top:20px;">
                         <a href="/Token/@token.Id/exchange" class="btn btn-success col-md-12">@SR["Exchange"]</a>
                     </div>
-                    <div class="col-md-6" style="padding:0px 20px 0 0px;">
-                        <a href="/Token/@token.Id/whitepaper" class="btn btn-success col-md-12">@SR["Whitepaper"]</a>
-                    </div>
+                    @*<div class="col-md-6" style="padding:0px 20px 0 0px;">
+                            <a href="/Token/@token.Id/whitepaper" class="btn btn-success col-md-12">@SR["Whitepaper"]</a>
+                        </div>*@
                 </div>
             </div>
         </div>
@@ -128,17 +139,14 @@
 
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item"><a class="nav-link active show" href="#tab-1" data-toggle="tab" role="tab" aria-selected="true">@SR["Detail"]</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false">@SR["Update History"]</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false">@SR["Recent updates"]</a></li>
                     @*<li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false">@SR["Comments"]</a></li>*@
                 </ul>
 
 
                 <div class="tab-content" style="background-color:#fff; padding:20px;">
                     <div class="tab-pane active show" id="tab-1" role="tabpanel">
-                        <p>
-                            @Html.Marked(Model.HandlerInfo.Detail)
-                        </p>
-
+                        @Html.Marked(Model.HandlerInfo.Detail)
                     </div>
                     <div class="tab-pane" id="tab-2" role="tabpanel">
                         @if (Model.RecentUpdate != null)

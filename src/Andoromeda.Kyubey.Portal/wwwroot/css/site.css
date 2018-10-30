@@ -8,9 +8,37 @@
     padding: 15px;
 }
 
+.hatcher-title {
+    margin-bottom: 0px;
+}
+
+.hatcher-introduction {
+    padding-left: 4px;
+    margin-bottom: 4px;
+}
+.token-infobox-intro {
+    width: 370px;
+}
+.token-infobox-intro {
+    width: 370px;
+}
+
 section {
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.token-infobox  img {
+    border: 3px solid #fff;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: #fff;
+   float:left;
+}
+.token-infobox-info-right strong {
+    font-size: 14px;
 }
 
 .currency-icon {
@@ -749,18 +777,16 @@ section {
 }
 
     .token-infobox .token-infobox-icon {
-        
-
     }
-    .token-infobox .token-infobox-icon img {
 
-        border: 3px solid #fff;
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: #fff;
-    }
+        .token-infobox .token-infobox-icon img {
+            border: 3px solid #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #fff;
+        }
 
 @media(max-width: 768px) {
     .exchange-submit-card {
@@ -930,7 +956,7 @@ section {
 
 .incubation-card-progress {
     height: 20px;
-    line-height: 16px!important;
+    line-height: 16px !important;
     padding: 0 5px;
     color: #fff;
     background: #888;
@@ -941,24 +967,24 @@ section {
     text-align: right;
 }
 
-.incubation-card-progress.done {
-    background: green;
-}
+    .incubation-card-progress.done {
+        background: green;
+    }
 
 
-.incubation-card-progress.inprogress {
-    background: #5f9fd6;
-}
+    .incubation-card-progress.inprogress {
+        background: #5f9fd6;
+    }
 
-.incubation-card-progress:first-child {
-    margin-top: 0;
-}
+    .incubation-card-progress:first-child {
+        margin-top: 0;
+    }
 
 .incubation-card-buttons {
     text-align: center;
     padding-bottom: 15px;
 }
 
-.incubation-card-buttons a {
-    color: #fff!important;
-}
+    .incubation-card-buttons a {
+        color: #fff !important;
+    }
