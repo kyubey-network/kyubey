@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TokenHatcher>
+﻿@model IEnumerable<TokenHandlerListVM>
 @{
     ViewBag.Title = SR["Kyubey Incubation Center"];
     ViewBag.Current = "home-incubation";
@@ -7,26 +7,40 @@
 
 <section>
     <div class="container">
-        <div class="incubation-card-outer">
-            <div class="incubation-card">
-                <div class="incubation-card-img" style="background: url(https://stage.kyubey.network/token/tokenbanner/42ddedac-d923-11e8-b292-000ec6a64fea.png)"></div>
-                <div class="incubation-card-main">
-                    <img class="incubation-card-icon" src="https://stage.kyubey.network/token/ADD.png" />
-                </div>
-                <div class="incubation-card-main-text">ADD</div>
-                <div class="incubation-card-main-description">blablabla</div>
-                <div class="incubation-card-underscore">众筹进度</div>
-                <div class="incubation-card-progress-outer">
-                    <div class="incubation-card-progress" style="width: 100%">1000.0000</div>
-                    <div class="incubation-card-progress done" style="width: 30%">300.0000</div>
-                </div>
-                <hr />
-                <div class="incubation-card-buttons">
-                    <a class="btn btn-primary">项目详情</a>
-                    <a class="btn btn-primary">去交易</a>
+        @foreach (var row in Model)
+        {
+            <div class="incubation-card-outer">
+                <div class="incubation-card">
+                    <div class="incubation-card-img" style="background: url(/token/tokenbanner/@(row.BannerId).png)"></div>
+                    <div class="incubation-card-main">
+                        <img class="incubation-card-icon" src="/token/@(row.Id).png" />
+                    </div>
+                    <div class="incubation-card-main-text">@(row.Id)</div>
+                    <div class="incubation-card-main-description">@(row.Introduction)</div>
+                    <div class="incubation-card-underscore">@SR["Project Progress"]</div>
+                    <div class="incubation-card-progress-outer">
+                        @{ 
+                            var rowPercent = (row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(row.CurrentRaised / row.TargetCredits);
+                            if (rowPercent < 10)
+                            {
+                                rowPercent = 14;
+                            }
+                        }
+                        <div class="incubation-card-progress" style="width: 100%">@row.TargetCredits.ToString("0.00")</div>
+                        <div class="incubation-card-progress done" style="width: @(rowPercent)%">@row.CurrentRaised.ToString("0.00")</div>
+                    </div>
+                    <hr />
+                    <div class="incubation-card-buttons">
+                        <a class="btn btn-primary">@SR["Project Detail"]</a>
+                        @if (row.ShowGoExchange)
+                        {
+                            <a class="btn btn-primary">@SR["Go Exchange"]</a>
+                        }
+
+                    </div>
                 </div>
             </div>
-        </div>
+        }
         <div style="clear:both"></div>
     </div>
 </section>
