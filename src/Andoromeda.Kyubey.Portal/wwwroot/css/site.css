@@ -28,14 +28,14 @@ section {
     margin-bottom: 30px;
 }
 
-.token-infobox  img {
+.token-infobox img {
     border: 3px solid #fff;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     width: 125px;
     height: 125px;
     border-radius: 50%;
     background: #fff;
-   float:left;
+    float: left;
 }
 .token-infobox-info-right strong {
     font-size: 14px;
@@ -788,15 +788,45 @@ section {
             background: #fff;
         }
 
+.token-incubation-description-outer {
+    width: calc(100% - 125px);
+}
+
 @media(max-width: 1024px) {
     .incubation-card-outer {
         width: 50% !important;
     }
 }
 
+.token-incubation-icon-outer {
+    display: inline-block;
+    float: left;
+}
+
 @media(max-width: 768px) {
+    .token-incubation-icon-outer {
+        display: block;
+        float: none;
+        text-align: center;
+    }
+
+    .token-incubation-icon-outer img {
+        float: none;
+    }
+
+    .token-incubation-description-outer h3 {
+        text-align: center;
+    }
+
+    .token-incubation-description-outer {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        padding-left: 0 !important;
+        width: 100%;
+    }
+
     .incubation-card-outer {
-        width: 100%!important;
+        width: 100% !important;
     }
 
     .exchange-submit-card {
@@ -917,6 +947,7 @@ section {
     width: 100%;
     background-position: center !important;
     overflow: hidden;
+    background-size: 100% 100%;
 }
 
 .incubation-card-main {
@@ -998,3 +1029,20 @@ section {
     .incubation-card-buttons a {
         color: #fff !important;
     }
+
+.token-incubation-image {
+    height: 100%;
+    width: 100%;
+    background-position: center !important;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 100% 100%;
+    min-height: 300px;
+}
+
+.token-incubation-description-outer {
+    padding-left: 15px;
+    float: left;
+}
