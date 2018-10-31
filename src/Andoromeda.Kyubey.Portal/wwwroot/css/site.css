@@ -788,7 +788,17 @@ section {
             background: #fff;
         }
 
+@media(max-width: 1024px) {
+    .incubation-card-outer {
+        width: 50% !important;
+    }
+}
+
 @media(max-width: 768px) {
+    .incubation-card-outer {
+        width: 100%!important;
+    }
+
     .exchange-submit-card {
         height: auto;
     }
