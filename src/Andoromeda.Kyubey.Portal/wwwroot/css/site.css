@@ -1036,7 +1036,7 @@ section {
     }
 
 .token-incubation-image {
-    height: 100%;
+    height: calc(100% - 24px);
     width: 100%;
     background-position: center !important;
     overflow: hidden;
@@ -1089,6 +1089,7 @@ section {
     height: 12px;
     cursor: pointer;
     background: rgba(255,255,255,0.2);
+    margin: 0 3px;
 }
 
     .token-incubation-image-circle.active {
