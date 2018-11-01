@@ -952,7 +952,7 @@ section {
     width: 100%;
     background-position: center !important;
     overflow: hidden;
-    background-size: 100% 100%;
+    background-size: 100%!important
 }
 
 .incubation-card-main {
@@ -1043,7 +1043,7 @@ section {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
-    background-size: 100% 100%;
+    background-size: 100% !important;
     min-height: 300px;
 }
 
