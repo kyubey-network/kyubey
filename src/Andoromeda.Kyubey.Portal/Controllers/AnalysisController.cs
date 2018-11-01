@@ -5,11 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.AspNetCore.Localization;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class AnalysisController : BaseController
     {
+        public AnalysisController(ICultureProvider cultureProvider) : base(cultureProvider)
+        {
+
+        }
         public override void Prepare()
         {
             base.Prepare();

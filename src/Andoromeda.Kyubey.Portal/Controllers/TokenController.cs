@@ -11,11 +11,16 @@ using Microsoft.EntityFrameworkCore;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 using Andoromeda.Kyubey.Models.Hatcher;
+using Pomelo.AspNetCore.Localization;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class TokenController : BaseController
     {
+        public TokenController(ICultureProvider cultureProvider) : base(cultureProvider)
+        {
+
+        }
         public override void Prepare()
         {
             base.Prepare();

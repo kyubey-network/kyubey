@@ -9,14 +9,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
+using Pomelo.AspNetCore.Localization;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class HomeController : BaseController
     {
+        public HomeController(ICultureProvider cultureProvider) : base(cultureProvider)
+        {
+
+        }
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {
+            var currentLanguage = _cultureProvider.DetermineCulture();
+
             //linq 待优化
             var tokens = await db.TokenHatchers
                 .Include(x => x.Token)
