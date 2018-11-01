@@ -48,6 +48,30 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }).ToListAsync(cancellationToken));
         }
 
+        public async Task<IActionResult> Default([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        {
+            var token = await db.Tokens
+                .Include(x => x.Curve)
+                .SingleOrDefaultAsync(x => x.Id == id
+                    && x.Status == TokenStatus.Active, cancellationToken);
+
+            if (token == null)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = SR["Token not found"];
+                    x.Details = SR["The token {0} is not found", id];
+                    x.StatusCode = 404;
+                });
+            }
+
+            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            ViewBag.Curve = token.Curve;
+
+            return View(await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken));
+        }
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
@@ -76,7 +100,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             if (handler == null)
             {
-                return View("IndexOld",token);
+                return View("IndexOld", token);
             }
 
 
@@ -148,7 +172,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             }).ToList();
 
-            
+
 
             var handlerVM = new TokenHandlerViewModel()
             {
@@ -157,6 +181,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 HandlerInfo = new HandlerInfo()
                 {
                     //CurrentRaised= 
+                    Title = handler.Title,
                     Detail = handler.Detail,
                     Introduction = handler.Introduction,
                     RemainingDay = (handler.Deadline - DateTime.Now).Days,
@@ -188,13 +213,13 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
         public async Task<IActionResult> Exchange([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
-            return await Index(db, id, cancellationToken);
+            return await Default(db, id, cancellationToken);
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/publish")]
         public async Task<IActionResult> Publish([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
-            return await Index(db, id, cancellationToken);
+            return await Default(db, id, cancellationToken);
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.png")]

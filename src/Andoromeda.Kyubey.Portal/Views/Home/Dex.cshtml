@@ -4,7 +4,11 @@
     ViewBag.Current = "home-dex";
 }
 @await Html.PartialAsync("_Header")
-
+<section style="text-align: center">
+    <form method="get" class="token-search">
+            <input type="text" name="token" value="@ViewBag.SearchToken" class="token-search-textbox" placeholder="@SR["Token"]" /><input type="submit" value="@SR["Search"]" class="token-search-button" />
+        </form>
+</section>
 <section>
     <div class="container currency-table-outer">
         <table class="currency-table">

@@ -31,10 +31,10 @@
                     </div>
                     <hr />
                     <div class="incubation-card-buttons">
-                        <a class="btn btn-primary">@SR["Project Detail"]</a>
+                        <a href="/Token/@row.Id" class="btn btn-primary">@SR["Project Detail"]</a>
                         @if (row.ShowGoExchange)
                         {
-                            <a class="btn btn-primary">@SR["Go Exchange"]</a>
+                            <a href="/Token/@row.Id/Exchange" class="btn btn-primary">@SR["Go Exchange"]</a>
                         }
 
                     </div>
