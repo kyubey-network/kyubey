@@ -17,7 +17,7 @@
                     </div>
                     <div class="incubation-card-main-text">@(row.Id)</div>
                     <div class="incubation-card-main-description">@(row.Introduction)</div>
-                    <div class="incubation-card-underscore">@SR["Project Progress"]</div>
+                    <div class="incubation-card-underscore">@SR["Crowdfunding Progress"]</div>
                     <div class="incubation-card-progress-outer">
                         @{ 
                             var rowPercent = (row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(row.CurrentRaised / row.TargetCredits);
@@ -31,7 +31,7 @@
                     </div>
                     <hr />
                     <div class="incubation-card-buttons">
-                        <a href="/Token/@row.Id" class="btn btn-primary">@SR["Project Detail"]</a>
+                        <a href="/Token/@row.Id" class="btn btn-primary">@SR["View Detail"]</a>
                         @if (row.ShowGoExchange)
                         {
                             <a href="/Token/@row.Id/Exchange" class="btn btn-primary">@SR["Go Exchange"]</a>
