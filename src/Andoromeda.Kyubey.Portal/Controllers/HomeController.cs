@@ -22,8 +22,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {
-            var currentLanguage = _cultureProvider.DetermineCulture();
-
             //linq 待优化
             var tokens = await db.TokenHatchers
                 .Include(x => x.Token)
