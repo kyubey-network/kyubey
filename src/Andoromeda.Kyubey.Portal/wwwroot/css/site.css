@@ -2,6 +2,11 @@
     background: #eeeeee;
 }
 
+    body.dark {
+        background: linear-gradient(to right bottom, #303649, #101016);
+        color: rgba(255,255,255,0.8)!important;
+    }
+
 .exchange {
     background: #fff;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -28,14 +33,14 @@ section {
     margin-bottom: 30px;
 }
 
-.token-infobox  img {
+.token-infobox img {
     border: 3px solid #fff;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     width: 125px;
     height: 125px;
     border-radius: 50%;
     background: #fff;
-   float:left;
+    float: left;
 }
 .token-infobox-info-right strong {
     font-size: 14px;
@@ -788,15 +793,45 @@ section {
             background: #fff;
         }
 
+.token-incubation-description-outer {
+    width: calc(100% - 125px);
+}
+
 @media(max-width: 1024px) {
     .incubation-card-outer {
         width: 50% !important;
     }
 }
 
+.token-incubation-icon-outer {
+    display: inline-block;
+    float: left;
+}
+
 @media(max-width: 768px) {
+    .token-incubation-icon-outer {
+        display: block;
+        float: none;
+        text-align: center;
+    }
+
+    .token-incubation-icon-outer img {
+        float: none;
+    }
+
+    .token-incubation-description-outer h3 {
+        text-align: center;
+    }
+
+    .token-incubation-description-outer {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        padding-left: 0 !important;
+        width: 100%;
+    }
+
     .incubation-card-outer {
-        width: 100%!important;
+        width: 100% !important;
     }
 
     .exchange-submit-card {
@@ -917,6 +952,7 @@ section {
     width: 100%;
     background-position: center !important;
     overflow: hidden;
+    background-size: 100%!important
 }
 
 .incubation-card-main {
@@ -998,3 +1034,169 @@ section {
     .incubation-card-buttons a {
         color: #fff !important;
     }
+
+.token-incubation-image {
+    height: calc(100% - 24px);
+    width: 100%;
+    background-position: center !important;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 100% !important;
+    min-height: 300px;
+}
+
+.token-incubation-description-outer {
+    padding-left: 15px;
+    float: left;
+}
+
+.token-incubation-title-outer {
+
+}
+
+.token-incubation-container {
+    margin-top: 80px;
+}
+
+.token-incubation-inner {
+    background: rgba(0,0,0,0.2);
+    /*box-shadow: 0 0 15px rgba(0,0,0,0.2);*/
+    /*border-width: 2px;
+    border-image: conic-gradient(#9ED110, #50B517, #179067, #476EAF, #9f49ac, #CC42A2, #FF3BA7, #FF5800, #FF8100, #FEAC00, #FFCC00, #EDE604, #9ED110) 30 30;
+    border-style: solid;*/
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 100%;
+}
+
+.token-incubation-title {
+    font-size: 20px;
+    line-height: 40px;
+}
+
+.token-incubation-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+}
+
+.token-incubation-image-circle {
+    display: inline-block;
+    border-radius: 12px;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.2);
+    margin: 0 3px;
+}
+
+    .token-incubation-image-circle.active {
+        width: 20px;
+        background: rgba(255,255,255,0.6);
+    }
+
+.token-incubation-image-circle-outer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.token-incubation-raised {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+}
+
+.token-incubation-inner .col-md-6, .token-incubation-inner .col-md-12 {
+    padding: 8px;
+}
+
+.token-incubation-card {
+    border-radius: 5px;
+    background: linear-gradient(to right bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    padding: 10px;
+}
+
+.token-incubation-card-icon {
+    font-size: 32px;
+}
+
+.token-incubation-card-text {
+    font-size: 12px!important;
+}
+
+.token-incubation-card-value {
+    font-size: 16px;
+    color: #50c6fd;
+}
+
+.token-infobox {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 100%;
+}
+
+.token-incubation-description-outer div {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+}
+
+.token-incubation-infobox-title {
+    font-size: 10px;
+}
+
+.token-incubation-infobox-subtitle {
+    font-size: 16px;
+    color: #50c6fd;
+}
+
+.token-incubation-infobox-card {
+    margin: 15px 0;
+}
+
+.progress-bar {
+    padding: 0 5px;
+}
+
+.tab-content {
+    padding: 15px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-top: -2px;
+    border-radius: 0 5px 5px 5px;
+}
+
+    .dark .nav-link.active {
+        background: linear-gradient(to right bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1))!important;
+        border: none;
+        color: rgba(255,255,255,0.8);
+    }
+
+.dark .nav-tabs {
+    border: none;
+}
+
+.dark .tab-pane {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+}
+
+.dark a {
+    color: #50c6fd
+}
+
+.btn-incubation-exchange {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.4)!important;
+}
+
+
+.btn-incubation-exchange:hover {
+    border: 1px solid rgba(255,255,255,1);
+    color: rgba(255,255,255,1)!important;
+}
