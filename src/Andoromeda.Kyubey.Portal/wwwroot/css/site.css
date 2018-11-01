@@ -1188,3 +1188,15 @@ section {
 .dark a {
     color: #50c6fd
 }
+
+.btn-incubation-exchange {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.4)!important;
+}
+
+
+.btn-incubation-exchange:hover {
+    border: 1px solid rgba(255,255,255,1);
+    color: rgba(255,255,255,1)!important;
+}
