@@ -7,7 +7,7 @@
 }
 <section>
     <div class="container">
-        <div class="card token-infobox">
+        <div class="token-infobox">
             <div class="row">
 
                 <div class="col-md-6">
@@ -21,29 +21,29 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row">
-                        <div class="col-md-4">
-                            <strong>@SR["Crowdfunding Amount"]</strong>
-                            <p>@(hatcher.HandlerInfo.TargetCredits.ToString("0.0000")) EOS</p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Crowdfunding Amount"]</div>
+                            <div class="token-incubation-infobox-subtitle">@(hatcher.HandlerInfo.TargetCredits.ToString("0.0000")) EOS</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>@SR["Delivery Amount"]</strong>
-                            <p>@(!Model.DeliveryAmount.HasValue ? SR["Unknown"] : Model.DeliveryAmount.ToString())</p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Delivery Amount"]</div>
+                            <div class="token-incubation-infobox-subtitle">@(!Model.DeliveryAmount.HasValue ? SR["Unknown"] : Model.DeliveryAmount.ToString())</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>@SR["PROTOCOL"]</strong>
-                            <p>@(Model.CurveId ?? SR["Unknown"])</p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Protocol"]</div>
+                            <div class="token-incubation-infobox-subtitle">@(Model.CurveId ?? SR["Unknown"])</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>@SR["Current Price"]</strong>
-                            <p>@(0) EOS</p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Current Price"]</div>
+                            <div class="token-incubation-infobox-subtitle">@(0) EOS</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>@SR["Contract"]</strong>
-                            <p>@Model.Contract</p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Contract Account"]</div>
+                            <div class="token-incubation-infobox-subtitle">@Model.Contract</div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>@SR["WebUrl"]</strong>
-                            <p><a href="@Model.WebUrl" target="_blank">@Model.WebUrl</a> </p>
+                        <div class="col-md-4 token-incubation-infobox-card">
+                            <div class="token-incubation-infobox-title">@SR["Website"]</div>
+                            <div class="token-incubation-infobox-subtitle"><a href="@Model.WebUrl" target="_blank">@SR["Go to"]</a></div>
                         </div>
                     </div>
                 </div>
