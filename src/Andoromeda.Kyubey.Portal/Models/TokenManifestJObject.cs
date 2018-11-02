@@ -8,7 +8,7 @@ namespace Andoromeda.Kyubey.Portal.Models
     public class TokenManifestJObject
     {
         public string Id { get; set; }
-        public string Owners { get; set; }
+        public string[] Owners { get; set; }
         public int Priority { get; set; }
         public TokenManifestBasicJObject Basic { get; set; }
         public bool Incubation { get; set; }
