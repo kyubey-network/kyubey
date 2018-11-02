@@ -10,18 +10,22 @@ using Microsoft.EntityFrameworkCore;
 using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 using Pomelo.AspNetCore.Localization;
+using Andoromeda.Kyubey.Portal.Interface;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(ICultureProvider cultureProvider) : base(cultureProvider)
+        private readonly ITokenRepository _tokenRepository;
+        public HomeController(ITokenRepository tokenRepository, ICultureProvider cultureProvider) : base(cultureProvider)
         {
-
+            _tokenRepository = tokenRepository;
         }
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {
+            
+            var add = _tokenRepository.GetTokenInfoByTokenId("ADD");
             //linq 待优化
             var tokens = await db.TokenHatchers
                 .Include(x => x.Token)

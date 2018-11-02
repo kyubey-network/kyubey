@@ -8,6 +8,8 @@ using Andoromeda.Kyubey.Models;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
+using Andoromeda.Kyubey.Portal.Interface;
+using Andoromeda.Kyubey.Portal.Services;
 
 namespace Andoromeda.Kyubey.Portal
 {
@@ -16,6 +18,7 @@ namespace Andoromeda.Kyubey.Portal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddConfiguration(out var Config);
+            services.AddTransient<ITokenRepository, TokenFileInfoRepository>();
             services.AddMvc();
             services.AddEntityFrameworkMySql()
                 .AddDbContext<KyubeyContext>(x =>
