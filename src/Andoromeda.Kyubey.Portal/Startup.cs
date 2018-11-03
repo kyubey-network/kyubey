@@ -42,7 +42,7 @@ namespace Andoromeda.Kyubey.Portal
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            var rootFolder = System.AppDomain.CurrentDomain.BaseDirectory;
+            var rootFolder = System.AppContext.BaseDirectory;
 
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
