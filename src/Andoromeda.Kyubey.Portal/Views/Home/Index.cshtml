@@ -16,10 +16,10 @@
                         <img class="incubation-card-icon" src="/token/@(row.Id).png" />
                     </div>
                     <div class="incubation-card-main-text">@(row.Id)</div>
-                    <div class="incubation-card-main-description">@(row.Introduction)</div>
+                    <div class="incubation-card-main-description">@((row.Introduction != null && row.Introduction.Length > 170) ? row.Introduction.Substring(0, 170) + "..." : row.Introduction)</div>
                     <div class="incubation-card-underscore">@SR["Crowdfunding Progress"]</div>
                     <div class="incubation-card-progress-outer">
-                        @{ 
+                        @{
                             var rowPercent = (row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(row.CurrentRaised / row.TargetCredits);
                             if (rowPercent < 10)
                             {
