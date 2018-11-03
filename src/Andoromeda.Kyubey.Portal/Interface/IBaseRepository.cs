@@ -8,6 +8,7 @@ namespace Andoromeda.Kyubey.Portal.Interface
 {
     public interface IBaseRepository<T>
     {
+        IQueryable<T> GetAll(Expression<Func<T, bool>> anyLambda);
         //int Count(Expression<Func<T, bool>> predicate);
         //T Find(Expression<Func<T, bool>> whereLambda);
         //IQueryable<T> FindList<S>(Expression<Func<T, bool>> whereLamdba, bool isAsc, Expression<Func<T, S>> orderLamdba);

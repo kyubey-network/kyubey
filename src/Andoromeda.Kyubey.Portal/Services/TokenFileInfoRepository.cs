@@ -19,8 +19,10 @@ namespace Andoromeda.Kyubey.Portal.Services
     }
     public class TokenFileInfoRepository : ITokenRepository
     {
-        private string tokenFolderAbsolutePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, @"Tokens");
-        private string manifestFileName = "manifest.json";
+        private const string tokenFolderRelativePath = @"Tokens";
+        private string tokenFolderAbsolutePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, tokenFolderRelativePath);
+        private const string manifestFileName = "manifest.json";
+        private const string iconFileName = "icon.png";
 
         private string GetFileNameSuffixByCulture(string cultureStr)
         {
@@ -62,7 +64,7 @@ namespace Andoromeda.Kyubey.Portal.Services
             }
             return maxCount;
         }
-        private string[] GetAvailuableFileNames(string[] fileNames, string cultureStr)
+        private string[] GetAvailableFileNames(string[] fileNames, string cultureStr)
         {
             var cultureSuffix = GetFileNameSuffixByCulture(cultureStr);
             string[] availuableFilenames = null;
@@ -100,8 +102,9 @@ namespace Andoromeda.Kyubey.Portal.Services
             tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "slides");
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "*.png");
-            var availuableFiles = GetAvailuableFileNames(files, cultureStr);
-            return availuableFiles;
+            var availableFiles = GetAvailableFileNames(files, cultureStr);
+            var availablePaths = availableFiles.Select(x => Path.Combine(tokenFolderRelativePath, x)).ToArray();
+            return availablePaths;
         }
 
 
@@ -117,5 +120,20 @@ namespace Andoromeda.Kyubey.Portal.Services
             return null;
         }
 
+        public IQueryable<TokenManifestJObject> GetAll(Expression<Func<TokenManifestJObject, bool>> anyLambda)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetTokenIconPath(string tokenId)
+        {
+            tokenId.RemoveDangerousChar();
+            var absolutePath = Path.Combine(tokenFolderAbsolutePath, tokenId, iconFileName);
+            if (File.Exists(absolutePath))
+            {
+                return absolutePath;
+            }
+            return null;
+        }
     }
 }

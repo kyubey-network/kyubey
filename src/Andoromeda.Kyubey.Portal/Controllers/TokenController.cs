@@ -12,14 +12,16 @@ using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 using Andoromeda.Kyubey.Models.Hatcher;
 using Pomelo.AspNetCore.Localization;
+using Andoromeda.Kyubey.Portal.Interface;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class TokenController : BaseController
     {
-        public TokenController(ICultureProvider cultureProvider) : base(cultureProvider)
+        private readonly ITokenRepository _tokenRepository;
+        public TokenController(ITokenRepository tokenRepository, ICultureProvider cultureProvider) : base(cultureProvider)
         {
-
+            _tokenRepository = tokenRepository;
         }
         public override void Prepare()
         {
@@ -227,39 +229,57 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             return await Default(db, id, cancellationToken);
         }
 
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.png")]
         public async Task<IActionResult> Icon([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
             var token = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken);
-            if (token.Icon == null || token.Icon.Length == 0)
+            if (token == null)
+                return NotFound();
+            var iconSrc = _tokenRepository.GetTokenIconPath(id);
+
+            if (string.IsNullOrWhiteSpace(iconSrc))
             {
                 return File(System.IO.File.ReadAllBytes(Path.Combine("wwwroot", "img", "null.png")), "image/png", "icon.png");
             }
             else
             {
-                return File(token.Icon, "image/png", "icon.png");
+                return File(System.IO.File.ReadAllBytes(iconSrc), "image/png", "icon.png");
             }
         }
-        [HttpGet("[controller]/tokenbanner/{id}.png")]
-        public async Task<IActionResult> Banner([FromServices] KyubeyContext db, Guid id, CancellationToken cancellationToken)
+
+        [HttpGet("[controller]/tokenbanner/{id}/{fileName}.png")]
+        public async Task<IActionResult> Banner([FromServices] KyubeyContext db, string id, string fileName, CancellationToken cancellationToken)
         {
-            var tokenBaner = await db.TokenBanners.SingleAsync(x => x.Id == id, cancellationToken);
-            if (tokenBaner.Banner == null || tokenBaner.Banner.Length == 0)
+            var token = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken);
+            if (token == null)
+                return NotFound();
+            var filePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Tokens", id, "slides", fileName + ".png");
+            if (!System.IO.File.Exists(filePath))
             {
                 return File(System.IO.File.ReadAllBytes(Path.Combine("wwwroot", "img", "null.png")), "image/png", "icon.png");
             }
             else
             {
-                return File(tokenBaner.Banner, "image/png", "icon.png");
+                return File(System.IO.File.ReadAllBytes(filePath), "image/png");
             }
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.js")]
         public async Task<IActionResult> Javascript([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
         {
-            var token = await db.Bancors
-                .SingleAsync(x => x.Id == id, cancellationToken);
-            return Content(token.TradeJavascript, "application/x-javascript");
+            var token = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken);
+            if (token == null)
+                return NotFound();
+            var filePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Tokens", id, "contract_exchange", "exchange.js");
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            else
+            {
+                return File(System.IO.File.ReadAllBytes(filePath), "application/x-javascript");
+            }
         }
 
         [HttpGet("[controller]/{id}/contract-price")]

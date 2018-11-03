@@ -10,5 +10,6 @@ namespace Andoromeda.Kyubey.Portal.Interface
     {
         TokenManifestJObject GetTokenInfoByTokenId(string tokenId);
         string[] GetTokenIncubationBannerPaths(string tokenId, string cultureStr);
+        string GetTokenIconPath(string tokenId);
     }
 }
