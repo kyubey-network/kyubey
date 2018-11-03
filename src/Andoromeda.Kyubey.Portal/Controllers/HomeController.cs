@@ -25,9 +25,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {
-            var currentCulture = _cultureProvider.DetermineCulture();
             var tokenStaticInfoList = _tokenRepository.GetAll();
-            var tokens = (await db.TokenHatchers
+            var tokens = (await db.TokenHatchers.Where(x => x.Status == Kyubey.Models.Hatcher.TokenHatcherStatus.Active)
                 .Include(x => x.Token).ToListAsync())
                 .Select(x => new TokenIncubatorListVM()
                 {
@@ -46,6 +45,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/Dex")]
         public async Task<IActionResult> Dex([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
         {
+            var tokenStaticInfoList = _tokenRepository.GetAll();
+
             if (token != null)
             {
                 token = token.ToUpper();
@@ -58,7 +59,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
             bancors = bancors
                 .Where(x => x.Status == Status.Active)
-                .OrderByDescending(x => x.Token.Priority)
+                .Join(tokenStaticInfoList, b => b.Id, t => t.Id, (b, t) => new
+                {
+                    Bancor = b,
+                    TokenInfo = t
+                })
+                .OrderByDescending(x => x.TokenInfo.Priority).Select(x => x.Bancor)
                 .ToList();
 
             IEnumerable<Otc> otcs = db.Otcs.Include(x => x.Token);
@@ -68,7 +74,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
             otcs = otcs
                 .Where(x => x.Status == Status.Active)
-                .OrderByDescending(x => x.Token.Priority)
+                .Join(tokenStaticInfoList, o => o.Id, t => t.Id, (o, t) => new
+                {
+                    Otc = o,
+                    TokenInfo = t
+                })
+                .OrderByDescending(x => x.TokenInfo.Priority).Select(x => x.Otc)
                 .ToList();
 
             var ret = new List<TokenDisplay>();

@@ -12,8 +12,8 @@ namespace Andoromeda.Kyubey.Models.Hatcher
         [MaxLength(16)]
         [ForeignKey("Token")]
         public string TokenId { get; set; }
-        [MaxLength(64)]
-        public string Title { get; set; }
+        //[MaxLength(64)]
+        //public string Title { get; set; }
         public virtual Token Token { get; set; }
 
         [ForeignKey("User")]
@@ -32,7 +32,14 @@ namespace Andoromeda.Kyubey.Models.Hatcher
         /// ???
         /// </summary>
         public decimal TargetCredits { get; set; }
-        public string Detail { get; set; }
-        public string Introduction { get; set; }
+        //public string Detail { get; set; }
+        //public string Introduction { get; set; }
+        public TokenHatcherStatus Status { get; set; }
+    }
+    public enum TokenHatcherStatus
+    {
+        Active,
+        DisabledByOwner,
+        DisabledByAdmin
     }
 }

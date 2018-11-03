@@ -121,9 +121,9 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<TokenHatcherPraise> TokenHatcherPraises { get; set; }
 
-        public DbSet<TokenBanner> TokenBanners { get; set; }
+        //public DbSet<TokenBanner> TokenBanners { get; set; }
 
-        public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }
+        //public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }
 
         public DbSet<TokenComment> TokenComments { get; set; }
 
@@ -178,7 +178,7 @@ namespace Andoromeda.Kyubey.Models
 
             builder.Entity<Token>(e =>
             {
-                e.HasIndex(x => x.Priority);
+                //e.HasIndex(x => x.Priority);
                 e.HasIndex(x => x.Name).ForMySqlIsFullText();
             });
 

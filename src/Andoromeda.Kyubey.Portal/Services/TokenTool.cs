@@ -17,5 +17,10 @@ namespace Andoromeda.Kyubey.Portal.Services
             string fileName = Path.GetFileName(filePath);
             return $"/Token/tokenbanner/{tokenId}/{fileName}";
         }
+        public static List<string> GetTokenIncubatorBannerUris(string tokenId, string[] filePaths)
+        {
+            var result = filePaths.Select(x => GetTokenIncubatorBannerUri(tokenId, x)).ToList();
+            return result;
+        }
     }
 }

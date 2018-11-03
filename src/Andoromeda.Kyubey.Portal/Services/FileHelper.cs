@@ -10,7 +10,7 @@ namespace Andoromeda.Kyubey.Portal.Services
     {
         public static void RemoveDangerousChar(this string fileName)
         {
-            fileName.Replace(".", "").Replace("\\", "").Replace("/", "");
+            fileName = fileName.Replace(".", "").Replace("\\", "").Replace("/", "");
         }
 
         public static string[] GetAllFileNameFromFolder(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)

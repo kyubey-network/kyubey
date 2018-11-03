@@ -5,6 +5,7 @@
     Bancor bancor = ViewBag.Bancor;
     Otc otc = ViewBag.Otc;
     Curve curve = ViewBag.Curve;
+    TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
     var constJs = "";
     if (curve != null)
     {
@@ -781,7 +782,7 @@
                     var price = parseFloat(parseFloat(this.inputs.sellPrice).toFixed(4));
                     var bid = parseFloat(parseFloat(this.inputs.sellAmount).toFixed(4));
                     var ask = parseFloat(bid * price);
-                    eos.contract('@Model.Contract', { requiredFields })
+                    eos.contract('@tokenInfo.Basic.Contract.transfer', { requiredFields })
                         .then(contract => {
                             return contract.transfer(
                                 account.name,
@@ -803,7 +804,7 @@
                         });
                 }
                 else if (this.control.publish === 'market') {
-                    eos.contract('@Model.Contract', { requiredFields })
+                    eos.contract('@tokenInfo.Basic.Contract.transfer', { requiredFields })
                         .then(contract => {
                             return contract.transfer(
                                 account.name,

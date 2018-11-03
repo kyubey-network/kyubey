@@ -12,8 +12,8 @@ namespace Andoromeda.Kyubey.Portal.Services
 {
     public class TokenCultureFileSuffix
     {
-        public const string ZHCN = ".zhcn";
-        public const string ZHTW = ".zhtw";
+        public const string ZHCN = ".zh";
+        public const string ZHTW = ".zh-Hant";
         public const string EN = ".en";
         public const string JP = ".jajp";
     }
@@ -119,6 +119,30 @@ namespace Andoromeda.Kyubey.Portal.Services
             return null;
         }
 
+        public string GetTokenIncubationDetail(string tokenId, string cultureStr)
+        {
+            tokenId.RemoveDangerousChar();
+            var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
+            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "detail*.md");
+            var availableFiles = GetAvailableFileNames(files, cultureStr);
+            var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
+            if (availablePath != null)
+                return FileHelper.ReadAllText(availablePath);
+            return null;
+        }
+
+        //public string GetTokenDescription(string tokenId, string cultureStr)
+        //{
+        //    tokenId.RemoveDangerousChar();
+        //    var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "token");
+        //    var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description*.txt");
+        //    var availableFiles = GetAvailableFileNames(files, cultureStr);
+        //    var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
+        //    if (availablePath != null)
+        //        return FileHelper.ReadAllText(availablePath);
+        //    return null;
+        //}
+
 
         public Models.TokenManifestJObject GetOne(string tokenId)
         {
@@ -150,6 +174,32 @@ namespace Andoromeda.Kyubey.Portal.Services
             if (File.Exists(absolutePath))
             {
                 return absolutePath;
+            }
+            return null;
+        }
+
+        public List<TokenIncubatorUpdateModel> GetTokenIncubatorUpdates(string tokenId, string cultureStr)
+        {
+            tokenId.RemoveDangerousChar();
+            var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "updates");
+            var files = FileHelper.GetAllFileNameFromFolder(folderPath);
+            var availableFiles = GetAvailableFileNames(files, cultureStr);
+            var mainFile = availableFiles.FirstOrDefault(x => x.EndsWith(".json"));
+            if (!string.IsNullOrWhiteSpace(mainFile))
+            {
+                var updateList = JsonConvert.DeserializeObject<List<TokenIncubatorUpdateModel>>(System.IO.File.ReadAllText(mainFile));
+                if (updateList != null)
+                {
+                    foreach (var u in updateList)
+                    {
+                        var contentPath = Path.Combine(folderPath, u.Content);
+                        if (!string.IsNullOrWhiteSpace(u.Content) && File.Exists(contentPath))
+                        {
+                            u.Content = System.IO.File.ReadAllText(contentPath);
+                        }
+                    }
+                }
+                return updateList;
             }
             return null;
         }
