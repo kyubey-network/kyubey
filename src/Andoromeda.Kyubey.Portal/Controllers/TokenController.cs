@@ -210,7 +210,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToListAsync(cancellationToken),
                 PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),
                 Comments = commentsVM,
-                RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture).Select(x => new RecentUpdateVM()
+                RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateVM()
                 {
                     Content = x.Content,
                     OperateTime = x.OperateTime,
