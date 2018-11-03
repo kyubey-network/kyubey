@@ -8,8 +8,10 @@ namespace Andoromeda.Kyubey.Portal.Interface
 {
     public interface ITokenRepository : IBaseRepository<TokenManifestJObject>
     {
-        TokenManifestJObject GetTokenInfoByTokenId(string tokenId);
+        TokenManifestJObject GetOne(string tokenId);
+        IList<TokenManifestJObject> GetAll();
         string[] GetTokenIncubationBannerPaths(string tokenId, string cultureStr);
         string GetTokenIconPath(string tokenId);
+        string GetTokenIncubationDescription(string tokenId, string cultureStr);
     }
 }

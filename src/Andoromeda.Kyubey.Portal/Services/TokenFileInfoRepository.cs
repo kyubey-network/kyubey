@@ -107,8 +107,20 @@ namespace Andoromeda.Kyubey.Portal.Services
             return availablePaths;
         }
 
+        public string GetTokenIncubationDescription(string tokenId, string cultureStr)
+        {
+            tokenId.RemoveDangerousChar();
+            var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
+            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description*.txt");
+            var availableFiles = GetAvailableFileNames(files, cultureStr);
+            var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
+            if (availablePath != null)
+                return FileHelper.ReadAllText(availablePath);
+            return null;
+        }
 
-        public Models.TokenManifestJObject GetTokenInfoByTokenId(string tokenId)
+
+        public Models.TokenManifestJObject GetOne(string tokenId)
         {
             tokenId.RemoveDangerousChar();
             var filePath = Path.Combine(tokenFolderAbsolutePath, tokenId, manifestFileName);
@@ -120,9 +132,15 @@ namespace Andoromeda.Kyubey.Portal.Services
             return null;
         }
 
-        public IQueryable<TokenManifestJObject> GetAll(Expression<Func<TokenManifestJObject, bool>> anyLambda)
+        public IList<TokenManifestJObject> GetAll()
         {
-            throw new NotImplementedException();
+            var tokenFolderDirectories = Directory.GetDirectories(tokenFolderAbsolutePath);
+            var result = new List<TokenManifestJObject>();
+            foreach (var t in tokenFolderDirectories)
+            {
+                result.Add(GetOne(t));
+            }
+            return result;
         }
 
         public string GetTokenIconPath(string tokenId)

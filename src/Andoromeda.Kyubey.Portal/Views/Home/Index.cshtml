@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TokenHandlerListVM>
+﻿@model IEnumerable<TokenIncubatorListVM>
 @{
     ViewBag.Title = SR["Kyubey Incubation Center"];
     ViewBag.Current = "home-incubation";
@@ -11,7 +11,7 @@
         {
             <div class="incubation-card-outer">
                 <div class="incubation-card">
-                    <div class="incubation-card-img" style="background: url(/token/tokenbanner/@(row.BannerId).png)"></div>
+                    <div class="incubation-card-img" style="background: url(@row.BannerSrc)"></div>
                     <div class="incubation-card-main">
                         <img class="incubation-card-icon" src="/token/@(row.Id).png" />
                     </div>

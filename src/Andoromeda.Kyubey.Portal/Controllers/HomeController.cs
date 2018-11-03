@@ -11,6 +11,7 @@ using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 using Pomelo.AspNetCore.Localization;
 using Andoromeda.Kyubey.Portal.Interface;
+using Andoromeda.Kyubey.Portal.Services;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
@@ -24,21 +25,20 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db)
         {
-            
-            var add = _tokenRepository.GetTokenInfoByTokenId("ADD");
-            //linq 待优化
-            var tokens = await db.TokenHatchers
-                .Include(x => x.Token)
-                .Select(x => new TokenHandlerListVM()
+            var currentCulture = _cultureProvider.DetermineCulture();
+            var tokenStaticInfoList = _tokenRepository.GetAll();
+            var tokens = (await db.TokenHatchers
+                .Include(x => x.Token).ToListAsync())
+                .Select(x => new TokenIncubatorListVM()
                 {
-                    BannerId = db.TokenBanners.Where(b => b.TokenId == x.TokenId).OrderBy(b => b.BannerOrder).FirstOrDefault().Id.ToString(),
+                    BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.TokenId, _tokenRepository.GetTokenIncubationBannerPaths(x.TokenId, currentCulture).FirstOrDefault()),
+                    //BannerId = db.TokenBanners.Where(b => b.TokenId == x.TokenId).OrderBy(b => b.BannerOrder).FirstOrDefault().Id.ToString(),
                     Id = x.TokenId,
-                    Introduction = x.Introduction,
+                    Introduction = _tokenRepository.GetTokenIncubationDescription(x.TokenId, currentCulture),
                     TargetCredits = x.TargetCredits,
                     CurrentRaised = x.CurrentRaisedSum,
                     ShowGoExchange = true,
-                })
-                .ToListAsync();
+                });
 
             return View(tokens);
         }
