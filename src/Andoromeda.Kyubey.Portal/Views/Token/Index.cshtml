@@ -89,7 +89,7 @@
                             var i = Model.RecentUpdate.Count;
                             @foreach (var up in Model.RecentUpdate)
                             {
-                                <h4>@(SR["Recent Update"] + i):</h4>
+                                <h4>@up.Title</h4>
                                 <p>@up.OperateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
                                 <p>@up.Content</p>
                                 i--;

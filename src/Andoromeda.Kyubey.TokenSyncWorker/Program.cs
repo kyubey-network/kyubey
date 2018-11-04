@@ -12,40 +12,40 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
         static void Main(string[] args)
         {
-            // Setup session options
-            SessionOptions sessionOptions = new SessionOptions
-            {
-                Protocol = Protocol.Sftp,
-                HostName = "example.com",
-                UserName = "user",
-                Password = "mypassword",
-                SshHostKeyFingerprint = "ssh-rsa 2048 xx:xx:xx:xx:xx:xx:xx:xx:..."
-            };
+            //// Setup session options
+            //SessionOptions sessionOptions = new SessionOptions
+            //{
+            //    Protocol = Protocol.Sftp,
+            //    HostName = "example.com",
+            //    UserName = "user",
+            //    Password = "mypassword",
+            //    SshHostKeyFingerprint = "ssh-rsa 2048 xx:xx:xx:xx:xx:xx:xx:xx:..."
+            //};
 
-            using (Session session = new Session())
-            {
-                // Connect
-                session.Open(sessionOptions);
+            //using (Session session = new Session())
+            //{
+            //    // Connect
+            //    session.Open(sessionOptions);
 
-                // Upload files
-                TransferOptions transferOptions = new TransferOptions();
-                transferOptions.TransferMode = TransferMode.Binary;
+            //    // Upload files
+            //    TransferOptions transferOptions = new TransferOptions();
+            //    transferOptions.TransferMode = TransferMode.Binary;
 
-                TransferOperationResult transferResult;
-                transferResult =
-                    session.PutFiles(@"d:\toupload\*", "/home/user/", false, transferOptions);
+            //    TransferOperationResult transferResult;
+            //    transferResult =
+            //        session.PutFiles(@"d:\toupload\*", "/home/user/", false, transferOptions);
 
-                // Throw on any error
-                transferResult.Check();
+            //    // Throw on any error
+            //    transferResult.Check();
 
-                // Print results
-                foreach (TransferEventArgs transfer in transferResult.Transfers)
-                {
-                    Console.WriteLine("Upload of {0} succeeded", transfer.FileName);
-                }
-            }
+            //    // Print results
+            //    foreach (TransferEventArgs transfer in transferResult.Transfers)
+            //    {
+            //        Console.WriteLine("Upload of {0} succeeded", transfer.FileName);
+            //    }
+            //}
 
-            return 0;
+            //return 0;
 
 
 
