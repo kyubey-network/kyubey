@@ -61,7 +61,7 @@ namespace Andoromeda.Kyubey.Models
         public TokenStatus Status { get; set; }
         public bool HasIncubation { get; set; }
         public bool HasDex { get; set; }
-        public bool Contract_exchange { get; set; }
+        public bool HasContractExchange { get; set; }
         public decimal Raised { get; set; }
         public int RaisedUserCount { get; set; }
     }
