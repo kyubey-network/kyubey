@@ -1,7 +1,7 @@
 ﻿{
   "Onboard": "接入Kyubey",
-  "Token not found": "没有找到通行证",
-  "The token {0} is not found": "通行证{0}没有找到",
+  "Token not found": "没有找到通证",
+  "The token {0} is not found": "通证{0}没有找到",
   "Kyubey Price": "Kyubey 价格",
   "Buy": "买入",
   "Sell": "出售",
