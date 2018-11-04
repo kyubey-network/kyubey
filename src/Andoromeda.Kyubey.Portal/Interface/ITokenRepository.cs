@@ -15,5 +15,6 @@ namespace Andoromeda.Kyubey.Portal.Interface
         string GetTokenIncubationDescription(string tokenId, string cultureStr);
         string GetTokenIncubationDetail(string tokenId, string cultureStr);
         List<TokenIncubatorUpdateModel> GetTokenIncubatorUpdates(string tokenId, string cultureStr);
+        string GetPriceJsText(string tokenId);
     }
 }

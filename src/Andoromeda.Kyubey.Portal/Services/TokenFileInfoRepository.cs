@@ -160,6 +160,16 @@ namespace Andoromeda.Kyubey.Portal.Services
             return null;
         }
 
+        public string GetPriceJsText(string tokenId)
+        {
+            var filePath = Path.Combine(tokenFolderAbsolutePath, tokenId, "contract_exchange", "price.js");
+            if (File.Exists(filePath))
+            {
+                return FileHelper.ReadAllText(filePath);
+            }
+            return null;
+        }
+
         public List<TokenIncubatorUpdateModel> GetTokenIncubatorUpdates(string tokenId, string cultureStr)
         {
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "updates");

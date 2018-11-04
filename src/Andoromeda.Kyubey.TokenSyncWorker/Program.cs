@@ -72,14 +72,14 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             foreach (var d in dirs)
             {
                 var currentPath = Path.Combine(path, d.Name);
-                CreateFtpFolder(currentPath);
+                CreateFtpFolder(currentPath,"");
                 UploadFolder(currentPath);
             }
             var files = rootDir.GetFiles();
             foreach (var f in files)
             {
                 var currentPath = Path.Combine(path, f.Name);
-                UploadFtpFile(currentPath);
+                UploadFtpFile(currentPath,"");
             }
         }
         public static void CreateFtpFolder(string path, string ftpPath)
