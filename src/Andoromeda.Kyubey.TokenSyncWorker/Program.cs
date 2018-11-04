@@ -64,7 +64,15 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             Console.WriteLine("Done.");
             Console.ReadKey();
         }
-        
+
+        public static void UploadFolder(string path)
+        {
+            var d = new DirectoryInfo(path);
+            d.GetDirectories()
+
+        }
+
+
         public static void DownloadFile(string uri, string fileName)
         {
             using (var client = new System.Net.WebClient())
