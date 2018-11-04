@@ -29,7 +29,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 CurrentRaised = x.Raised,
                 Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
                 ShowGoExchange = true,
-                TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.RaisedTarget ?? 0
+                TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.Goal ?? 0
             }).ToList();
 
             return View(tokens);

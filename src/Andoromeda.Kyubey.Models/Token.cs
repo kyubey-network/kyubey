@@ -42,8 +42,6 @@ namespace Andoromeda.Kyubey.Models
 
         public virtual Curve Curve { get; set; }
 
-        public JsonObject<IEnumerable<decimal>> CurveArguments { get; set; } = "[]";
-
         [MaxLength(255)]
         public string Alert { get; set; }
 

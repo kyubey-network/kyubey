@@ -11,7 +11,7 @@
     {
         for (var i = 0; i < curve.Arguments.Object.Count(); i++)
         {
-            constJs += $"var {curve.Arguments.Object.ElementAt(i).Id} = {Model.CurveArguments.Object.ElementAt(i)};";
+            constJs += $"var {curve.Arguments.Object.ElementAt(i).Id} = {tokenInfo.Basic.Curve_Arguments.ElementAt(i)};";
         }
     }
     bool isContractExchange = Context.Request.Query.ContainsKey("contract");
@@ -782,7 +782,7 @@
                     var price = parseFloat(parseFloat(this.inputs.sellPrice).toFixed(4));
                     var bid = parseFloat(parseFloat(this.inputs.sellAmount).toFixed(4));
                     var ask = parseFloat(bid * price);
-                    eos.contract('@tokenInfo.Basic.Contract.transfer', { requiredFields })
+                    eos.contract('@tokenInfo.Basic.Contract.Transfer', { requiredFields })
                         .then(contract => {
                             return contract.transfer(
                                 account.name,
@@ -804,7 +804,7 @@
                         });
                 }
                 else if (this.control.publish === 'market') {
-                    eos.contract('@tokenInfo.Basic.Contract.transfer', { requiredFields })
+                    eos.contract('@tokenInfo.Basic.Contract.Transfer', { requiredFields })
                         .then(contract => {
                             return contract.transfer(
                                 account.name,

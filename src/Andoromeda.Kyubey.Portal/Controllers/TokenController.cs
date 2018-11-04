@@ -163,7 +163,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine==null?-999:(tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
-                    TargetCredits = tokenInfo?.Incubation?.RaisedTarget ?? 0,
+                    TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
                     CurrentRaised = token.Raised,
                     CurrentRaisedCount = token.RaisedUserCount
                 },
@@ -402,7 +402,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
             using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
             {
-                code = tokenInfo?.Basic?.Contract?.transfer ?? "eosio.token",
+                code = tokenInfo?.Basic?.Contract?.Transfer ?? "eosio.token",
                 table = "accounts",
                 scope = account,
                 json = true,
@@ -465,7 +465,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             try
             {
                 using (var client = new HttpClient() { BaseAddress = new Uri("https://cache.togetthere.cn") })
-                using (var resposne = await client.GetAsync($"/token/distributed/{tokenInfo.Basic.Contract.transfer}/{token.Id}"))
+                using (var resposne = await client.GetAsync($"/token/distributed/{tokenInfo.Basic.Contract.Transfer}/{token.Id}"))
                 {
                     var dic = await resposne.Content.ReadAsAsync<IDictionary<string, double>>();
                     ViewBag.Holders = dic.Select(x => new Holder
