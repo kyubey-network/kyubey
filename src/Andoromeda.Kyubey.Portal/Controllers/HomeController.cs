@@ -20,16 +20,17 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository)
         {
-            var incubatorList = _tokenRepository.GetAll().Where(x => x.Incubation != null).ToList();
-            var tokens = (await db.Tokens.Where(x => x.HasIncubation && x.Status == TokenStatus.Active).ToListAsync()).OrderByDescending(x => x.Priority).Select(x => new TokenHandlerListViewModel()
+            var tokenInfoList = _tokenRepository.GetAll().ToList();
+            var dbIncubations = await db.Tokens.Where(x => x.HasIncubation && x.Status == TokenStatus.Active).ToListAsync();
+            var tokens = dbIncubations.OrderByDescending(x => x.Priority).Select(x => new TokenHandlerListViewModel()
             {
                 Id = x.Id,
                 BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.Id, _tokenRepository.GetTokenIncubationBannerPaths(x.Id, currentCulture).FirstOrDefault()),
                 CurrentRaised = x.Raised,
                 Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
                 ShowGoExchange = true,
-                TargetCredits = incubatorList.FirstOrDefault(s => s.Id == x.Id).Incubation.RaisedTarget
-            });
+                TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.RaisedTarget ?? 0
+            }).ToList();
 
             return View(tokens);
         }

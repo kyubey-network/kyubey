@@ -162,8 +162,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 {
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
-                    RemainingDay = (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
-                    TargetCredits = tokenInfo.Incubation.RaisedTarget,
+                    RemainingDay = tokenInfo?.Incubation?.DeadLine==null?-999:(tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
+                    TargetCredits = tokenInfo?.Incubation?.RaisedTarget ?? 0,
                     CurrentRaised = token.Raised,
                     CurrentRaisedCount = token.RaisedUserCount
                 },
