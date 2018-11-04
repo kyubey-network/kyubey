@@ -71,24 +71,24 @@ namespace Andoromeda.Kyubey.Portal.Services
             if (!string.IsNullOrEmpty(cultureSuffix))
             {
                 //current culture 
-                availuableFilenames = fileNames.Where(x => x.Contains(cultureSuffix)).ToArray();
+                availuableFilenames = fileNames.Where(x => x.Contains(cultureSuffix + ".")).ToArray();
                 if (availuableFilenames.Count() > 0)
                     return availuableFilenames;
 
                 //zh-cn no file, -->zh-tw
                 if (cultureSuffix == TokenCultureFileSuffix.ZHCN)
-                    availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.ZHTW)).ToArray();
+                    availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.ZHTW + ".")).ToArray();
                 if (availuableFilenames.Count() > 0)
                     return availuableFilenames;
 
                 //zh-tw no file, -->zh-cn
                 if (cultureSuffix == TokenCultureFileSuffix.ZHTW)
-                    availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.ZHCN)).ToArray();
+                    availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.ZHCN + ".")).ToArray();
                 if (availuableFilenames.Count() > 0)
                     return availuableFilenames;
             }
             //en
-            availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.EN)).ToArray();
+            availuableFilenames = fileNames.Where(x => x.Contains(TokenCultureFileSuffix.EN + ".")).ToArray();
             if (availuableFilenames.Count() > 0)
                 return availuableFilenames;
 
