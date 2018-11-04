@@ -11,9 +11,14 @@ namespace Andoromeda.Kyubey.Portal.Models
         public string[] Owners { get; set; }
         public int Priority { get; set; }
         public TokenManifestBasicJObject Basic { get; set; }
-        public bool Incubation { get; set; }
+        public IncubationJObject Incubation { get; set; }
         public bool Dex { get; set; }
         public bool Contract_Exchange { get; set; }
+    }
+    public class IncubationJObject
+    {
+        public decimal RaisedTarget { get; set; }
+        public DateTimeOffset DeadLine { get; set; }
     }
     public class TokenManifestBasicJObject
     {
@@ -23,7 +28,7 @@ namespace Andoromeda.Kyubey.Portal.Models
         public string Github { get; set; }
         public string Email { get; set; }
         public string Tg { get; set; }
-
+        public decimal? TotalSupply { get; set; }
     }
     public class TokenManifestBasicContractJObject
     {

@@ -33,17 +33,8 @@ namespace Andoromeda.Kyubey.Models
         [MaxLength(16)]
         public string Id { get; set; }
 
-        //public byte[] Icon { get; set; }
-
         [MaxLength(32)]
         public string Name { get; set; }
-
-        //public string Description { get; set; }
-
-        public long? DeliveryAmount { get; set; }
-
-
-        //public string Detail { get; set; }
 
         [MaxLength(16)]
         [ForeignKey("Curve")]
@@ -53,22 +44,10 @@ namespace Andoromeda.Kyubey.Models
 
         public JsonObject<IEnumerable<decimal>> CurveArguments { get; set; } = "[]";
 
-        //[MaxLength(64)]
-        //public string WebUrl { get; set; }
-
-        //[MaxLength(64)]
-        //public string GitHub { get; set; }
-
-        //[MaxLength(64)]
-        //public string Email { get; set; }
-
-        //[MaxLength(64)]
-        //public string Contract { get; set; }
-
         [MaxLength(255)]
         public string Alert { get; set; }
 
-        //public int Priority { get; set; }
+        public int Priority { get; set; }
 
         [ForeignKey("User")]
         public long UserId { get; set; }
@@ -80,5 +59,10 @@ namespace Andoromeda.Kyubey.Models
         public TokenAlertNotificationType NotificationType { get; set; }
 
         public TokenStatus Status { get; set; }
+        public bool HasIncubation { get; set; }
+        public bool HasDex { get; set; }
+        public bool Contract_exchange { get; set; }
+        public decimal Raised { get; set; }
+        public int RaisedUserCount { get; set; }
     }
 }

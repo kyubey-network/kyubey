@@ -19,11 +19,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class TokenController : BaseController
     {
-        private readonly ITokenRepository _tokenRepository;
-        public TokenController(ITokenRepository tokenRepository, ICultureProvider cultureProvider) : base(cultureProvider)
-        {
-            _tokenRepository = tokenRepository;
-        }
         public override void Prepare()
         {
             base.Prepare();
@@ -56,7 +51,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }).ToListAsync(cancellationToken));
         }
 
-        public async Task<IActionResult> Default([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Default([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
             var token = await db.Tokens
                 .Include(x => x.Curve)
@@ -82,7 +77,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
-        public async Task<IActionResult> Index([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
             var token = await db.Tokens
                 .Include(x => x.Curve)
@@ -104,31 +99,17 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Curve = token.Curve;
             ViewBag.Token = token;
 
-            ViewBag.TokenInfo = _tokenRepository.GetOne(id);
+            var tokenInfo = _tokenRepository.GetOne(id);
+            ViewBag.TokenInfo = tokenInfo;
             ViewBag.TokenDescription = _tokenRepository.GetTokenIncubationDescription(id, currentCulture);
 
-
-            var hatcher = await db.TokenHatchers.SingleOrDefaultAsync(x => x.TokenId == id && x.Status == TokenHatcherStatus.Active, cancellationToken);
-
-            if (hatcher == null)
+            if (!token.HasIncubation)
             {
                 return View("IndexOld", token);
             }
+
             ViewBag.Flex = false;
 
-            //ViewBag.TokenBannerIds = await db.TokenBanners.Where(x => x.TokenId == id).OrderBy(x => x.BannerOrder).Select(x => x.Id).ToListAsync(cancellationToken);
-            //ViewBag.RecentUpdates = await db.TokenRecentUpdates.Where(x => x.TokenId == id).OrderByDescending(x => x.OperateTime).ToListAsync(cancellationToken);
-
-            //just one query db
-
-
-
-            //var comments =  db.TokenComments
-            //    .Include(x => x.User)
-            //    .Include(x => x.ReplyUserId)
-            //    .Where(x => x.TokenId == id && x.IsDelete == false).ToList();
-
-            //!!!?????????
             var comments = db.TokenComments
     .Include(x => x.User)
     .Include(x => x.ReplyUserId)
@@ -149,14 +130,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
     })
     .ToList();
 
-            //var comments=await (from c in db.TokenComments
-            //                    join cu in db.Users
-            //                    on c.UserId equals cu.Id
-            //                    join ru in db.Users
-            //                    on c.ReplyUserId equals ru.Id
-            //                    on 
-            //                    )
-
             var commentPraises = await (from p in db.TokenCommentPraises
                                         join c in db.TokenComments
                                         on p.CommentId equals c.Id
@@ -168,10 +141,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 Content = x.Content,
                 CreateTime = x.CreateTime.ToLocalTime().ToString("d", System.Globalization.CultureInfo.InvariantCulture),
                 PraiseCount = commentPraises.Count(p => p.CommentId == x.Id),
-                //ReplyUserId = x.ReplyUserId,
                 UserId = x.UserId,
                 UserName = x.User.UserName,
-                //ReplyUserName = x.ReplyUser?.UserName,
                 ChildComments = comments.Where(cc => cc.ParentCommentId == x.Id).OrderByDescending(c => c.CreateTime).Select(c => new TokenCommentViewModel()
                 {
                     Content = c.Content,
@@ -184,33 +155,22 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             }).ToList();
 
-
-
             var handlerVM = new TokenHandlerViewModel()
             {
                 TokenInfo = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken),
-                //Providers=
                 HandlerInfo = new HandlerInfo()
                 {
-                    //CurrentRaised= 
-                    //Title = hatcher.Title,
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
-                    RemainingDay = (hatcher.Deadline - DateTime.Now).Days,
-                    TargetCredits = hatcher.TargetCredits,
-                    CurrentRaised = hatcher.CurrentRaisedSum,
-                    CurrentRaisedCount = hatcher.CurrentRaisedCount
+                    RemainingDay = (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
+                    TargetCredits = tokenInfo.Incubation.RaisedTarget,
+                    CurrentRaised = token.Raised,
+                    CurrentRaisedCount = token.RaisedUserCount
                 },
                 IncubatorBannerUrls = TokenTool.GetTokenIncubatorBannerUris(id, _tokenRepository.GetTokenIncubationBannerPaths(id, currentCulture)),
-                Providers = await db.TokenProviders.Include(x => x.User).Where(x => x.TokenId == id).Select(x => new TokenProviderVM()
-                {
-                    RoleType = x.RoleType.ToString("G"),
-                    UserName = x.User.UserName,
-                    IsSponsor = x.RoleType == TokenProviderRole.Sponsor
-                }).ToListAsync(cancellationToken),
                 PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),
                 Comments = commentsVM,
-                RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateVM()
+                RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateViewModel()
                 {
                     Content = x.Content,
                     OperateTime = x.OperateTime,
@@ -224,20 +184,20 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/exchange")]
-        public async Task<IActionResult> Exchange([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Exchange([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
-            return await Default(db, id, cancellationToken);
+            return await Default(db, _tokenRepository, id, cancellationToken);
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/publish")]
-        public async Task<IActionResult> Publish([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Publish([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
-            return await Default(db, id, cancellationToken);
+            return await Default(db, _tokenRepository, id, cancellationToken);
         }
 
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}.png")]
-        public async Task<IActionResult> Icon([FromServices] KyubeyContext db, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Icon([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
             var token = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken);
             if (token == null)
@@ -435,7 +395,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{account}/balance/{token}")]
-        public async Task<IActionResult> AccountBalance(string token, string account, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> AccountBalance([FromServices] ITokenRepository _tokenRepository, string token, string account, CancellationToken cancellationToken = default)
         {
             var t = DB.Tokens.SingleOrDefault(x => x.Id == token);
             var tokenInfo = _tokenRepository.GetOne(token);
@@ -463,7 +423,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{account}/history-order")]
-        public async Task<IActionResult> HistoryOrder(string id, string account, bool only = false, CancellationToken token = default)
+        public async Task<IActionResult> HistoryOrder([FromServices] ITokenRepository _tokenRepository, string id, string account, bool only = false, CancellationToken token = default)
         {
             IQueryable<MatchReceipt> matches = DB.MatchReceipts
                 .Where(x => x.Bidder == account || x.Asker == account);
@@ -478,6 +438,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet]
         public async Task<IActionResult> Holders(
             [FromServices] KyubeyContext db,
+            [FromServices] ITokenRepository _tokenRepository,
             string id,
             CancellationToken cancellationToken)
         {

@@ -15,7 +15,7 @@ namespace Andoromeda.Kyubey.Portal.Services
         public const string ZHCN = ".zh";
         public const string ZHTW = ".zh-Hant";
         public const string EN = ".en";
-        public const string JP = ".jajp";
+        public const string JP = ".ja";
     }
     public class TokenFileInfoRepository : ITokenRepository
     {
@@ -111,7 +111,7 @@ namespace Andoromeda.Kyubey.Portal.Services
         {
             tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
-            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description*.txt");
+            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description.*.txt");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
             if (availablePath != null)
@@ -123,26 +123,13 @@ namespace Andoromeda.Kyubey.Portal.Services
         {
             tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
-            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "detail*.md");
+            var files = FileHelper.GetAllFileNameFromFolder(folderPath, "detail.*.md");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
             if (availablePath != null)
                 return FileHelper.ReadAllText(availablePath);
             return null;
         }
-
-        //public string GetTokenDescription(string tokenId, string cultureStr)
-        //{
-        //    tokenId.RemoveDangerousChar();
-        //    var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "token");
-        //    var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description*.txt");
-        //    var availableFiles = GetAvailableFileNames(files, cultureStr);
-        //    var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
-        //    if (availablePath != null)
-        //        return FileHelper.ReadAllText(availablePath);
-        //    return null;
-        //}
-
 
         public Models.TokenManifestJObject GetOne(string tokenId)
         {

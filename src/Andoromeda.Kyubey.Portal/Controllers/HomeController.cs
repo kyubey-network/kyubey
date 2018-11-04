@@ -17,33 +17,25 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly ITokenRepository _tokenRepository;
-        public HomeController(ITokenRepository tokenRepository, ICultureProvider cultureProvider) : base(cultureProvider)
-        {
-            _tokenRepository = tokenRepository;
-        }
         [Route("/")]
-        public async Task<IActionResult> Index([FromServices] KyubeyContext db)
+        public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository)
         {
-            var tokenStaticInfoList = _tokenRepository.GetAll();
-            var tokens = (await db.TokenHatchers.Where(x => x.Status == Kyubey.Models.Hatcher.TokenHatcherStatus.Active)
-                .Include(x => x.Token).ToListAsync())
-                .Select(x => new TokenIncubatorListVM()
-                {
-                    BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.TokenId, _tokenRepository.GetTokenIncubationBannerPaths(x.TokenId, currentCulture).FirstOrDefault()),
-                    //BannerId = db.TokenBanners.Where(b => b.TokenId == x.TokenId).OrderBy(b => b.BannerOrder).FirstOrDefault().Id.ToString(),
-                    Id = x.TokenId,
-                    Introduction = _tokenRepository.GetTokenIncubationDescription(x.TokenId, currentCulture),
-                    TargetCredits = x.TargetCredits,
-                    CurrentRaised = x.CurrentRaisedSum,
-                    ShowGoExchange = true,
-                });
+            var incubatorList = _tokenRepository.GetAll().Where(x => x.Incubation != null).ToList();
+            var tokens = await db.Tokens.Where(x => incubatorList.Select(i => i.Id).Contains(x.Id) && x.Status == TokenStatus.Active).Select(x => new TokenHandlerListViewModel()
+            {
+                BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.Id, _tokenRepository.GetTokenIncubationBannerPaths(x.Id, currentCulture).FirstOrDefault()),
+                CurrentRaised = x.Raised,
+                Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
+                ShowGoExchange = true,
+                TargetCredits = incubatorList.FirstOrDefault(s => s.Id == x.Id).Incubation.RaisedTarget
+
+            }).ToListAsync();
 
             return View(tokens);
         }
 
         [Route("/Dex")]
-        public async Task<IActionResult> Dex([FromServices] KyubeyContext db, string token = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Dex([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string token = null, CancellationToken cancellationToken = default)
         {
             var tokenStaticInfoList = _tokenRepository.GetAll();
 

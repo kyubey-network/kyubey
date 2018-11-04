@@ -11,10 +11,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 {
     public class AnalysisController : BaseController
     {
-        public AnalysisController(ICultureProvider cultureProvider) : base(cultureProvider)
-        {
-
-        }
         public override void Prepare()
         {
             base.Prepare();

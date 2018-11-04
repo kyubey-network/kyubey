@@ -8,6 +8,7 @@ namespace Andoromeda.Kyubey.Portal.Services
 {
     public class TokenTool
     {
+        private const string tokenRoutePrefix = "/token_assets";
         public static string GetTokenIncubatorBannerUri(string tokenId, string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))

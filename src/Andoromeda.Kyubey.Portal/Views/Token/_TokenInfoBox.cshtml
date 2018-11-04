@@ -27,8 +27,8 @@
                             <div class="token-incubation-infobox-subtitle">@(hatcher.HandlerInfo.TargetCredits.ToString("0.0000")) EOS</div>
                         </div>
                         <div class="col-md-4 token-incubation-infobox-card">
-                            <div class="token-incubation-infobox-title">@SR["Delivery Amount"]</div>
-                            <div class="token-incubation-infobox-subtitle">@(!Model.DeliveryAmount.HasValue ? SR["Unknown"] : Model.DeliveryAmount.ToString())</div>
+                            <div class="token-incubation-infobox-title">@SR["Total Supply"]</div>
+                            <div class="token-incubation-infobox-subtitle">@(!tokenInfo.Basic.TotalSupply.HasValue ? SR["Unknown"] : tokenInfo.Basic.TotalSupply.ToString())</div>
                         </div>
                         <div class="col-md-4 token-incubation-infobox-card">
                             <div class="token-incubation-infobox-title">@SR["Protocol"]</div>

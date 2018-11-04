@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Andoromeda.Kyubey.Portal.Models
 {
-    public class TokenIncubatorListVM
+    public class TokenHandlerListViewModel
     {
         public string BannerSrc { get; set; }
         public string Id { get; set; }

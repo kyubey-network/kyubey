@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Andoromeda.Kyubey.Portal.Interface
 {
-    public interface ITokenRepository : IBaseRepository<TokenManifestJObject>
+    public interface ITokenRepository
     {
         TokenManifestJObject GetOne(string tokenId);
         IList<TokenManifestJObject> GetAll();
