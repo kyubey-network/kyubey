@@ -67,12 +67,29 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
         public static void UploadFolder(string path)
         {
-            var d = new DirectoryInfo(path);
-            d.GetDirectories()
+            var rootDir = new DirectoryInfo(path);
+            var dirs = rootDir.GetDirectories();
+            foreach (var d in dirs)
+            {
+                var currentPath = Path.Combine(path, d.Name);
+                CreateFtpFolder(currentPath);
+                UploadFolder(currentPath);
+            }
+            var files = rootDir.GetFiles();
+            foreach (var f in files)
+            {
+                var currentPath = Path.Combine(path, f.Name);
+                UploadFtpFile(currentPath);
+            }
+        }
+        public static void CreateFtpFolder(string path, string ftpPath)
+        {
 
         }
+        public static void UploadFtpFile(string path, string ftpPath)
+        {
 
-
+        }
         public static void DownloadFile(string uri, string fileName)
         {
             using (var client = new System.Net.WebClient())
