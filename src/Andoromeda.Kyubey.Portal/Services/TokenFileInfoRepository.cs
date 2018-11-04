@@ -26,13 +26,13 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         private string GetFileNameSuffixByCulture(string cultureStr)
         {
-            if (new string[] { "en", "en-US", "en-GB" }.Contains(cultureStr))
+            if (new string[] { "en" }.Contains(cultureStr))
                 return TokenCultureFileSuffix.EN;
-            if (new string[] { "zh", "zh-CN", "zh-Hans", "zh-Hans-CN", "zh-cn" }.Contains(cultureStr))
+            if (new string[] { "zh" }.Contains(cultureStr))
                 return TokenCultureFileSuffix.ZHCN;
-            if (new string[] { "zh-Hant", "zh-Hant-TW", "zh-TW", "zh-tw" }.Contains(cultureStr))
+            if (new string[] { "zh-Hant" }.Contains(cultureStr))
                 return TokenCultureFileSuffix.ZHTW;
-            if (new string[] { "ja", "ja-JP" }.Contains(cultureStr))
+            if (new string[] { "ja" }.Contains(cultureStr))
                 return TokenCultureFileSuffix.JP;
             return "";
         }
@@ -99,7 +99,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public string[] GetTokenIncubationBannerPaths(string tokenId, string cultureStr)
         {
-            tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "slides");
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "*.png");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
@@ -109,7 +108,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public string GetTokenIncubationDescription(string tokenId, string cultureStr)
         {
-            tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description.*.txt");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
@@ -121,7 +119,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public string GetTokenIncubationDetail(string tokenId, string cultureStr)
         {
-            tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "detail.*.md");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
@@ -133,7 +130,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public Models.TokenManifestJObject GetOne(string tokenId)
         {
-            tokenId.RemoveDangerousChar();
             var filePath = Path.Combine(tokenFolderAbsolutePath, tokenId, manifestFileName);
             if (File.Exists(filePath))
             {
@@ -156,7 +152,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public string GetTokenIconPath(string tokenId)
         {
-            tokenId.RemoveDangerousChar();
             var absolutePath = Path.Combine(tokenFolderAbsolutePath, tokenId, iconFileName);
             if (File.Exists(absolutePath))
             {
@@ -167,7 +162,6 @@ namespace Andoromeda.Kyubey.Portal.Services
 
         public List<TokenIncubatorUpdateModel> GetTokenIncubatorUpdates(string tokenId, string cultureStr)
         {
-            tokenId.RemoveDangerousChar();
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "updates");
             var files = FileHelper.GetAllFileNameFromFolder(folderPath);
             var availableFiles = GetAvailableFileNames(files, cultureStr);
