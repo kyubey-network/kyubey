@@ -48,7 +48,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         /// </summary>
         /// <param name="remoteFile"></param>
         /// <param name="localFile"></param>
-        public void Upload(string remoteFile, string localFile)
+        public bool Upload(string remoteFile, string localFile)
         {
             try
             {
@@ -78,15 +78,17 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Upload File:{localFile}");
-                Console.WriteLine($"Upload File Complete, status {response.StatusDescription}");
+                Console.WriteLine($"Upload Succeed:{localFile}");
                 Console.ResetColor();
                 response.Dispose();
+                return true;
             }
-            catch (Exception ex)
+            catch (WebException ex)
             {
-                Console.WriteLine(ex.ToString());
-                //Console.ReadKey();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Upload Failed:{ex.HResult} {localFile}");
+                Console.ResetColor();
+                return false;
             }
         }
 
@@ -178,7 +180,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         /// Create a New Directory on the FTP Server
         /// </summary>
         /// <param name="newDirectory"></param>
-        public string CreateDirectory(string newDirectory)
+        public bool CreateDirectory(string newDirectory)
         {
             try
             {
@@ -192,19 +194,19 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
                 var _ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Create Folder:{newDirectory}");
+                Console.WriteLine($"Create Folder Succeed:{newDirectory}");
                 Console.ResetColor();
                 _ftpResponse.Dispose();
-                return _ftpResponse.StatusDescription;
-
+                return true;
             }
             catch (WebException ex)
             {
-
-                Console.WriteLine(ex.ToString());
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Create Folder Failed:{ex.HResult} {newDirectory}");
+                Console.ResetColor();
+                return false;
                 //throw ex;
             }
-            return null;
         }
 
         ///// <summary>
