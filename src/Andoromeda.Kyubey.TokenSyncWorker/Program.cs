@@ -39,6 +39,10 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             {
                 File.Delete(downloadFile);
             }
+            if (Directory.Exists(branchName))
+            {
+                Directory.Delete(branchName,true);
+            }
 
             //download
             Console.WriteLine($"{DateTime.Now}:start download");
@@ -58,8 +62,8 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             //upload
             Console.WriteLine($"{DateTime.Now}:start upload");
             ftpClient = new FtpHelper(ftpAddress, ftpUserName, ftpPassword);
-            ftpClient.CreateDirectory(Path.Combine(ftpAddress, "Tokens2"));
-            UploadFolder(Path.Combine(branchName, "token-list-master"), "Tokens2");
+            ftpClient.CreateDirectory(Path.Combine(ftpAddress, "Tokens"));
+            UploadFolder(Path.Combine(branchName, "token-list-master"), "Tokens");
             Console.WriteLine($"{DateTime.Now}:upload complete");
 
 
