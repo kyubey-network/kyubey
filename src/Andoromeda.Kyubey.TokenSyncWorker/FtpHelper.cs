@@ -43,17 +43,11 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             }
         }
 
-        /// <summary>
-        /// Upload File
-        /// </summary>
-        /// <param name="remoteFile"></param>
-        /// <param name="localFile"></param>
-        public bool Upload(string remoteFile, string localFile)
+
+        public bool Upload(string localFile, string uri)
         {
             try
             {
-                var uri = Path.Combine(_hostAddress, remoteFile);
-
                 _ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
                 _ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
 
@@ -180,12 +174,12 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         /// Create a New Directory on the FTP Server
         /// </summary>
         /// <param name="newDirectory"></param>
-        public bool CreateDirectory(string newDirectory)
+        public bool CreateDirectory(string directoryUri)
         {
             try
             {
                 // Create an FTP Request
-                _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + newDirectory);
+                _ftpRequest = (FtpWebRequest)WebRequest.Create(directoryUri);
                 // Log in to the FTP Server with the User Name and Password Provided
                 _ftpRequest.Credentials = new NetworkCredential(_username.Normalize(), _password.Normalize());
                 // Specify the Type of FTP Request
@@ -194,7 +188,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
                 var _ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Create Folder Succeed:{newDirectory}");
+                Console.WriteLine($"Create Folder Succeed:{directoryUri}");
                 Console.ResetColor();
                 _ftpResponse.Dispose();
                 return true;
@@ -202,7 +196,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             catch (WebException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Create Folder Failed:{ex.HResult} {newDirectory}");
+                Console.WriteLine($"Create Folder Failed:{ex.HResult} {directoryUri}");
                 Console.ResetColor();
                 return false;
                 //throw ex;
