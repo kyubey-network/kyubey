@@ -20,6 +20,8 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         static string ftpPassword = null;
         static void Main(string[] args)
         {
+            Console.WriteLine($"{DateTime.Now}:loading...");
+
             var builder = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json")
@@ -31,17 +33,17 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             ftpUserName = configuration["FtpUserName"];
             ftpPassword = configuration["FtpPassword"];
 
-
             var branchName = "master";
             var downloadFile = $"{branchName}.zip";
 
+            Console.WriteLine($"{DateTime.Now}:delete exist files");
             if (File.Exists(downloadFile))
             {
                 File.Delete(downloadFile);
             }
             if (Directory.Exists(branchName))
             {
-                Directory.Delete(branchName,true);
+                Directory.Delete(branchName, true);
             }
 
             //download
@@ -78,7 +80,8 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
 
             Console.WriteLine("Done.");
-            Console.ReadKey();
+            Thread.Sleep(10 * 1000);
+            //Console.ReadKey();
         }
 
 
