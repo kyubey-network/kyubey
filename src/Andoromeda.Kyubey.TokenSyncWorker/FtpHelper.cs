@@ -56,10 +56,10 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
                 // Copy the contents of the file to the request stream.
                 byte[] fileContents;
-                using (StreamReader sourceStream = new StreamReader(localFile))
-                {
-                    fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-                }
+
+                fileContents = File.ReadAllBytes(localFile);
+
+                _ftpRequest.UseBinary = true;
 
                 _ftpRequest.ContentLength = fileContents.Length;
 
@@ -72,7 +72,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Upload Succeed:{localFile}");
+                Console.WriteLine($"{DateTime.Now} Upload File Succeed:{uri}");
                 Console.ResetColor();
                 response.Dispose();
                 return true;
@@ -80,95 +80,11 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             catch (WebException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Upload Failed:{ex.HResult} {localFile}");
+                Console.WriteLine($"{DateTime.Now} Upload File Failed:{uri}");
                 Console.ResetColor();
                 return false;
             }
         }
-
-        ///// <summary>
-        ///// Delete File
-        ///// </summary>
-        ///// <param name="deleteFile"></param>
-        //public string Delete(string deleteFile)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + deleteFile);
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.DeleteFile;
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            return _ftpResponse.StatusDescription;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Delete Dir
-        ///// </summary>
-        ///// <param name="directoryPath"></param>
-        //public string DeleteDir(string directoryPath)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + directoryPath);
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            return _ftpResponse.StatusDescription;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Rename File
-        ///// </summary>
-        ///// <param name="currentFileNameAndPath"></param>
-        ///// <param name="newFileName"></param>
-        //public string Rename(string currentFileNameAndPath, string newFileName)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + currentFileNameAndPath);
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.Rename;
-        //        // Rename the File
-        //        _ftpRequest.RenameTo = newFileName;
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            return _ftpResponse.StatusDescription;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
 
         /// <summary>
         /// Create a New Directory on the FTP Server
@@ -178,174 +94,45 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         {
             try
             {
-                // Create an FTP Request
-                _ftpRequest = (FtpWebRequest)WebRequest.Create(directoryUri);
-                // Log in to the FTP Server with the User Name and Password Provided
-                _ftpRequest.Credentials = new NetworkCredential(_username.Normalize(), _password.Normalize());
-                // Specify the Type of FTP Request
-                _ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
-                // Establish Return Communication with the FTP Server
-                var _ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse();
+                //create the directory
+                FtpWebRequest requestDir = (FtpWebRequest)FtpWebRequest.Create(new Uri(directoryUri));
+                requestDir.Method = WebRequestMethods.Ftp.MakeDirectory;
+                requestDir.Credentials = new NetworkCredential(_username.Normalize(), _password.Normalize());
+                requestDir.UsePassive = true;
+                requestDir.UseBinary = true;
+                requestDir.KeepAlive = false;
+                FtpWebResponse response = (FtpWebResponse)requestDir.GetResponse();
+                Stream ftpStream = response.GetResponseStream();
 
+                ftpStream.Close();
+                response.Close();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Create Folder Succeed:{directoryUri}");
+                Console.WriteLine($"{DateTime.Now} Create Folder Succeed:{directoryUri}");
                 Console.ResetColor();
-                _ftpResponse.Dispose();
                 return true;
             }
             catch (WebException ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Create Folder Failed:{ex.HResult} {directoryUri}");
-                Console.ResetColor();
-                return false;
-                //throw ex;
+                FtpWebResponse response = (FtpWebResponse)ex.Response;
+                if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                {
+                    response.Close();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{DateTime.Now} Create Folder Succeed:{directoryUri}");
+                    Console.ResetColor();
+                    return true;
+                }
+                else
+                {
+                    response.Close();
+                    
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{DateTime.Now} Create Folder Failed:{directoryUri}");
+                    Console.ResetColor();
+                    return false;
+                }
             }
         }
-
-        ///// <summary>
-        ///// Get the Date/Time a File was Created
-        ///// </summary>
-        ///// <param name="fileName"></param>
-        ///// <returns></returns>
-        //public DateTime GetFileCreatedDateTime(string fileName)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + fileName);
-
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.GetDateTimestamp;
-
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            return _ftpResponse.LastModified;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Get the Size of a File
-        ///// </summary>
-        ///// <param name="fileName"></param>
-        ///// <returns></returns>
-        //public long GetFileSize(string fileName)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + fileName);
-
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.GetFileSize;
-
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            return _ftpResponse.ContentLength;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// List Directory Contents File/Folder Name Only
-        ///// </summary>
-        ///// <param name="directory"></param>
-        ///// <returns></returns>
-        //public IList<string> DirectoryListSimple(string directory)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + directory);
-
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
-
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            StreamReader streamReader = new StreamReader(_ftpResponse.GetResponseStream());
-
-        //            IList<string> directories = new List<string>();
-
-        //            string line = streamReader.ReadLine();
-        //            while (!string.IsNullOrEmpty(line))
-        //            {
-        //                directories.Add(line);
-        //                line = streamReader.ReadLine();
-        //            }
-        //            return directories;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// List Directory Contents in Detail (Name, Size, Created, etc.)
-        ///// </summary>
-        ///// <param name="directory"></param>
-        ///// <returns></returns>
-        //public IList<string> DirectoryListDetailed(string directory)
-        //{
-        //    try
-        //    {
-        //        // Create an FTP Request
-        //        _ftpRequest = (FtpWebRequest)WebRequest.Create(_hostAddress + "/" + directory);
-
-        //        // Log in to the FTP Server with the User Name and Password Provided
-        //        _ftpRequest.Credentials = new NetworkCredential(_username, _password);
-
-        //        // Specify the Type of FTP Request
-        //        _ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-
-        //        // Establish Return Communication with the FTP Server
-        //        using (_ftpResponse = (FtpWebResponse)_ftpRequest.GetResponse())
-        //        {
-        //            StreamReader streamReader = new StreamReader(_ftpResponse.GetResponseStream());
-
-        //            IList<string> directories = new List<string>();
-
-        //            string line = streamReader.ReadLine();
-        //            while (!string.IsNullOrEmpty(line))
-        //            {
-        //                directories.Add(line);
-        //                line = streamReader.ReadLine();
-        //            }
-        //            return directories;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        throw ex;
-        //    }
-        //}
-
+        
     }
 }
