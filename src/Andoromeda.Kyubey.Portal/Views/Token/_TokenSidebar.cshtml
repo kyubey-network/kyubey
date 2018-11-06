@@ -2,6 +2,7 @@
 @{
     Otc otc = ViewBag.Otc;
     Bancor bancor = ViewBag.Bancor;
+    TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
 }
 
 <div class="col-md-4">
@@ -11,24 +12,24 @@
             @Model.Alert
         </div>
     }
-    @if (!string.IsNullOrWhiteSpace(Model.WebUrl) || !string.IsNullOrWhiteSpace(Model.GitHub) || !string.IsNullOrWhiteSpace(Model.Email))
+    @if (!string.IsNullOrWhiteSpace(tokenInfo.Basic.Website) || !string.IsNullOrWhiteSpace(tokenInfo.Basic.Github) || !string.IsNullOrWhiteSpace(tokenInfo.Basic.Email))
     {
         <div class="card links">
-            @if (!string.IsNullOrWhiteSpace(Model.WebUrl))
+            @if (!string.IsNullOrWhiteSpace(tokenInfo.Basic.Website))
             {
-                <div><i class="fa fa-home"></i> <a target="_blank" href="@Model.WebUrl">@Model.WebUrl.Replace("http://", "").Replace("https://", "")</a></div>
+                <div><i class="fa fa-home"></i> <a target="_blank" href="@tokenInfo.Basic.Website">@tokenInfo.Basic.Website.Replace("http://", "").Replace("https://", "")</a></div>
             }
-            @if (!string.IsNullOrWhiteSpace(Model.GitHub))
+            @if (!string.IsNullOrWhiteSpace(tokenInfo.Basic.Github))
             {
-                <div><i class="fa fa-github"></i> <a target="_blank" href="@Model.GitHub">@Model.GitHub.Replace("http://", "").Replace("https://", "")</a></div>
+                <div><i class="fa fa-github"></i> <a target="_blank" href="@tokenInfo.Basic.Github">@tokenInfo.Basic.Github.Replace("http://", "").Replace("https://", "")</a></div>
             }
-            @if (!string.IsNullOrWhiteSpace(Model.Email))
+            @if (!string.IsNullOrWhiteSpace(tokenInfo.Basic.Email))
             {
-                <div><i class="fa fa-envelope-o "></i> @Model.Email </div>
+                <div><i class="fa fa-envelope-o "></i> @tokenInfo.Basic.Email </div>
             }
-            @if (!string.IsNullOrWhiteSpace(Model.Contract))
+            @if (!string.IsNullOrWhiteSpace(tokenInfo.Basic.Contract.Transfer))
             {
-                <div><i class="fa fa-key"></i> <a href="https://eosflare.io/account/@Model.Contract" target="_blank">@Model.Contract</a></div>
+                <div><i class="fa fa-key"></i> <a href="https://eosflare.io/account/@tokenInfo.Basic.Contract.Transfer" target="_blank">@tokenInfo.Basic.Contract.Transfer</a></div>
             }
         </div>
     }

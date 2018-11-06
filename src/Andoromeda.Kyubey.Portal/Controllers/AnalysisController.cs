@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.AspNetCore.Localization;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {

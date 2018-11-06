@@ -115,15 +115,7 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<Token> Tokens { get; set; }
 
-        public DbSet<TokenHatcher> TokenHatchers { get; set; }
-
-        public DbSet<TokenProvider> TokenProviders { get; set; }
-
         public DbSet<TokenHatcherPraise> TokenHatcherPraises { get; set; }
-
-        public DbSet<TokenBanner> TokenBanners { get; set; }
-
-        public DbSet<TokenRecentUpdate> TokenRecentUpdates { get; set; }
 
         public DbSet<TokenComment> TokenComments { get; set; }
 
@@ -154,25 +146,15 @@ namespace Andoromeda.Kyubey.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //builder.ApplyConfiguration(new TokenCommentConfiguration());
 
             builder.SetupBlobStorage();
 
-
-
-
-
-            //builder.Entity<TokenComment>().HasKey(p => p.ReplyUserId);
 
             builder.Entity<TokenComment>().HasOne<User>(s => s.ReplyUser)
                 .WithOne().HasForeignKey<TokenComment>(s => s.ReplyUserId);
 
             builder.Entity<TokenComment>().HasOne<User>(s => s.User)
                 .WithOne().HasForeignKey<TokenComment>(s => s.UserId);
-
-
-
-
 
 
 
