@@ -2,6 +2,7 @@
     TokenHandlerViewModel Model = ViewBag.HandlerView;
     Token token = ViewBag.Token;
     ViewBag.Current = "token-about";
+    ViewBag.Theme = "dark";
     ViewBag.Title = token.Id;
     Bancor bancor = ViewBag.Bancor;
 }
@@ -15,7 +16,7 @@
                 <div class="token-incubation-inner">
                     <div class="row">
                         <div class="col-md-7">
-                            <div class="token-incubation-image" v-bind:style="'background: url(/token/tokenbanner/' + current + '.png)'"></div>
+                            <div class="token-incubation-image" v-bind:style="'background: url(' + current + ')'"></div>
                             <div class="token-incubation-image-circle-outer">
                                 <div v-for="x in images" class="token-incubation-image-circle" v-bind:class="{ active: current === x }" v-on:click="current = x"></div>
                             </div>
@@ -88,7 +89,7 @@
                             var i = Model.RecentUpdate.Count;
                             @foreach (var up in Model.RecentUpdate)
                             {
-                                <h4>@(SR["Recent Update"] + i):</h4>
+                                <h4>@up.Title</h4>
                                 <p>@up.OperateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
                                 <p>@up.Content</p>
                                 i--;
@@ -127,7 +128,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            images: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.HandlerBannerIds))),
+            images: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.IncubatorBannerUrls))),
             current: null
         },
         watch: {
