@@ -20,11 +20,11 @@
                     <div class="incubation-card-underscore">@SR["Crowdfunding Progress"]</div>
                     <div class="incubation-card-progress-outer">
                         @{
-                            var rowPercent = (row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(row.CurrentRaised / row.TargetCredits);
-                            if (rowPercent < 10)
-                            {
-                                rowPercent = 14;
-                            }
+                            var minVal = 10m;
+                            var rowPercent = minVal + ((row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(100 * row.CurrentRaised / row.TargetCredits));
+
+                            rowPercent = 100 * rowPercent / (100 + minVal);
+
                         }
                         <div class="incubation-card-progress" style="width: 100%">@row.TargetCredits.ToString("0.00")</div>
                         <div class="incubation-card-progress done" style="width: @(rowPercent)%">@row.CurrentRaised.ToString("0.00")</div>
