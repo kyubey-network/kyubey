@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.AspNetCore.Localization;
 using Andoromeda.Kyubey.Models;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using System.Reflection;
+using Andoromeda.Kyubey.Portal.Interface;
+using Andoromeda.Kyubey.Portal.Services;
 
 namespace Andoromeda.Kyubey.Portal
 {
@@ -13,6 +18,7 @@ namespace Andoromeda.Kyubey.Portal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddConfiguration(out var Config);
+            services.AddTransient<ITokenRepository, TokenFileInfoRepository>();
             services.AddMvc();
             services.AddEntityFrameworkMySql()
                 .AddDbContext<KyubeyContext>(x =>
@@ -36,8 +42,15 @@ namespace Andoromeda.Kyubey.Portal
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var rootFolder = System.AppContext.BaseDirectory;
+
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(rootFolder, @"Tokens")),
+                RequestPath = new PathString("/token_assets")
+            });
             app.UseBlobStorage("/js/jquery.fileupload.js");
             app.UseFrontendLocalizer("/scripts/localization.js");
             app.UseMvcWithDefaultRoute();

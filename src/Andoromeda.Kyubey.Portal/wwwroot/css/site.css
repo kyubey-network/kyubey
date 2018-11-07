@@ -983,7 +983,7 @@ section {
     line-height: 30px;
     color: #888;
     padding: 15px;
-    height: 120px;
+    height: 140px;
     overflow-y: hidden;
 }
 
@@ -1168,6 +1168,7 @@ section {
     border: 1px solid rgba(255,255,255,0.2);
     margin-top: -2px;
     border-radius: 0 5px 5px 5px;
+    overflow:hidden;
 }
 
     .dark .nav-link.active {
@@ -1183,6 +1184,7 @@ section {
 .dark .tab-pane {
     font-size: 12px;
     color: rgba(255,255,255,0.6);
+    overflow: hidden;
 }
 
 .dark a {
