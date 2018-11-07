@@ -11,7 +11,7 @@
             @await Html.PartialAsync("_TokenSidebar")
             <div class="col-md-8">
                 <div class="card">
-                    @Html.Marked(Model.Description)
+                    @Html.Marked((string)ViewBag.TokenDescription)
                 </div>
             </div>
         </div>
