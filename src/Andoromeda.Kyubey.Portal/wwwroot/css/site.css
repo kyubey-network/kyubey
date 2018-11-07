@@ -16,6 +16,9 @@
 .hatcher-title {
     margin-bottom: 0px;
 }
+.tab-pane img { max-width: 100% }
+
+
 
 .hatcher-introduction {
     padding-left: 4px;
