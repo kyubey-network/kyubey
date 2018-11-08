@@ -32,9 +32,9 @@ namespace Andoromeda.Kyubey.Portal.Jobs
             {
                 using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
                 {
-                    code = "eosio.token",
+                    code = token.Basic.Contract.Transfer,
                     scope = token.Basic.Contract.Transfer,
-                    table = "accounts",
+                    table = "market",
                     json = true
                 }))
                 {
