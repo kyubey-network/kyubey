@@ -86,13 +86,11 @@
                     <div class="tab-pane" id="tab-2" role="tabpanel">
                         @if (Model.RecentUpdate != null)
                         {
-                            var i = Model.RecentUpdate.Count;
                             @foreach (var up in Model.RecentUpdate)
                             {
                                 <h4>@up.Title</h4>
-                                <p>@up.OperateTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
-                                <p>@up.Content</p>
-                                i--;
+                                <p>@up.Time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+                                <p>@Html.Marked(up.Content)</p>
                             }
                         }
                     </div>

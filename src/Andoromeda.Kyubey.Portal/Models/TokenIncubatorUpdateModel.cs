@@ -8,7 +8,7 @@ namespace Andoromeda.Kyubey.Portal.Models
     public class TokenIncubatorUpdateModel
     {
         public string Title { get; set; }
-        public DateTimeOffset OperateTime { get; set; }
+        public DateTimeOffset Time { get; set; }
         public string Content { get; set; }
     }
 }

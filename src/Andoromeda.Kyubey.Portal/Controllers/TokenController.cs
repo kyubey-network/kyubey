@@ -173,7 +173,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateViewModel()
                 {
                     Content = x.Content,
-                    OperateTime = x.OperateTime,
+                    Time = x.Time,
                     Title = x.Title
                 }).ToList()
             };

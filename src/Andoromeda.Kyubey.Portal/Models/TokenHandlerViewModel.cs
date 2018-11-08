@@ -27,7 +27,7 @@ namespace Andoromeda.Kyubey.Portal.Models
     }
     public class RecentUpdateViewModel
     {
-        public DateTimeOffset OperateTime { get; set; }
+        public DateTimeOffset Time { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
     }
