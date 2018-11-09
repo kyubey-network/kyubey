@@ -12,35 +12,56 @@ namespace Andoromeda.Kyubey.Portal.Controllers
     [Route("api/[controller]")]
     public class CandlestickController : Controller
     {
-        //[HttpPost("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
-        //public async Task<ActionResult> Post([FromServices] KyubeyContext db, string id, int period, PerioidUnit perioidUnit, DateTime begin, DateTime end)
-        //{
-        //    var maxPeriod = 60;
-        //    TimeSpan groupTimeSpan = TimeSpan.FromMinutes(Math.Min(period, maxPeriod));
+        [HttpPost("{id}")]
+        public async Task<ActionResult> Post([FromServices] KyubeyContext db, string id, [FromBody] CandlestickItem item)
+        {
+            var maxPeriod = 60;
+            TimeSpan groupTimeSpan = TimeSpan.FromMinutes(Math.Min(item.period, maxPeriod));
 
-        //    if (perioidUnit == PerioidUnit.hour)
-        //    {
-        //        groupTimeSpan = TimeSpan.FromHours(Math.Min(period, maxPeriod));
-        //    }
-        //    else if (perioidUnit == PerioidUnit.day)
-        //    {
-        //        groupTimeSpan = TimeSpan.FromDays(Math.Min(period, maxPeriod));
-        //    }
+            if (item.perioidUnit == PerioidUnit.hour)
+            {
+                groupTimeSpan = TimeSpan.FromHours(Math.Min(item.period, maxPeriod));
+            }
+            else if (item.perioidUnit == PerioidUnit.day)
+            {
+                groupTimeSpan = TimeSpan.FromDays(Math.Min(item.period, maxPeriod));
+            }
+            //will to mem cache or redis
+            var dbQueryList = (from s in db.MatchReceipts
+                               where s.TokenId == id && s.Time >= item.begin && s.Time < item.end
+                               orderby s.Time
+                               select s
+                               ).ToList();
 
-        //    var d = DateTime.Now - DateTime.Now;
-        //    var grouped = from s in db.MatchReceipts
-        //                  where s.TokenId == id
-        //                  group s by
-        //                     s.Time.Ticks / groupTimeSpan.Ticks
-        //                   into g
-        //                  select new
-        //                  {
-        //                      g.Key,
-        //                      Min =
-        //                  }
-
-
-        //}
+            var grouped = (from s in dbQueryList
+                           group s by
+                                 new
+                                 {
+                                     groupedColumn = (int)((s.Time - DateTime.MinValue).TotalMinutes / groupTimeSpan.TotalMinutes)
+                                 }
+                            into g
+                           select new
+                           {
+                               Time = DateTime.MinValue.AddMinutes(g.Key.groupedColumn * groupTimeSpan.TotalMinutes),
+                               Min = g.Min(x => x.UnitPrice),
+                               Max = g.Max(x => x.UnitPrice),
+                               First = g.First().UnitPrice,
+                               Last = g.Last().UnitPrice
+                           }).ToList();
+            return Json(grouped);
+        }
+        [HttpGet("api/[controller]")]
+        public ActionResult Get()
+        {
+            return Content("True");
+        }
+        public class CandlestickItem
+        {
+            public int period { get; set; }
+            public PerioidUnit perioidUnit { get; set; }
+            public DateTime begin { get; set; }
+            public DateTime end { get; set; }
+        }
         public enum PerioidUnit
         {
             minute,
