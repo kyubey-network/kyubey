@@ -19,3 +19,16 @@
 .carousel-caption {
     text-align: center;
 }
+
+.carousel-item {
+    background-repeat: no-repeat!important;
+    background-size: 100%!important;
+    background-position: center center!important;
+    height: 350px;
+}
+
+@media(max-width: 1049px) {
+    .carousel-item {
+        background-size: auto 100% !important;
+    }
+}
