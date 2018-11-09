@@ -59,6 +59,7 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
         }
         public void SyncOneToken(TokenManifestJObject obj)
         {
+            Console.WriteLine("Inserting " + obj.Id);
             var token = _dbContext.Tokens.FirstOrDefault(x => x.Id == obj.Id);
             if (token != null)
             {
