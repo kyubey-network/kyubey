@@ -45,41 +45,11 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 token = token.ToUpper();
             }
             ViewBag.SearchToken = token;
-            IEnumerable<Bancor> bancors = db.Bancors.Include(x => x.Token);
-            if (!string.IsNullOrEmpty(token))
-            {
-                bancors = bancors.Where(x => x.Id.Contains(token) || x.Token.Name.Contains(token));
-            }
-            bancors = bancors
-                .Where(x => x.Status == Status.Active)
-                .Join(tokenStaticInfoList, b => b.Id, t => t.Id, (b, t) => new
-                {
-                    Bancor = b,
-                    TokenInfo = t
-                })
-                .OrderByDescending(x => x.TokenInfo.Priority).Select(x => x.Bancor)
-                .ToList();
-
-            IEnumerable<Otc> otcs = db.Otcs.Include(x => x.Token);
-            if (!string.IsNullOrEmpty(token))
-            {
-                otcs = otcs.Where(x => x.Id.Contains(token) || x.Token.Name.Contains(token));
-            }
-            otcs = otcs
-                .Where(x => x.Status == Status.Active)
-                .Join(tokenStaticInfoList, o => o.Id, t => t.Id, (o, t) => new
-                {
-                    Otc = o,
-                    TokenInfo = t
-                })
-                .OrderByDescending(x => x.TokenInfo.Priority).Select(x => x.Otc)
-                .ToList();
-
             var ret = new List<TokenDisplay>();
             var tokens = await DB.Tokens.ToListAsync(cancellationToken);
             foreach (var x in tokens)
             {
-                if (!bancors.Any(y => y.Id == x.Id) && !otcs.Any(y => y.Id == x.Id))
+                if (!x.HasDex && !x.HasContractExchange)
                 {
                     continue;
                 }
@@ -89,20 +59,9 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Id = x.Id,
                     Name = x.Name,
                     Protocol = x.CurveId ?? SR["Unknown"],
-                    ExchangeInDex = otcs.Any(y => y.Id == x.Id),
-                    ExchangeInContract = bancors.Any(y => y.Id == x.Id)
+                    ExchangeInDex = x.HasDex,
+                    ExchangeInContract = x.HasContractExchange
                 };
-
-                if (t.ExchangeInDex)
-                {
-                    t.Change = otcs.Single(y => y.Id == x.Id).Change;
-                    t.Price = otcs.Single(y => y.Id == x.Id).Price;
-                }
-                else
-                {
-                    t.Change = bancors.Single(y => y.Id == x.Id).Change;
-                    t.Price = bancors.Single(y => y.Id == x.Id).BuyPrice;
-                }
 
                 ret.Add(t);
             }
