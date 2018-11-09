@@ -28,7 +28,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
             //will to mem cache or redis
             var dbQueryList = (from s in db.MatchReceipts
-                               where s.TokenId == id && s.Time >= item.begin && s.Time < item.end
+                               where s.TokenId == id && s.Time >= UnixTimeStampToDateTime(item.begin) && s.Time < UnixTimeStampToDateTime(item.end)
                                orderby s.Time
                                select s
                                ).ToList();
@@ -42,13 +42,20 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                             into g
                            select new
                            {
-                               Time = DateTime.MinValue.AddMinutes(g.Key.groupedColumn * groupTimeSpan.TotalMinutes),
+                               TimeStamp = DateTime.MinValue.AddMinutes(g.Key.groupedColumn * groupTimeSpan.TotalMinutes).ToTimeStamp(),
                                Min = g.Min(x => x.UnitPrice),
                                Max = g.Max(x => x.UnitPrice),
                                First = g.First().UnitPrice,
                                Last = g.Last().UnitPrice
                            }).ToList();
             return Json(grouped);
+        }
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
         }
         [HttpGet("api/[controller]")]
         public ActionResult Get()
@@ -59,8 +66,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         {
             public int period { get; set; }
             public PerioidUnit perioidUnit { get; set; }
-            public DateTime begin { get; set; }
-            public DateTime end { get; set; }
+            public long begin { get; set; }
+            public long end { get; set; }
         }
         public enum PerioidUnit
         {

@@ -16,6 +16,9 @@
     }
     bool isContractExchange = Context.Request.Query.ContainsKey("contract");
 }
+
+
+
 <script src="~/js/eos.js"></script>
 <script src="~/js/common.js"></script>
 <script src="~/js/moment.js"></script>
@@ -95,7 +98,120 @@
                             }
                         </div>
                         <div v-show="control.chart === 'k'">
-                            <div id="chart" style="margin: 15px; height:350px; width: 100%"></div>
+                            <div id="chart" style=" height:350px; width: 100%">
+                                @section Style{
+                                    <!--封装了一个发布订阅模式-->
+                                    <script src="/js/candlestick/event.js"></script>
+                                    <!--图表库js-->
+                                    <script src="/js/candlestick/charting_library/charting_library.min.js"></script>
+                                    <!--websocket-->
+                                    <script src="/js/candlestick/websocket.js"></script>
+                                    <!--图表数据获取-->
+                                    <script src="/js/candlestick/datafeed.js"></script>
+                                    <!--图表配置-->
+                                    <script src="/js/candlestick/chartConfig.js"></script>
+                                    <style>
+
+                                        * {
+                                            padding: 0px;
+                                            margin: 0px;
+                                            box-sizing: border-box;
+                                        }
+
+                                        .root {
+                                            position: absolute;
+                                            width: 100%;
+                                            height: 100%;
+                                            /*padding-top: 200px;*/
+                                        }
+
+                                        .market {
+                                            position: absolute;
+                                            top: 80px;
+                                            height: 30px;
+                                            width: 100%;
+                                            text-align: center;
+                                        }
+
+                                            .market span {
+                                                display: inline-block;
+                                                font-size: 14px;
+                                                height: 30px;
+                                                line-height: 30px;
+                                                cursor: pointer;
+                                                padding: 0 8px;
+                                                color: rgb(24, 149, 210);
+                                                border: 1px solid rgb(24, 149, 210);
+                                                border-radius: 3px;
+                                                margin-right: 10px;
+                                            }
+
+                                            .market .active {
+                                                background-color: rgb(24, 149, 210);
+                                                border: none;
+                                                color: #fff;
+                                            }
+
+                                        .chart {
+                                            width: 100%;
+                                            height: 100%;
+                                            position: relative;
+                                        }
+
+                                        /* 这个下面的css是 产品周期按钮的 */
+
+                                        .interval {
+                                            position: absolute;
+                                            left: 88px;
+                                            width: 100%;
+                                            height: 30px;
+                                            font-size: 0px;
+                                            text-align: left;
+                                            top: 5px;
+                                            z-index: 2;
+                                        }
+
+                                            .interval span {
+                                                display: inline-block;
+                                                padding: 0 10px;
+                                                margin-right: 4px;
+                                                height: 30px;
+                                                line-height: 30px;
+                                                color: #9194a4;
+                                                text-align: center;
+                                                font-size: 14px;
+                                                cursor: pointer;
+                                            }
+
+                                                .interval span:hover {
+                                                    background-color: rgba(53, 116, 250, 0.12);
+                                                }
+
+                                            .interval .active {
+                                                background-color: rgba(53, 116, 250, 0.12);
+                                                color: #8194a4;
+                                            }
+
+
+
+
+                                        /* 这个下面的css重点关注，和k线图与关 */
+
+
+                                        #tv_chart_container {
+                                            width: 100%;
+                                            height: 100%;
+                                            position: absolute;
+                                        }
+
+                                        iframe {
+                                            width: 100%;
+                                            height: 100% !important;
+                                        }
+                                    </style>
+                                }
+                                @await Html.PartialAsync("CandlestickComponent")
+                            </div>
                         </div>
                         @if (curve != null)
                         {
@@ -507,7 +623,7 @@
             'inputs.pair': function () {
                 this.getPairs();
             },
-            'inputs.buyPrice': function (val) {        
+            'inputs.buyPrice': function (val) {
                 if (!this.isValidInput(val)) {
                     this.inputs.buyPrice = this.inputs.vaildbuyPriceInput;
                     val = this.inputs.vaildbuyPriceInput;
@@ -540,7 +656,7 @@
                 this.inputs.sellTotal = val * this.inputs.sellAmount;
             },
             'inputs.sellAmount': function (val) {
-                if (!this.isValidInput(val)) {  
+                if (!this.isValidInput(val)) {
                     this.inputs.sellAmount = this.inputs.vaildsellAmountInput;
                     val = this.inputs.vaildsellAmountInput;
                 }
@@ -890,206 +1006,9 @@
         };
     }
 
-    $.getJSON('https://dasdaq-webapi.chinacloudsites.cn/api/Candlestick/kyubey-dex-@Model.Id?begin=@DateTime.UtcNow.AddDays(-7).ToString("yyyy-MM-dd")', {}, function (data) {
-        data = data.data.values.map(x => [x.time.split('T')[0], x.opening, x.closing, x.min, x.max]);
-        var myChart = echarts.init(document.getElementById('chart'));
-        var data0 = splitData(data);
 
-        function calculateMA(dayCount) {
-            var result = [];
-            for (var i = 0, len = data0.values.length; i < len; i++) {
-                if (i < dayCount) {
-                    result.push('-');
-                    continue;
-                }
-                var sum = 0;
-                for (var j = 0; j < dayCount; j++) {
-                    sum += data0.values[i - j][1];
-                }
-                result.push(sum / dayCount);
-            }
-            return result;
-        }
 
-        option = {
-            title: {
-                text: '@Model.Id',
-                left: 0
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross'
-                }
-            },
-            legend: {
-                data: ['Day-K', 'MA5', 'MA10', 'MA20', 'MA30']
-            },
-            grid: {
-                show: true,
-                left: '10%',
-                right: '10%',
-                bottom: '15%',
-            },
-            xAxis: {
-                type: 'category',
-                data: data0.categoryData,
-                boundaryGap: false,
-                axisLine: { onZero: false },
-                splitLine: { show: false },
-                min: 'dataMin',
-                max: 'dataMax'
-            },
-            yAxis: {
-                scale: true,
-                splitArea: {
-                    show: true
-                }
-            },
-            dataZoom: [
-                {
-                    filterMode: 'filter',
-                    type: 'inside',
-                    start: 50,
-                    end: 100
-                },
-                {
-                    show: true,
-                    type: 'slider',
-                    y: '90%',
-                    start: 50,
-                    end: 100
-                }
-            ],
-            series: [
-                {
-                    name: 'Day-K',
-                    type: 'candlestick',
-                    data: data0.values,
-                    markPoint: {
-                        label: {
-                            normal: {
-                                show: true,
-                                formatter: function (param) {
-                                    return param !== null ? Math.round(param.value) : '';
-                                }
-                            }
-                        },
-                        data: [
-                            {
-                                name: 'XX标点',
-                                coord: ['2013/5/31', 2300],
-                                value: 2300,
-                                itemStyle: {
-                                    normal: { color: 'rgb(41,60,85)' }
-                                }
-                            },
-                            {
-                                name: 'highest value',
-                                type: 'max',
-                                valueDim: 'highest'
-                            },
-                            {
-                                name: 'lowest value',
-                                type: 'min',
-                                valueDim: 'lowest'
-                            },
-                            {
-                                name: 'average value on close',
-                                type: 'average',
-                                valueDim: 'close'
-                            }
-                        ],
-                        tooltip: {
-                            formatter: function (param) {
-                                return param.name + '<br>' + (param.data.coord || '');
-                            }
-                        }
-                    },
-                    markLine: {
-                        symbol: ['none', 'none'],
-                        data: [
-                            [
-                                {
-                                    name: 'from lowest to highest',
-                                    type: 'min',
-                                    valueDim: 'lowest',
-                                    symbol: 'circle',
-                                    symbolSize: 10,
-                                    label: {
-                                        normal: { show: false },
-                                        emphasis: { show: false }
-                                    }
-                                },
-                                {
-                                    type: 'max',
-                                    valueDim: 'highest',
-                                    symbol: 'circle',
-                                    symbolSize: 10,
-                                    label: {
-                                        normal: { show: false },
-                                        emphasis: { show: false }
-                                    }
-                                }
-                            ],
 
-                            {
-                                name: 'min line on close',
-                                type: 'min',
-                                valueDim: 'close'
-                            },
-                            {
-                                name: 'max line on close',
-                                type: 'max',
-                                valueDim: 'close'
-                            }
-                        ]
-
-                    }
-
-                },
-
-                {
-                    name: 'MA5',
-                    type: 'line',
-                    data: calculateMA(5),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA10',
-                    type: 'line',
-                    data: calculateMA(10),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA20',
-                    type: 'line',
-                    data: calculateMA(20),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA30',
-                    type: 'line',
-                    data: calculateMA(30),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-
-            ]
-        };
-        myChart.setOption(option);
-    });
 
 </script>
 
