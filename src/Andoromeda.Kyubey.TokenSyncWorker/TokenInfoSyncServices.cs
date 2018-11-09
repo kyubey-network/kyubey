@@ -32,8 +32,12 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
 
         public void SyncTokenInfo()
         {
-            var tokenNames = GetTokenFolders();
-            tokenNames.ForEach(x => SyncOneToken(GetTokenObj(x)));
+            var tokenIds = GetTokenFolders();
+            var existed = _dbContext.Tokens.ToList();
+            var tokensToRemove = existed.Where(x => !tokenIds.Contains(x.Id));
+            _dbContext.RemoveRange(tokensToRemove);
+            _dbContext.SaveChanges();
+            tokenIds.ForEach(x => SyncOneToken(GetTokenObj(x)));
         }
         private TokenManifestJObject GetTokenObj(string name)
         {
@@ -58,10 +62,23 @@ namespace Andoromeda.Kyubey.TokenSyncWorker
             var token = _dbContext.Tokens.FirstOrDefault(x => x.Id == obj.Id);
             if (token != null)
             {
-                token.Priority = obj.Priority = obj.Priority;
+                token.Priority = obj.Priority;
                 token.HasIncubation = obj.Incubation != null;
                 token.HasDex = obj.Dex;
                 token.HasContractExchange = obj.Contract_Exchange;
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                token = new Token
+                {
+                    Id = obj.Id,
+                    Priority = obj.Priority,
+                    HasIncubation = obj.Incubation != null,
+                    HasDex = obj.Dex,
+                    HasContractExchange = obj.Contract_Exchange
+                };
+                _dbContext.Tokens.Add(token);
                 _dbContext.SaveChanges();
             }
         }
