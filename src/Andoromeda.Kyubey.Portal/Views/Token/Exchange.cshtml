@@ -112,7 +112,30 @@
                                     <script src="/js/candlestick/chartConfig.js"></script>
                                     <link href="~/css/kyubey-candlestick.css" rel="stylesheet">
                                 }
-                                @await Html.PartialAsync("CandlestickComponent")
+                                <div class="root">
+                                    <!--<div id="market" class="market">
+                                      <span class="active">BTC/USDT</span>
+                                      <span>ETH/USDT</span>
+                                      <span>BCH/USDT</span>
+                                      <span>EOS/USDT</span>
+                                      <span>ETC/USDT</span>
+                                    </div>-->
+                                    <div class="chart">
+                                        <div class="interval" id="interval">
+                                            <span class="active" data-value="1">M1</span>
+                                            <span data-value="3">M3</span>
+                                            <span data-value="5">M5</span>
+                                            <span data-value="15">M15</span>
+                                            <span data-value="30">M30</span>
+                                            <span data-value="60">H1</span>
+                                            <span data-value="240">H4</span>
+                                            <span data-value="360">H6</span>
+                                            <span data-value="1D">D1</span>
+                                        </div>
+                                        <div id="tv_chart_container"></div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         @if (curve != null)
@@ -484,6 +507,7 @@
     var app = new Vue({
         el: '#app',
         data: {
+             tokenId:'@Model.Id',
             control: {
                 order: 'mixed',
                 my: 'current',
@@ -586,8 +610,118 @@
                     self.isSignedIn = false;
                 }
             }, 5000);
+
+        },
+        mounted: function () {
+            this.initCandlestick();
+            this.bindCandlestick();
         },
         methods: {
+            dateObjToString: function (date) {
+                    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+            },
+            bindCandlestick: function () {
+                var _this = this;
+                FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
+    //debugger;
+                    var start = _this.dateObjToString(new Date(rangeStartDate * 1000));
+                    var end = _this.dateObjToString(new Date(rangeEndDate * 1000));
+                    var perioid = 60;
+                    switch (resolution) {
+                        case '1D':
+                            perioid = 24*60 * 1;
+                            break;
+                        default:
+                            perioid = parseInt(resolution) * 60;
+                    }
+
+    $.ajax({
+        type: "GET",
+        url: `/Token/${_this.tokenId}/candlestick?begin=${start}&end=${end}&period=${perioid}`,
+        contentType: "application/json; charset=utf-8",
+        success: function (data, status) {
+            //debugger;
+            //console.log(data);
+
+            if (data && Array.isArray(data)) {
+                //debugger;
+                var meta = { noData: false }
+                var bars = []
+                if (data.length) {
+                    for (var i = 0; i < data.length; i += 1) {
+                        bars.push({
+                            time: Number(new Date(data[i].time))  ,
+                            close: data[i].closing,
+                            open: data[i].opening,
+                            high: data[i].max,
+                            low: data[i].min,
+                            volume: data[i].count
+                        })
+                    }
+                } else {
+                    meta = { noData: true }
+                }
+                onResult(bars, meta)
+            }
+        },
+        dataType: "json"
+    });
+
+}
+
+            },
+            initCandlestick: function () {
+                var _this = this;
+                // 图表库实例化后储存的函数
+                //debugger;
+                var widget = null
+                // 进入页面 默认展示的产品
+                //var index_market = 'BTC/USDT'
+                // 进入页面 默认展示的产品周期
+                var index_activeCycle = '1'
+
+                // window.TradingView.onready 确保在html的dom加载完成后在调用
+                window.TradingView.onready(function () {
+                    // chartConfig 在chartConfig.js里面
+                    // 给chartConfig添加展示周期
+                    chartConfig.interval = index_activeCycle
+                    // 给chartConfig添加展示产品
+                    chartConfig.symbol = `${_this.tokenId}/EOS`// index_market
+
+                    // 初始化 TradingView
+                    widget = new window.TradingView.widget(chartConfig)
+
+                    widget && widget.onChartReady && widget.onChartReady(function () {
+                        //// 这是k线图 展示的 7日均线和30日均线。
+                        //widget.chart().createStudy('Moving Average', false, false, [7], null, {'Plot.linewidth': 2, 'Plot.color': '#2ba7d6'})
+                        //widget.chart().createStudy('Moving Average', false, false, [30], null, {'Plot.linewidth': 2, 'Plot.color': '#de9f66'})
+                    })
+                })
+
+
+                //var marketDom = document.getElementById('market')
+                var intervalDom = document.getElementById('interval')
+
+                //// 切换产品
+                //marketDom.addEventListener('click', function (e) {
+                //  // e.target.innerHTML 就是我们拿到的产品
+                //  // 1是 1分钟数据
+                //  widget.setSymbol(e.target.innerHTML, 1)
+
+                //  // 这个函数不用看，我为了样式好看 写一个添加删除class
+                //  addClass(marketDom, e.target)
+                //}, false)
+
+                // 切换产品周期
+                intervalDom.addEventListener('click', function (e) {
+                    // e.target.dataset.value 这个就是获取的产品的周期
+                    widget.chart().setResolution(e.target.dataset.value)
+
+
+                    // 这个函数不用看，我为了样式好看 写一个添加删除class
+                    addClass(intervalDom, e.target)
+                }, false)
+            },
             toggleFav: function (id) {
                 var self = this;
                 $.post(`/token/${account.name}/favorite/${id}`, {}, function (data) {
@@ -913,7 +1047,7 @@
 
 
 </script>
-
+<script src="/js/candlestick/index.js"></script>
 @if (curve != null)
 {
     <script>

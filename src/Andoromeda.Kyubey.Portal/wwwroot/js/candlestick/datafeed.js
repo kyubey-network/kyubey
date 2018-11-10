@@ -72,114 +72,115 @@ FeedBase.prototype.getApiTime = function (resolution) {
 }
 
 
-FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
-    //debugger;
-    var tokenId = "KBY";
-    $.ajax({
-        type: "POST",
-        url: `/api/Candlestick/${tokenId}`,
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            period: 10,
-            perioidUnit: 1,
-            begin: rangeStartDate,
-            end: rangeEndDate
-        }),
-        success: function (data, status) {
-            //debugger;
-            //console.log(data);
+//FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
+//    debugger;
+//    var tokenId = "KBY";
+//    $.ajax({
+//        type: "POST",
+//        url: `/api/Candlestick/${tokenId}`,
+//        contentType: "application/json; charset=utf-8",
+//        data: JSON.stringify({
+//            period: 10,
+//            perioidUnit: 1,
+//            begin: rangeStartDate,
+//            end: rangeEndDate
+//        }),
+//        success: function (data, status) {
+//            //debugger;
+//            //console.log(data);
 
-            if (data && Array.isArray(data)) {
-                var meta = { noData: false }
-                var bars = []
-                if (data.length) {
-                    for (var i = 0; i < data.length; i += 1) {
-                        bars.push({
-                            time: data[i].timeStamp ,
-                            close: data[i].last,
-                            open: data[i].first,
-                            high: data[i].max,
-                            low: data[i].min,
-                            volume: data[i].count
-                        })
-                    }
-                } else {
-                    meta = { noData: true }
-                }
-                onResult(bars, meta)
-            }
-        },
-        dataType: "json"
-    });
-
-
-    return;
+//            if (data && Array.isArray(data)) {
+//                var meta = { noData: false }
+//                var bars = []
+//                if (data.length) {
+//                    for (var i = 0; i < data.length; i += 1) {
+//                        bars.push({
+//                            time: data[i].timeStamp ,
+//                            close: data[i].last,
+//                            open: data[i].first,
+//                            high: data[i].max,
+//                            low: data[i].min,
+//                            volume: data[i].count
+//                        })
+//                    }
+//                } else {
+//                    meta = { noData: true }
+//                }
+//                onResult(bars, meta)
+//            }
+//        },
+//        dataType: "json"
+//    });
 
 
-
-    // 切换产品周期 或者 切换产品 会执行这个函数
-
-    // 是历史数据 
-    var history = true
-
-    /*
-      !detafeed_historyTime 如果没请请求过这个产品或者这个周期的历史数据
-      resolution !== detafeed_lastResolution 是否更换了产品周期
-      detafeed_lastSymbol !== symbolInfo.name 是否切换了产品
-    */
-
-    if (!detafeed_historyTime || (resolution !== detafeed_lastResolution) || detafeed_lastSymbol !== symbolInfo.name) {
-        // 那就不是历史数据
-        history = false
-        // 储存请求过的产品
-        detafeed_lastSymbol = symbolInfo.name
-        // 记录目前时间搓，就用目前的目前时间搓往前请求历史数据
-        detafeed_historyTime = window.parseInt((Date.now() / 1000))
-    }
+//    return;
 
 
-    /*
-      @socket.sendData
-      第一个参数订阅历史数据
-      第二个参数订阅实时数据
-      第三个参数 是  是否是历史数据
-    */
-    socket.sendData({
-        args: [`candle.${this.getApiTime(resolution)}.${this.getSendSymbolName(symbolInfo.name)}`, 1441, detafeed_historyTime],
-        cmd: 'req',
-        id: '0a0493f7-80d4-4d1a-9d98-6da9ae9d399e'
-    }, `candle.${this.getApiTime(resolution)}.${this.getSendSymbolName(symbolInfo.name)}`, history)
-    Event.off('data')
 
-    Event.on('data', data => {
-        //debugger;
-        if (data.data && Array.isArray(data.data)) {
-            // 记录这次请求的时间周期
-            detafeed_lastResolution = resolution
-            var meta = { noData: false }
-            var bars = []
-            if (data.data.length) {
-                detafeed_historyTime = data.data[0].id - 1
-                for (var i = 0; i < data.data.length; i += 1) {
-                    bars.push({
-                        time: data.data[i].id * 1000,
-                        close: data.data[i].close,
-                        open: data.data[i].open,
-                        high: data.data[i].high,
-                        low: data.data[i].low,
-                        volume: data.data[i].base_vol
-                    })
-                }
-            } else {
-                meta = { noData: true }
-            }
-            onResult(bars, meta)
-        }
-    })
-}
+//    // 切换产品周期 或者 切换产品 会执行这个函数
+
+//    // 是历史数据 
+//    var history = true
+
+//    /*
+//      !detafeed_historyTime 如果没请请求过这个产品或者这个周期的历史数据
+//      resolution !== detafeed_lastResolution 是否更换了产品周期
+//      detafeed_lastSymbol !== symbolInfo.name 是否切换了产品
+//    */
+
+//    if (!detafeed_historyTime || (resolution !== detafeed_lastResolution) || detafeed_lastSymbol !== symbolInfo.name) {
+//        // 那就不是历史数据
+//        history = false
+//        // 储存请求过的产品
+//        detafeed_lastSymbol = symbolInfo.name
+//        // 记录目前时间搓，就用目前的目前时间搓往前请求历史数据
+//        detafeed_historyTime = window.parseInt((Date.now() / 1000))
+//    }
+
+
+//    /*
+//      @socket.sendData
+//      第一个参数订阅历史数据
+//      第二个参数订阅实时数据
+//      第三个参数 是  是否是历史数据
+//    */
+//    socket.sendData({
+//        args: [`candle.${this.getApiTime(resolution)}.${this.getSendSymbolName(symbolInfo.name)}`, 1441, detafeed_historyTime],
+//        cmd: 'req',
+//        id: '0a0493f7-80d4-4d1a-9d98-6da9ae9d399e'
+//    }, `candle.${this.getApiTime(resolution)}.${this.getSendSymbolName(symbolInfo.name)}`, history)
+//    Event.off('data')
+
+//    Event.on('data', data => {
+//        //debugger;
+//        if (data.data && Array.isArray(data.data)) {
+//            // 记录这次请求的时间周期
+//            detafeed_lastResolution = resolution
+//            var meta = { noData: false }
+//            var bars = []
+//            if (data.data.length) {
+//                detafeed_historyTime = data.data[0].id - 1
+//                for (var i = 0; i < data.data.length; i += 1) {
+//                    bars.push({
+//                        time: data.data[i].id * 1000,
+//                        close: data.data[i].close,
+//                        open: data.data[i].open,
+//                        high: data.data[i].high,
+//                        low: data.data[i].low,
+//                        volume: data.data[i].base_vol
+//                    })
+//                }
+//            } else {
+//                meta = { noData: true }
+//            }
+//            onResult(bars, meta)
+//        }
+//    })
+//}
 
 
 FeedBase.prototype.subscribeBars = function (symbolInfo, resolution, onTick, listenerGuid, onResetCacheNeededCallback) {
+    return;
     Event.off('realTime')
 
     // 拿到实时数据 在这里画

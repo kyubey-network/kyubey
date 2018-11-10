@@ -12,6 +12,7 @@ namespace Andoromeda.Kyubey.Portal.Models
 
         public double Min { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime Time { get; set; }
+        public int Volume { get; set; }
     }
 }

@@ -162,7 +162,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 {
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
-                    RemainingDay = tokenInfo?.Incubation?.DeadLine==null?-999:(tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
+                    RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
                     CurrentRaised = token.Raised,
                     CurrentRaisedCount = token.RaisedUserCount
@@ -203,11 +203,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .GroupBy(x => x.Time >= begin ? x.Time.Ticks / ticks.Ticks * ticks.Ticks : 0)
                 .Select(x => new Candlestick
                 {
-                    Timestamp = new DateTime(x.Key),
+                    Time = new DateTime(x.Key),
                     Min = x.Min(y => y.UnitPrice),
                     Max = x.Max(y => y.UnitPrice),
                     Opening = x.Select(y => y.UnitPrice).FirstOrDefault(),
-                    Closing = x.Select(y => y.UnitPrice).FirstOrDefault()
+                    Closing = x.Select(y => y.UnitPrice).FirstOrDefault(),
+                    Volume = x.Count()
                 })
                 .ToListAsync();
 
@@ -220,29 +221,30 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 for (var i = begin; i < end; i = i.Add(ticks))
                 {
-                    if (!data.Any(x => x.Timestamp == i))
+                    if (!data.Any(x => x.Time == i))
                     {
                         var prev = data
-                            .Where(x => x.Timestamp < i)
-                            .OrderBy(x => x.Timestamp)
+                            .Where(x => x.Time < i)
+                            .OrderBy(x => x.Time)
                             .LastOrDefault();
 
                         if (prev != null)
                         {
                             data.Add(new Candlestick
                             {
-                                Min = prev.Min,
-                                Max = prev.Max,
+                                Min = prev.Closing,
+                                Max = prev.Closing,
                                 Closing = prev.Closing,
-                                Opening = prev.Opening,
-                                Timestamp = i
+                                Opening = prev.Closing,
+                                Time = i,
+                                Volume =0
                             });
                         }
                     }
                 }
             }
 
-            return Json(data.Where(x => x.Timestamp >= begin).OrderBy(x => x.Timestamp));
+            return Json(data.Where(x => x.Time >= begin).OrderBy(x => x.Time));
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/publish")]
