@@ -193,9 +193,9 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/candlestick")]
         public async Task<IActionResult> Candlestick(string id, int period, DateTime begin, DateTime end, CancellationToken token)
         {
-            begin = new DateTime(begin.Ticks / period * period);
-            end = new DateTime(end.Ticks / period * period);
             var ticks = new TimeSpan(0, 0, period);
+            begin = new DateTime(begin.Ticks / ticks.Ticks * ticks.Ticks);
+            end = new DateTime(end.Ticks / ticks.Ticks * ticks.Ticks);
 
             var data = await DB.MatchReceipts
                 .Where(x => x.TokenId == id)
