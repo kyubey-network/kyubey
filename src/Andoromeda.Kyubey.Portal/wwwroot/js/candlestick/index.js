@@ -1,4 +1,5 @@
 // 图表库实例化后储存的函数
+
 var widget = null 
 // 进入页面 默认展示的产品
 var index_market = 'BTC/USDT'
