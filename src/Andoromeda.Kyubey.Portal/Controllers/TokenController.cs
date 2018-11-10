@@ -189,6 +189,62 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             return await Default(db, _tokenRepository, id, cancellationToken);
         }
 
+
+        [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/candlestick")]
+        public async Task<IActionResult> Candlestick(string id, int period, DateTime begin, DateTime end, CancellationToken token)
+        {
+            var ticks = new TimeSpan(0, 0, period);
+            begin = new DateTime(begin.Ticks / ticks.Ticks * ticks.Ticks);
+            end = new DateTime(end.Ticks / ticks.Ticks * ticks.Ticks);
+
+            var data = await DB.MatchReceipts
+                .Where(x => x.TokenId == id)
+                .Where(x => x.Time < end)
+                .GroupBy(x => x.Time >= begin ? x.Time.Ticks / ticks.Ticks * ticks.Ticks : 0)
+                .Select(x => new Candlestick
+                {
+                    Timestamp = new DateTime(x.Key),
+                    Min = x.Min(y => y.UnitPrice),
+                    Max = x.Max(y => y.UnitPrice),
+                    Opening = x.Select(y => y.UnitPrice).FirstOrDefault(),
+                    Closing = x.Select(y => y.UnitPrice).FirstOrDefault()
+                })
+                .ToListAsync();
+
+            for (var i = 1; i < data.Count; i++)
+            {
+                data[i].Closing = data[i - 1].Closing;
+            }
+
+            if (data.Count > 1)
+            {
+                for (var i = begin; i < end; i = i.Add(ticks))
+                {
+                    if (!data.Any(x => x.Timestamp == i))
+                    {
+                        var prev = data
+                            .Where(x => x.Timestamp < i)
+                            .OrderBy(x => x.Timestamp)
+                            .LastOrDefault();
+
+                        if (prev != null)
+                        {
+                            data.Add(new Candlestick
+                            {
+                                Min = prev.Min,
+                                Max = prev.Max,
+                                Closing = prev.Closing,
+                                Opening = prev.Opening,
+                                Timestamp = i
+                            });
+                        }
+                    }
+                }
+            }
+
+            return Json(data.Where(x => x.Timestamp >= begin).OrderBy(x => x.Timestamp));
+        }
+
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}/publish")]
         public async Task<IActionResult> Publish([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
         {
