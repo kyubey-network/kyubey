@@ -30,7 +30,7 @@ FeedBase.prototype.resolveSymbol = function (symbolName, onResolve, onError) {
     onResolve({
         "name": symbolName,
         "timezone": "Asia/Shanghai",
-        "pricescale": 100,
+        "pricescale": 100000,
         "minmov": 1,
         "minmov2": 0,
         "ticker": symbolName,
@@ -70,16 +70,11 @@ FeedBase.prototype.getApiTime = function (resolution) {
             return 'M1'
     }
 }
-function GetCandlestickTokenHistory() {
-
-}
-
-
 
 
 FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
-    debugger;
-    var tokenId = "CMU";
+    //debugger;
+    var tokenId = "KBY";
     $.ajax({
         type: "POST",
         url: `/api/Candlestick/${tokenId}`,
@@ -91,8 +86,8 @@ FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, r
             end: rangeEndDate
         }),
         success: function (data, status) {
-            debugger;
-            console.log(data);
+            //debugger;
+            //console.log(data);
 
             if (data && Array.isArray(data)) {
                 var meta = { noData: false }
@@ -100,12 +95,12 @@ FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, r
                 if (data.length) {
                     for (var i = 0; i < data.length; i += 1) {
                         bars.push({
-                            time: data[i].timeStamp * 1000,
+                            time: data[i].timeStamp ,
                             close: data[i].last,
                             open: data[i].first,
                             high: data[i].max,
                             low: data[i].min,
-                            volume: 100
+                            volume: data[i].count
                         })
                     }
                 } else {
