@@ -46,12 +46,7 @@ namespace Andoromeda.Kyubey.Models
         public string Alert { get; set; }
 
         public int Priority { get; set; }
-
-        [ForeignKey("User")]
-        public long UserId { get; set; }
-
-        public virtual User User { get; set; }
-
+        
         public TokenAlertPlan AlertPlan { get; set; }
 
         public TokenAlertNotificationType NotificationType { get; set; }

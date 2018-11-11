@@ -1,15 +1,32 @@
-﻿<header class="masthead text-center text-white">
-    <div class="masthead-content">
-        <div class="container">
-            <div class="home-container">
-                <h1>@SR["Kyubey"]</h1>
-                <div class="home-description">@SR["A Decentralized DApps Incubation Center"]</div>
-                <div class="home-description">@SR["The first DAIBO protocol (decentralized initial bancor offering protocl). Introduce the project progess as indexes. Unblock raised fund by community votes"]</div>
+﻿<div class="banner">
+    <div id="demo" class="carousel slide" data-ride="carousel">
+        <ul class="carousel-indicators">
+            <li data-target="#demo" data-slide-to="0" class="active"></li>
+            <li data-target="#demo" data-slide-to="1"></li>
+            <li data-target="#demo" data-slide-to="2"></li>
+        </ul>
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="background: url(/img/banners/incubator/bg.png)">
+                <div class="carousel-caption">
+                    <img src="~/img/banners/incubator/front.@(ViewBag.Culture).png" class="img-xys" />
+                </div>
+            </div>
+            <div class="carousel-item" style="background: url(/img/banners/dex/bg.png)">
+                <div class="carousel-caption">
+                    <img src="~/img/banners/dex/front.@(ViewBag.Culture).png" class="img-xys" />
+                </div>
+            </div>
+            <div class="carousel-item" style="background: url(/img/banners/cryptomeetup/bg.png)">
+                <div class="carousel-caption">
+                    <img src="~/img/banners/cryptomeetup/front.@(ViewBag.Culture).png" class="img-xys" />
+                </div>
             </div>
         </div>
+        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#demo" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
     </div>
-    <div class="bg-circle-1 bg-circle"></div>
-    <div class="bg-circle-2 bg-circle"></div>
-    <div class="bg-circle-3 bg-circle"></div>
-    <div class="bg-circle-4 bg-circle"></div>
-</header>
+</div>

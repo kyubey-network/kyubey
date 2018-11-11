@@ -16,6 +16,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
             var _cultureProvider = (ICultureProvider)HttpContext.RequestServices.GetService(typeof(ICultureProvider));
             currentCulture = _cultureProvider.DetermineCulture();
+            ViewBag.Culture = currentCulture;
         }
     }
 }

@@ -1,0 +1,33 @@
+﻿
+.banner{
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-inner img {
+    width: 100%;
+    height: 350px;
+}
+
+.img-xys {
+    width: auto!important;
+    height: 275px!important;
+    margin-top: -225px;
+}
+
+.carousel-caption {
+    text-align: center;
+}
+
+.carousel-item {
+    background-repeat: no-repeat!important;
+    background-size: 100%!important;
+    background-position: center center!important;
+    height: 350px;
+}
+
+@media(max-width: 1049px) {
+    .carousel-item {
+        background-size: auto 100% !important;
+    }
+}

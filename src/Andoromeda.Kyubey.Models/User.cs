@@ -5,6 +5,5 @@ namespace Andoromeda.Kyubey.Models
 {
     public class User : IdentityUser<long>
     {
-        public virtual ICollection<Token> Tokens { get; set; }
     }
 }
