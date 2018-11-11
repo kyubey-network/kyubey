@@ -103,10 +103,11 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.TokenInfo = tokenInfo;
             ViewBag.TokenDescription = _tokenRepository.GetTokenIncubationDescription(id, currentCulture);
 
-            if (!token.HasIncubation)
+            if (!token.HasIncubation || tokenInfo.Incubation == null)
             {
                 return View("IndexOld", token);
             }
+            tokenInfo.Incubation.Begin_Time = tokenInfo.Incubation.Begin_Time ?? DateTimeOffset.MinValue;
 
             ViewBag.Flex = false;
 
@@ -164,8 +165,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).Select(x => x.Amount).SumAsync()),
-                    CurrentRaisedCount = await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).CountAsync()
+                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
+                    (x.Timestamp > tokenInfo.Incubation.Begin_Time
+                    && x.Timestamp < tokenInfo.Incubation.DeadLine)
+                    &&x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
+                    CurrentRaisedCount = await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).CountAsync(),
+                    BeginTime = tokenInfo?.Incubation?.Begin_Time
                 },
                 IncubatorBannerUrls = TokenTool.GetTokenIncubatorBannerUris(id, _tokenRepository.GetTokenIncubationBannerPaths(id, currentCulture)),
                 Comments = commentsVM,
@@ -231,7 +236,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                                 Closing = prev.Closing,
                                 Opening = prev.Closing,
                                 Time = i,
-                                Volume =0
+                                Volume = 0
                             });
                         }
                     }
