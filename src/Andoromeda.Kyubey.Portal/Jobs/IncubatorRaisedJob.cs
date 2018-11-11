@@ -16,7 +16,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 {
     public class IncubatorRaisedJob : Job
     {
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
+        //[Invoke(Begin = "2018-06-01", Interval = 1000 * 60 * 1, SkipWhileExecuting = true)]
         public void SyncAllIncubatorRaised(IConfiguration config, KyubeyContext db, ITokenRepository tokenRepository)
         {
             var hatchingTokens = tokenRepository.GetAll().Where(x => x.Incubation != null).ToList();

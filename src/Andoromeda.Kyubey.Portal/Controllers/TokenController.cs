@@ -111,24 +111,24 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             ViewBag.Flex = false;
 
             var comments = db.TokenComments
-    .Include(x => x.User)
-    .Include(x => x.ReplyUserId)
-    .Where(x => x.TokenId == id && x.IsDelete == false)
-    .Select(x => new TokenComment()
-    {
-        Id = x.Id,
-        ReplyUserId = x.ReplyUserId,
-        UserId = x.UserId,
-        User = x.User,
-        Content = x.Content,
-        CreateTime = x.CreateTime,
-        DeleteTime = x.DeleteTime,
-        IsDelete = x.IsDelete,
-        ParentCommentId = x.ParentCommentId,
-        ReplyUser = db.Users.FirstOrDefault(u => u.Id == x.ReplyUserId),
-        TokenId = x.TokenId
-    })
-    .ToList();
+                .Include(x => x.User)
+                .Include(x => x.ReplyUserId)
+                .Where(x => x.TokenId == id && x.IsDelete == false)
+                .Select(x => new TokenComment()
+                {
+                    Id = x.Id,
+                    ReplyUserId = x.ReplyUserId,
+                    UserId = x.UserId,
+                    User = x.User,
+                    Content = x.Content,
+                    CreateTime = x.CreateTime,
+                    DeleteTime = x.DeleteTime,
+                    IsDelete = x.IsDelete,
+                    ParentCommentId = x.ParentCommentId,
+                    ReplyUser = db.Users.FirstOrDefault(u => u.Id == x.ReplyUserId),
+                    TokenId = x.TokenId
+                })
+                .ToList();
 
             var commentPraises = await (from p in db.TokenCommentPraises
                                         join c in db.TokenComments
@@ -164,11 +164,10 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    CurrentRaised = token.Raised,
-                    CurrentRaisedCount = token.RaisedUserCount
+                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).Select(x => x.Amount).SumAsync()),
+                    CurrentRaisedCount = await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).CountAsync()
                 },
                 IncubatorBannerUrls = TokenTool.GetTokenIncubatorBannerUris(id, _tokenRepository.GetTokenIncubationBannerPaths(id, currentCulture)),
-                PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),
                 Comments = commentsVM,
                 RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateViewModel()
                 {

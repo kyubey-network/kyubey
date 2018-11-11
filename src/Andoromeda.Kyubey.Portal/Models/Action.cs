@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 namespace Andoromeda.Kyubey.Portal.Models
 {
 
-    public class EosActionWrap
+    public class EosActionWrap<T>
     {
-        public IEnumerable<EosAction> actions { get; set; }
+        public IEnumerable<EosAction<T>> actions { get; set; }
     }
 
-    public class EosAction
+    public class EosAction<T>
     {
         public long global_action_seq { get; set; }
 
@@ -19,15 +19,23 @@ namespace Andoromeda.Kyubey.Portal.Models
 
         public string block_time { get; set; }
 
-        public ActionTrace action_trace { get; set; }
+        public ActionTrace<T> action_trace { get; set; }
     }
 
-    public class ActionTrace
+    public class ActionTrace : ActionTrace<ActionTraceAct>
     {
-        public ActionTraceAct act { get; set; }
     }
 
-    public class ActionTraceAct
+    public class ActionTrace<T>
+    {
+        public ActionTraceAct<T> act { get; set; }
+    }
+
+    public class ActionTraceAct : ActionTraceAct<ActionDataWrap>
+    {
+    }
+
+    public class ActionTraceAct<T>
     {
         public string account { get; set; }
 
@@ -35,7 +43,16 @@ namespace Andoromeda.Kyubey.Portal.Models
 
         public IEnumerable<ActionTraceActAuthorization> authorization { get; set; }
 
-        public ActionDataWrap data { get; set; }
+        public T data { get; set; }
+    }
+
+    public class TransferActionData
+    {
+        public string from { get; set; }
+
+        public string to { get; set; }
+
+        public string quantity { get; set; }
     }
 
     public class ActionTraceActAuthorization
