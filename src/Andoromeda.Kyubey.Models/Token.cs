@@ -52,10 +52,19 @@ namespace Andoromeda.Kyubey.Models
         public TokenAlertNotificationType NotificationType { get; set; }
 
         public TokenStatus Status { get; set; }
+
         public bool HasIncubation { get; set; }
+
         public bool HasDex { get; set; }
+
         public bool HasContractExchange { get; set; }
+
         public decimal Raised { get; set; }
+
         public int RaisedUserCount { get; set; }
+
+        public long ActionPosition { get; set; }
+
+        public virtual ICollection<RaiseLog> RaiseLogs { get; set; }
     }
 }
