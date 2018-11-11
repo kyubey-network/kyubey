@@ -16,6 +16,9 @@
     }
     bool isContractExchange = Context.Request.Query.ContainsKey("contract");
 }
+
+
+
 <script src="~/js/eos.js"></script>
 <script src="~/js/common.js"></script>
 <script src="~/js/moment.js"></script>
@@ -95,7 +98,44 @@
                             }
                         </div>
                         <div v-show="control.chart === 'k'">
-                            <div id="chart" style="margin: 15px; height:350px; width: 100%"></div>
+                            <div id="chart" style=" height:350px; width: 100%">
+                                @section Style{
+                                    <!--封装了一个发布订阅模式-->
+                                    <script src="/js/candlestick/event.js"></script>
+                                    <!--图表库js-->
+                                    <script src="/js/candlestick/charting_library/charting_library.min.js"></script>
+                                    <!--websocket-->
+                                    <script src="/js/candlestick/websocket.js"></script>
+                                    <!--图表数据获取-->
+                                    <script src="/js/candlestick/datafeed.js"></script>
+                                    <!--图表配置-->
+                                    <script src="/js/candlestick/chartConfig.js"></script>
+                                    <link href="~/css/kyubey-candlestick.css" rel="stylesheet">
+                                }
+                                <div class="root">
+                                    <!--<div id="market" class="market">
+                                      <span class="active">BTC/USDT</span>
+                                      <span>ETH/USDT</span>
+                                      <span>BCH/USDT</span>
+                                      <span>EOS/USDT</span>
+                                      <span>ETC/USDT</span>
+                                    </div>-->
+                                    <div class="chart">
+                                        <div class="interval" id="interval">
+                                            <span  data-value="1">M1</span>
+                                            <span data-value="5">M5</span>
+                                            <span data-value="15">M15</span>
+                                            <span data-value="30">M30</span>
+                                            <span data-value="60">H1</span>
+                                            <span class="active" data-value="240">H4</span>
+                                            <span data-value="360">H6</span>
+                                            <span data-value="1D">D1</span>
+                                        </div>
+                                        <div id="tv_chart_container"></div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                         @if (curve != null)
                         {
@@ -466,6 +506,7 @@
     var app = new Vue({
         el: '#app',
         data: {
+             tokenId:'@Model.Id',
             control: {
                 order: 'mixed',
                 my: 'current',
@@ -507,7 +548,7 @@
             'inputs.pair': function () {
                 this.getPairs();
             },
-            'inputs.buyPrice': function (val) {        
+            'inputs.buyPrice': function (val) {
                 if (!this.isValidInput(val)) {
                     this.inputs.buyPrice = this.inputs.vaildbuyPriceInput;
                     val = this.inputs.vaildbuyPriceInput;
@@ -540,7 +581,7 @@
                 this.inputs.sellTotal = val * this.inputs.sellAmount;
             },
             'inputs.sellAmount': function (val) {
-                if (!this.isValidInput(val)) {  
+                if (!this.isValidInput(val)) {
                     this.inputs.sellAmount = this.inputs.vaildsellAmountInput;
                     val = this.inputs.vaildsellAmountInput;
                 }
@@ -568,8 +609,125 @@
                     self.isSignedIn = false;
                 }
             }, 5000);
+
+        },
+        mounted: function () {
+            this.initCandlestick();
+            this.bindCandlestick();
         },
         methods: {
+            // 单纯的写一个添加class的函数，这个不用看 没用
+            addCandlestickClass:    function (fatherDom, dom) {
+            [...fatherDom.getElementsByTagName('span')].forEach(function(item) {
+                item.className = ''
+            })
+    dom.className = 'active'
+},
+            dateObjToString: function (date) {
+                    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+            },
+            bindCandlestick: function () {
+                var _this = this;
+                FeedBase.prototype.getBars = function (symbolInfo, resolution, rangeStartDate, rangeEndDate, onResult, onError) {
+    //debugger;
+                    var start = _this.dateObjToString(new Date(rangeStartDate * 1000));
+                    var end = _this.dateObjToString(new Date(rangeEndDate * 1000));
+                    var perioid = 60;
+                    switch (resolution) {
+                        case '1D':
+                            perioid = 24*60 * 1;
+                            break;
+                        default:
+                            perioid = parseInt(resolution) * 60;
+                    }
+
+    $.ajax({
+        type: "GET",
+        url: `/Token/${_this.tokenId}/candlestick?begin=${start}&end=${end}&period=${perioid}`,
+        contentType: "application/json; charset=utf-8",
+        success: function (data, status) {
+            //debugger;
+            //console.log(data);
+
+            if (data && Array.isArray(data)) {
+                //debugger;
+                var meta = { noData: false }
+                var bars = []
+                if (data.length) {
+                    for (var i = 0; i < data.length; i += 1) {
+                        bars.push({
+                            time: Number(new Date(data[i].time))  ,
+                            close: data[i].closing,
+                            open: data[i].opening,
+                            high: data[i].max,
+                            low: data[i].min,
+                            volume: data[i].volume
+                        })
+                    }
+                } else {
+                    meta = { noData: true }
+                }
+                onResult(bars, meta)
+            }
+        },
+        dataType: "json"
+    });
+
+}
+
+            },
+            initCandlestick: function () {
+                var _this = this;
+                // 图表库实例化后储存的函数
+                //debugger;
+                var widget = null
+                // 进入页面 默认展示的产品
+                //var index_market = 'BTC/USDT'
+                // 进入页面 默认展示的产品周期
+                var index_activeCycle = '240'
+
+                // window.TradingView.onready 确保在html的dom加载完成后在调用
+                window.TradingView.onready(function () {
+                    // chartConfig 在chartConfig.js里面
+                    // 给chartConfig添加展示周期
+                    chartConfig.interval = index_activeCycle
+                    // 给chartConfig添加展示产品
+                    chartConfig.symbol = `${_this.tokenId}/EOS`// index_market
+
+                    // 初始化 TradingView
+                    widget = new window.TradingView.widget(chartConfig)
+
+                    widget && widget.onChartReady && widget.onChartReady(function () {
+                        //// 这是k线图 展示的 7日均线和30日均线。
+                        //widget.chart().createStudy('Moving Average', false, false, [7], null, {'Plot.linewidth': 2, 'Plot.color': '#2ba7d6'})
+                        //widget.chart().createStudy('Moving Average', false, false, [30], null, {'Plot.linewidth': 2, 'Plot.color': '#de9f66'})
+                    })
+                })
+
+
+                //var marketDom = document.getElementById('market')
+                var intervalDom = document.getElementById('interval')
+
+                //// 切换产品
+                //marketDom.addEventListener('click', function (e) {
+                //  // e.target.innerHTML 就是我们拿到的产品
+                //  // 1是 1分钟数据
+                //  widget.setSymbol(e.target.innerHTML, 1)
+
+                //  // 这个函数不用看，我为了样式好看 写一个添加删除class
+                //  addClass(marketDom, e.target)
+                //}, false)
+
+                // 切换产品周期
+                intervalDom.addEventListener('click', function (e) {
+                    // e.target.dataset.value 这个就是获取的产品的周期
+                    widget.chart().setResolution(e.target.dataset.value)
+
+
+                    // 这个函数不用看，我为了样式好看 写一个添加删除class
+                    _this.addCandlestickClass(intervalDom, e.target)
+                }, false)
+            },
             toggleFav: function (id) {
                 var self = this;
                 $.post(`/token/${account.name}/favorite/${id}`, {}, function (data) {
@@ -890,209 +1048,11 @@
         };
     }
 
-    $.getJSON('https://dasdaq-webapi.chinacloudsites.cn/api/Candlestick/kyubey-dex-@Model.Id?begin=@DateTime.UtcNow.AddDays(-7).ToString("yyyy-MM-dd")', {}, function (data) {
-        data = data.data.values.map(x => [x.time.split('T')[0], x.opening, x.closing, x.min, x.max]);
-        var myChart = echarts.init(document.getElementById('chart'));
-        var data0 = splitData(data);
 
-        function calculateMA(dayCount) {
-            var result = [];
-            for (var i = 0, len = data0.values.length; i < len; i++) {
-                if (i < dayCount) {
-                    result.push('-');
-                    continue;
-                }
-                var sum = 0;
-                for (var j = 0; j < dayCount; j++) {
-                    sum += data0.values[i - j][1];
-                }
-                result.push(sum / dayCount);
-            }
-            return result;
-        }
 
-        option = {
-            title: {
-                text: '@Model.Id',
-                left: 0
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross'
-                }
-            },
-            legend: {
-                data: ['Day-K', 'MA5', 'MA10', 'MA20', 'MA30']
-            },
-            grid: {
-                show: true,
-                left: '10%',
-                right: '10%',
-                bottom: '15%',
-            },
-            xAxis: {
-                type: 'category',
-                data: data0.categoryData,
-                boundaryGap: false,
-                axisLine: { onZero: false },
-                splitLine: { show: false },
-                min: 'dataMin',
-                max: 'dataMax'
-            },
-            yAxis: {
-                scale: true,
-                splitArea: {
-                    show: true
-                }
-            },
-            dataZoom: [
-                {
-                    filterMode: 'filter',
-                    type: 'inside',
-                    start: 50,
-                    end: 100
-                },
-                {
-                    show: true,
-                    type: 'slider',
-                    y: '90%',
-                    start: 50,
-                    end: 100
-                }
-            ],
-            series: [
-                {
-                    name: 'Day-K',
-                    type: 'candlestick',
-                    data: data0.values,
-                    markPoint: {
-                        label: {
-                            normal: {
-                                show: true,
-                                formatter: function (param) {
-                                    return param !== null ? Math.round(param.value) : '';
-                                }
-                            }
-                        },
-                        data: [
-                            {
-                                name: 'XX标点',
-                                coord: ['2013/5/31', 2300],
-                                value: 2300,
-                                itemStyle: {
-                                    normal: { color: 'rgb(41,60,85)' }
-                                }
-                            },
-                            {
-                                name: 'highest value',
-                                type: 'max',
-                                valueDim: 'highest'
-                            },
-                            {
-                                name: 'lowest value',
-                                type: 'min',
-                                valueDim: 'lowest'
-                            },
-                            {
-                                name: 'average value on close',
-                                type: 'average',
-                                valueDim: 'close'
-                            }
-                        ],
-                        tooltip: {
-                            formatter: function (param) {
-                                return param.name + '<br>' + (param.data.coord || '');
-                            }
-                        }
-                    },
-                    markLine: {
-                        symbol: ['none', 'none'],
-                        data: [
-                            [
-                                {
-                                    name: 'from lowest to highest',
-                                    type: 'min',
-                                    valueDim: 'lowest',
-                                    symbol: 'circle',
-                                    symbolSize: 10,
-                                    label: {
-                                        normal: { show: false },
-                                        emphasis: { show: false }
-                                    }
-                                },
-                                {
-                                    type: 'max',
-                                    valueDim: 'highest',
-                                    symbol: 'circle',
-                                    symbolSize: 10,
-                                    label: {
-                                        normal: { show: false },
-                                        emphasis: { show: false }
-                                    }
-                                }
-                            ],
 
-                            {
-                                name: 'min line on close',
-                                type: 'min',
-                                valueDim: 'close'
-                            },
-                            {
-                                name: 'max line on close',
-                                type: 'max',
-                                valueDim: 'close'
-                            }
-                        ]
-
-                    }
-
-                },
-
-                {
-                    name: 'MA5',
-                    type: 'line',
-                    data: calculateMA(5),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA10',
-                    type: 'line',
-                    data: calculateMA(10),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA20',
-                    type: 'line',
-                    data: calculateMA(20),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-                {
-                    name: 'MA30',
-                    type: 'line',
-                    data: calculateMA(30),
-                    smooth: true,
-                    lineStyle: {
-                        normal: { opacity: 0.5 }
-                    }
-                },
-
-            ]
-        };
-        myChart.setOption(option);
-    });
 
 </script>
-
 @if (curve != null)
 {
     <script>
