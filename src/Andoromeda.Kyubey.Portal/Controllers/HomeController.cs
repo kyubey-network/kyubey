@@ -26,7 +26,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 Id = x.Id,
                 BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.Id, _tokenRepository.GetTokenIncubationBannerPaths(x.Id, currentCulture).FirstOrDefault()),
-                CurrentRaised = x.Raised,
+                CurrentRaised = Convert.ToDecimal(db.RaiseLogs.Where(y => y.TokenId == x.Id && y.Account.Length == 12).Select(y => y.Amount).Sum()),
                 Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
                 ShowGoExchange = true,
                 TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.Goal ?? 0
