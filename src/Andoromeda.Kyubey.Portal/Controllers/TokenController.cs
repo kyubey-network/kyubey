@@ -165,7 +165,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
                     CurrentRaised = token.Raised,
-                    CurrentRaisedCount = token.RaisedUserCount
+                    CurrentRaisedCount = token.RaisedUserCount,
+                    BeginTime= tokenInfo?.Incubation?.Begin_Time
                 },
                 IncubatorBannerUrls = TokenTool.GetTokenIncubatorBannerUris(id, _tokenRepository.GetTokenIncubationBannerPaths(id, currentCulture)),
                 PraiseCount = await db.TokenHatcherPraises.CountAsync(x => x.TokenId == id),

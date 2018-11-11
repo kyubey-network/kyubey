@@ -24,6 +24,7 @@ namespace Andoromeda.Kyubey.Portal.Models
         public int CurrentRaisedCount { get; set; }
         public int RemainingDay { get; set; }
         public string Detail { get; set; }
+        public DateTimeOffset? BeginTime { get; set; }
     }
     public class RecentUpdateViewModel
     {
