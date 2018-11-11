@@ -100,6 +100,10 @@ namespace Andoromeda.Kyubey.Portal.Services
         public string[] GetTokenIncubationBannerPaths(string tokenId, string cultureStr)
         {
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "slides");
+            if (!Directory.Exists(folderPath))
+            {
+                return null;
+            }
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "*.png");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var availablePaths = availableFiles.Select(x => Path.Combine(tokenFolderRelativePath, x)).ToArray();
@@ -109,6 +113,10 @@ namespace Andoromeda.Kyubey.Portal.Services
         public string GetTokenIncubationDescription(string tokenId, string cultureStr)
         {
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
+            if (!Directory.Exists(folderPath))
+            {
+                return null;
+            }
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "description.*.txt");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
@@ -120,6 +128,10 @@ namespace Andoromeda.Kyubey.Portal.Services
         public string GetTokenIncubationDetail(string tokenId, string cultureStr)
         {
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "incubator");
+            if (!Directory.Exists(folderPath))
+            {
+                return null;
+            }
             var files = FileHelper.GetAllFileNameFromFolder(folderPath, "detail.*.md");
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var availablePath = availableFiles.Select(x => Path.Combine(folderPath, x)).FirstOrDefault();
@@ -173,6 +185,10 @@ namespace Andoromeda.Kyubey.Portal.Services
         public List<TokenIncubatorUpdateModel> GetTokenIncubatorUpdates(string tokenId, string cultureStr)
         {
             var folderPath = Path.Combine(tokenFolderAbsolutePath, tokenId, "updates");
+            if (!Directory.Exists(folderPath))
+            {
+                return null;
+            }
             var files = FileHelper.GetAllFileNameFromFolder(folderPath);
             var availableFiles = GetAvailableFileNames(files, cultureStr);
             var mainFile = availableFiles.FirstOrDefault(x => x.EndsWith(".json"));
