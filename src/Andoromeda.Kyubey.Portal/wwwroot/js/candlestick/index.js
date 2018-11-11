@@ -1,4 +1,4 @@
-
+ï»¿
 
 var kyubeyExchangeCandlestick = (function () {
     var defaultActiveCycle = 240;
@@ -13,30 +13,30 @@ var kyubeyExchangeCandlestick = (function () {
     var addInternalChangedEventListener = function () {
         var _this = this;
         var intervalDom = document.getElementById('interval')
-        // ÇĞ»»²úÆ·ÖÜÆÚ
+        // åˆ‡æ¢äº§å“å‘¨æœŸ
         intervalDom.addEventListener('click', function (e) {
-            // e.target.dataset.value Õâ¸ö¾ÍÊÇ»ñÈ¡µÄ²úÆ·µÄÖÜÆÚ
+            // e.target.dataset.value è¿™ä¸ªå°±æ˜¯è·å–çš„äº§å“çš„å‘¨æœŸ
             widget.chart().setResolution(e.target.dataset.value)
 
 
-            // Õâ¸öº¯Êı²»ÓÃ¿´£¬ÎÒÎªÁËÑùÊ½ºÃ¿´ Ğ´Ò»¸öÌí¼ÓÉ¾³ıclass
+            // è¿™ä¸ªå‡½æ•°ä¸ç”¨çœ‹ï¼Œæˆ‘ä¸ºäº†æ ·å¼å¥½çœ‹ å†™ä¸€ä¸ªæ·»åŠ åˆ é™¤class
             addCandlestickClass(intervalDom, e.target)
         }, false)
     }
     var initCandlestick = function () {
         var _this = this;
         window.TradingView.onready(function () {
-            // chartConfig ÔÚchartConfig.jsÀïÃæ
-            // ¸øchartConfigÌí¼ÓÕ¹Ê¾ÖÜÆÚ
+            // chartConfig åœ¨chartConfig.jsé‡Œé¢
+            // ç»™chartConfigæ·»åŠ å±•ç¤ºå‘¨æœŸ
             chartConfig.interval =defaultActiveCycle;
-            // ¸øchartConfigÌí¼ÓÕ¹Ê¾²úÆ·
+            // ç»™chartConfigæ·»åŠ å±•ç¤ºäº§å“
             chartConfig.symbol = `${window.tokenId}/EOS`// index_market
 
-            // ³õÊ¼»¯ TradingView
+            // åˆå§‹åŒ– TradingView
             widget = new window.TradingView.widget(chartConfig)
 
             widget && widget.onChartReady && widget.onChartReady(function () {
-                //// ÕâÊÇkÏßÍ¼ Õ¹Ê¾µÄ 7ÈÕ¾ùÏßºÍ30ÈÕ¾ùÏß¡£
+                //// è¿™æ˜¯kçº¿å›¾ å±•ç¤ºçš„ 7æ—¥å‡çº¿å’Œ30æ—¥å‡çº¿ã€‚
                 //widget.chart().createStudy('Moving Average', false, false, [7], null, {'Plot.linewidth': 2, 'Plot.color': '#2ba7d6'})
                 //widget.chart().createStudy('Moving Average', false, false, [30], null, {'Plot.linewidth': 2, 'Plot.color': '#de9f66'})
             })
