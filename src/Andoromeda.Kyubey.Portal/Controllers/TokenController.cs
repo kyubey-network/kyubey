@@ -204,18 +204,13 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .Select(x => new Candlestick
                 {
                     Time = new DateTime(x.Key),
-                    Min = x.Min(y => y.UnitPrice),
-                    Max = x.Max(y => y.UnitPrice),
+                    Min = x.Select(y => y.UnitPrice).Min(),
+                    Max = x.Select(y => y.UnitPrice).Max(),
                     Opening = x.Select(y => y.UnitPrice).FirstOrDefault(),
                     Closing = x.Select(y => y.UnitPrice).FirstOrDefault(),
                     Volume = x.Count()
                 })
                 .ToListAsync();
-
-            for (var i = 1; i < data.Count; i++)
-            {
-                data[i].Closing = data[i - 1].Closing;
-            }
 
             if (data.Count > 1)
             {
