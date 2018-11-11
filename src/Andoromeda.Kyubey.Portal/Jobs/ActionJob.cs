@@ -16,7 +16,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 {
     public class ActionJob : Job
     {
-        //[Invoke(Begin = "2018-06-01", Interval = 1000 * 5, SkipWhileExecuting = true)]
+        [Invoke(Begin = "2018-06-01", Interval = 1000 * 5, SkipWhileExecuting = true)]
         public void PollDexActions(IConfiguration config, KyubeyContext db)
         {
             TryHandleDexActionAsync(config, db).Wait();
