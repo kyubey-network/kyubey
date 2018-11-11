@@ -44,14 +44,14 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     TryHandleIboActionAsync(config, db, x.Id, tokenRepository).Wait();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
 
         private async Task TryHandleIboActionAsync(
-            IConfiguration config, KyubeyContext db, 
+            IConfiguration config, KyubeyContext db,
             string tokenId, ITokenRepository tokenRepository)
         {
             while (true)
@@ -59,7 +59,9 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                 var actions = await LookupIboActionAsync(config, db, tokenId, tokenRepository);
                 foreach (var act in actions)
                 {
-                    foreach (var act in actions)
+                    Console.WriteLine($"Handling action log {act.account_action_seq} {act.action_trace.act.name}");
+                    var blockTime = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(act.block_time + 'Z'));
+                    switch (act.action_trace.act.name)
                     {
                         case "transfer":
                             var token = tokenRepository.GetOne(tokenId);
@@ -308,7 +310,10 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 
         private async Task<IEnumerable<EosAction<ActionDataWrap>>> LookupDexActionAsync(IConfiguration config, KyubeyContext db)
         {
-            try
+            var row = await db.Constants.SingleAsync(x => x.Id == "action_pos");
+            var position = Convert.ToInt64(row.Value);
+            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
+            using (var response = await client.PostAsJsonAsync("/v1/history/get_actions", new
             {
                 account_name = "kyubeydex.bp",
                 pos = position,
@@ -318,38 +323,24 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                 var txt = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<EosActionWrap<ActionDataWrap>>(txt, new JsonSerializerSettings
                 {
-                    account_name = "kyubeydex.bp",
-                    pos = position,
-                    offset = 100
-                }))
+                    Error = HandleDeserializationError
+                });
+                if (result.actions.Count() == 0)
                 {
-                    var txt = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<EosActionWrap>(txt, new JsonSerializerSettings
-                    {
-                        Error = HandleDeserializationError
-                    });
-                    if (result.actions.Count() == 0)
-                    {
-                        return null;
-                    }
-                    if (result.actions.Count() > 0)
-                    {
-                        row.Value = result.actions.Last().account_action_seq.ToString();
-                        await db.SaveChangesAsync();
-                    }
-
-                    return result.actions;
+                    return null;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return null;
+                if (result.actions.Count() > 0)
+                {
+                    row.Value = result.actions.Last().account_action_seq.ToString();
+                    await db.SaveChangesAsync();
+                }
+
+                return result.actions;
             }
         }
 
         private async Task<IEnumerable<EosAction<TransferActionData>>> LookupIboActionAsync(
-            IConfiguration config, KyubeyContext db, 
+            IConfiguration config, KyubeyContext db,
             string tokenId, ITokenRepository tokenRepository)
         {
             var tokenInDb = await db.Tokens.SingleAsync(x => x.Id == tokenId);
