@@ -183,14 +183,13 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             }).ToList();
 
-            var handlerVM = new TokenHandlerViewModel()
+            var handlerVM = new TokenIncubationViewModel()
             {
-                TokenInfo = await db.Tokens.SingleAsync(x => x.Id == id && x.Status == TokenStatus.Active, cancellationToken),
-                HandlerInfo = new HandlerInfo()
+                IncubationInfo = new IncubationInfo()
                 {
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
-                    RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days,0),
+                    RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days, 0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
                     CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
@@ -212,6 +211,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             };
 
+            ViewBag.CurrentPrice = await db.MatchReceipts.Where(x => x.TokenId == id).OrderByDescending(x => x.Time).Select(x=>x.UnitPrice).FirstOrDefaultAsync();
             ViewBag.HandlerView = handlerVM;
 
             return View(token);
@@ -230,10 +230,10 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             var ticks = new TimeSpan(0, 0, period);
             begin = new DateTime(begin.Ticks / ticks.Ticks * ticks.Ticks);
             end = new DateTime(end.Ticks / ticks.Ticks * ticks.Ticks);
-
             var data = await DB.MatchReceipts
                 .Where(x => x.TokenId == id)
                 .Where(x => x.Time < end)
+                .OrderBy(x=>x.Time)
                 .GroupBy(x => x.Time >= begin ? x.Time.Ticks / ticks.Ticks * ticks.Ticks : 0)
                 .Select(x => new Candlestick
                 {
@@ -241,7 +241,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Min = x.Select(y => y.UnitPrice).Min(),
                     Max = x.Select(y => y.UnitPrice).Max(),
                     Opening = x.Select(y => y.UnitPrice).FirstOrDefault(),
-                    Closing = x.Select(y => y.UnitPrice).FirstOrDefault(),
+                    Closing = x.OrderByDescending(y=>y.Time).Select(y => y.UnitPrice).FirstOrDefault(),
                     Volume = x.Count()
                 })
                 .ToListAsync();
@@ -344,7 +344,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             string id,
             CancellationToken token)
         {
-            try {
+            try
+            {
                 using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
                 {
                     var currentTokenInfo = _tokenRepository.GetOne(id);
@@ -381,12 +382,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw e;
             }
-            
+
         }
 
         [HttpGet("[controller]/{id}/buy-data")]

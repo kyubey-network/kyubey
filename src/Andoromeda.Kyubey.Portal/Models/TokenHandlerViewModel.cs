@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 namespace Andoromeda.Kyubey.Portal.Models
 {
-    public class TokenHandlerViewModel
+    public class TokenIncubationViewModel
     {
-        public HandlerInfo HandlerInfo { get; set; }
-        public Token TokenInfo { get; set; }
-        //public List<Guid> HandlerBannerIds { get; set; }
+        public IncubationInfo IncubationInfo { get; set; }
         public List<string> IncubatorBannerUrls { get; set; }
         public int PraiseCount { get; set; }
         public List<TokenCommentViewModel> Comments { get; set; }
         public List<RecentUpdateViewModel> RecentUpdate { get; set; }
     }
-    public class HandlerInfo
+    public class IncubationInfo
     {
         public string Introduction { get; set; }
         public decimal CurrentRaised { get; set; }

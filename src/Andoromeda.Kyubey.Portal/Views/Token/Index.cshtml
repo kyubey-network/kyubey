@@ -1,5 +1,5 @@
 ﻿@{
-    TokenHandlerViewModel Model = ViewBag.HandlerView;
+    TokenIncubationViewModel Model = ViewBag.HandlerView;
     Token token = ViewBag.Token;
     ViewBag.Current = "token-about";
     ViewBag.Theme = "dark";
@@ -24,10 +24,10 @@
                         <div class="col-md-5">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="token-incubation-raised">@($"{Model.HandlerInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</div>
+                                    <div class="token-incubation-raised">@($"{Model.IncubationInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</div>
                                     <div class="progress" style="background-color:darkgray;height:30px;">
                                         @{
-                                            int raisedPercent = (Model.HandlerInfo.CurrentRaised == 0 || Model.HandlerInfo.TargetCredits == 0) ? 0 : (int)(100 * Model.HandlerInfo.CurrentRaised / Model.HandlerInfo.TargetCredits);
+                                            int raisedPercent = (Model.IncubationInfo.CurrentRaised == 0 || Model.IncubationInfo.TargetCredits == 0) ? 0 : (int)(100 * Model.IncubationInfo.CurrentRaised / Model.IncubationInfo.TargetCredits);
                                         }
                                         <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
                                     </div>
@@ -36,21 +36,21 @@
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
                                         <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
-                                        <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.HandlerInfo.RemainingDay]</div>
+                                        <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.RemainingDay]</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
                                         <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
-                                        <div class="token-incubation-card-value">@($"{ Math.Max((Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised),0).ToString("N")}") EOS</div>
+                                        <div class="token-incubation-card-value">@($"{ Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised),0).ToString("N")}") EOS</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
                                         <div class="token-incubation-card-text">@SR["Supporters"]</div>
-                                        <div class="token-incubation-card-value">@SR["{0} User(s)", Model.HandlerInfo.CurrentRaisedCount]</div>
+                                        <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.CurrentRaisedCount]</div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -80,7 +80,7 @@
 
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tab-1" role="tabpanel">
-                        @Html.Marked(Model.HandlerInfo.Detail)
+                        @Html.Marked(Model.IncubationInfo.Detail)
                     </div>
                     <div class="tab-pane" id="tab-2" role="tabpanel">
                         @if (Model.RecentUpdate != null)
