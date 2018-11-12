@@ -509,7 +509,7 @@
             control: {
                 order: 'mixed',
                 my: 'current',
-                publish: '@(otc == null || isContractExchange ? "contract" : "limit")',
+                publish: '@((!tokenInfo.Dex|| isContractExchange) ? "contract" : "limit")',
                 chart: '@(curve != null && isContractExchange ? "curve": "k")',
                 curve: 'price-balance',
                 pair: 'all'

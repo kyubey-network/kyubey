@@ -14,6 +14,8 @@ using Andoromeda.Kyubey.Models.Hatcher;
 using Pomelo.AspNetCore.Localization;
 using Andoromeda.Kyubey.Portal.Interface;
 using Andoromeda.Kyubey.Portal.Services;
+using Microsoft.AspNetCore.NodeServices;
+using Newtonsoft.Json;
 
 namespace Andoromeda.Kyubey.Portal.Controllers
 {
@@ -28,27 +30,56 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/pair")]
-        public async Task<IActionResult> Pair([FromServices] KyubeyContext db, string token, CancellationToken cancellationToken)
+        public async Task<IActionResult> Pair([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string token, CancellationToken cancellationToken)
         {
             if (token != null)
             {
                 token = token.ToUpper();
             }
+            var otcTokens = _tokenRepository.GetAll().Select(x => x.Id).ToList();
 
-            IQueryable<Otc> ret = db.Otcs
-                .Where(x => x.Status == Status.Active);
+            var last = await db.MatchReceipts
+                .Where(x => otcTokens.Contains(x.TokenId))
+                            .Where(y => y.TokenId == token || token == null)
+                            .GroupBy(x => x.TokenId)
+                            .Select(x => new
+                            {
+                                TokenId = x.Key,
+                                Last = x.LastOrDefault()
+                            })
+                            .ToListAsync();
 
-            if (!string.IsNullOrEmpty(token))
+
+
+            var last24 = await db.MatchReceipts
+                .Where(x => otcTokens.Contains(x.TokenId))
+                .Where(y => y.TokenId == token || token == null)
+                .Where(y => y.Time < DateTime.UtcNow.AddDays(-1))
+                .GroupBy(x => x.TokenId)
+                .Select(x => new
+                {
+                    TokenId = x.Key,
+                    Last = x.LastOrDefault()
+                })
+                .ToListAsync();
+
+
+
+            var rOrdinal = last.Select(x => new
             {
-                ret = ret.Where(x => x.Id.Contains(token));
-            }
+                id = x.TokenId,
+                price = x.Last?.UnitPrice ?? 0,
+                change = (x.Last?.UnitPrice ?? 0) / (last24?.FirstOrDefault(l => l.TokenId == x.TokenId)?.Last?.UnitPrice - 1)
+            });
 
-            return Json(await ret.Select(x => new
+            var r = db.Tokens.Where(x => x.Status == TokenStatus.Active).ToList().Select(x => new
             {
                 id = x.Id,
-                price = x.Price,
-                change = x.Change
-            }).ToListAsync(cancellationToken));
+                price = rOrdinal.FirstOrDefault(o => o.id == x.Id)?.price ?? 0,
+                change = rOrdinal.FirstOrDefault(o => o.id == x.Id)?.change ?? 0
+            });
+
+            return Json(r);
         }
 
         public async Task<IActionResult> Default([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
@@ -68,8 +99,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 });
             }
 
-            
-            
             ViewBag.Curve = token.Curve;
             ViewBag.TokenInfo = _tokenRepository.GetOne(id);
 
@@ -166,7 +195,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
                     && x.Timestamp < tokenInfo.Incubation.DeadLine)
-                    &&x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
+                    && x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
                     CurrentRaisedCount = await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).CountAsync(),
                     BeginTime = tokenInfo?.Incubation?.Begin_Time
                 },
@@ -305,17 +334,56 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
         [HttpGet("[controller]/{id}/contract-price")]
         public async Task<IActionResult> ContractPrice(
-            [FromServices] KyubeyContext db,
+          [FromServices]  INodeServices node,
+             //[FromServices] KyubeyContext db,
+             [FromServices] ITokenRepository _tokenRepository,
             [FromServices] IConfiguration config,
             string id,
             CancellationToken token)
         {
-            var bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id);
-            return Json(new
+            try {
+                using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
+                {
+                    var currentTokenInfo = _tokenRepository.GetOne(id);
+                    var currentPriceJavascript = _tokenRepository.GetPriceJsText(id);
+                    using (var tableResponse = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
+                    {
+                        code = currentTokenInfo.Basic.Contract.Pricing,
+                        scope = currentTokenInfo.Basic.Price_Scope,
+                        table = currentTokenInfo.Basic.Price_Table,
+                        json = true
+                    }))
+                    {
+                        if (string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope) || string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope))
+                        {
+                            return Json(new
+                            {
+                                BuyPrice = 0,
+                                SellPrice = 0
+                            });
+                        }
+
+                        var text = await tableResponse.Content.ReadAsStringAsync();
+                        var rows = JsonConvert.DeserializeObject<Table>(text).rows;
+
+                        var buy = await node.InvokeExportAsync<string>("./price", "buyPrice", rows, currentPriceJavascript);
+                        var sell = await node.InvokeExportAsync<string>("./price", "sellPrice", rows, currentPriceJavascript);
+                        var buyPrice = Convert.ToDouble(buy.Contains(".") ? buy.TrimEnd('0') : buy);
+                        var sellPrice = Convert.ToDouble(sell.Contains(".") ? sell.TrimEnd('0') : sell);
+                        return Json(new
+                        {
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        });
+                    }
+                }
+            }
+            catch(Exception e)
             {
-                BuyPrice = bancor.BuyPrice,
-                SellPrice = bancor.SellPrice
-            });
+                Console.WriteLine(e);
+                throw e;
+            }
+            
         }
 
         [HttpGet("[controller]/{id}/buy-data")]
