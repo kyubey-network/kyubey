@@ -13,30 +13,20 @@ var kyubeyExchangeCandlestick = (function () {
     var addInternalChangedEventListener = function () {
         var _this = this;
         var intervalDom = document.getElementById('interval')
-        // 切换产品周期
         intervalDom.addEventListener('click', function (e) {
-            // e.target.dataset.value 这个就是获取的产品的周期
+            // e.target.dataset.value   it is get product life cycle
             widget.chart().setResolution(e.target.dataset.value)
-
-
-            // 这个函数不用看，我为了样式好看 写一个添加删除class
             addCandlestickClass(intervalDom, e.target)
         }, false)
     }
     var initCandlestick = function () {
         var _this = this;
         window.TradingView.onready(function () {
-            // chartConfig 在chartConfig.js里面
-            // 给chartConfig添加展示周期
             chartConfig.interval =defaultActiveCycle;
-            // 给chartConfig添加展示产品
             chartConfig.symbol = `${window.tokenId}/EOS`// index_market
-
-            // 初始化 TradingView
             widget = new window.TradingView.widget(chartConfig)
 
             widget && widget.onChartReady && widget.onChartReady(function () {
-                //// 这是k线图 展示的 7日均线和30日均线。
                 //widget.chart().createStudy('Moving Average', false, false, [7], null, {'Plot.linewidth': 2, 'Plot.color': '#2ba7d6'})
                 //widget.chart().createStudy('Moving Average', false, false, [30], null, {'Plot.linewidth': 2, 'Plot.color': '#de9f66'})
             })
@@ -84,7 +74,7 @@ var kyubeyExchangeCandlestick = (function () {
         }
     }
     function init(tokenId, ajaxCallback) {
-        debugger;
+        //debugger;
         window.tokenId = tokenId;
         initCandlestick();
         bindCandlestick(ajaxCallback);
