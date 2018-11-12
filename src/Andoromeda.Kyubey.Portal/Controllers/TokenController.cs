@@ -196,7 +196,10 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
                     && x.Timestamp < tokenInfo.Incubation.DeadLine)
                     && x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
-                    CurrentRaisedCount = await db.RaiseLogs.Where(x => x.TokenId == token.Id && x.Account.Length == 12).CountAsync(),
+                    CurrentRaisedCount = await db.RaiseLogs.Where(x =>
+                    (x.Timestamp > tokenInfo.Incubation.Begin_Time
+                    && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
+                    x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).CountAsync(),
                     BeginTime = tokenInfo?.Incubation?.Begin_Time
                 },
                 IncubatorBannerUrls = TokenTool.GetTokenIncubatorBannerUris(id, _tokenRepository.GetTokenIncubationBannerPaths(id, currentCulture)),
