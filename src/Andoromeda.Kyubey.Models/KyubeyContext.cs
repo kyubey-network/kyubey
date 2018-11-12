@@ -121,9 +121,9 @@ namespace Andoromeda.Kyubey.Models
 
         public DbSet<TokenCommentPraise> TokenCommentPraises { get; set; }
 
-        public DbSet<Otc> Otcs { get; set; }
+        //public DbSet<Otc> Otcs { get; set; }
 
-        public DbSet<Bancor> Bancors { get; set; }
+        //public DbSet<Bancor> Bancors { get; set; }
 
         public DbSet<AlertRule> AlertRules { get; set; }
 
