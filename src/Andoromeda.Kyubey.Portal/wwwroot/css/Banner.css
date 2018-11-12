@@ -13,6 +13,7 @@
     width: auto!important;
     height: 275px!important;
     margin-top: -225px;
+    max-width:100%;
 }
 
 .carousel-caption {

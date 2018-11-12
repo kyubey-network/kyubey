@@ -1,4 +1,4 @@
-﻿using Andoromeda.Kyubey.Models;
+using Andoromeda.Kyubey.Models;
 using Andoromeda.Kyubey.Portal.Models;
 using Andoromeda.Kyubey.Portal.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -44,14 +44,14 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     TryHandleIboActionAsync(config, db, x.Id, tokenRepository).Wait();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
 
         private async Task TryHandleIboActionAsync(
-            IConfiguration config, KyubeyContext db, 
+            IConfiguration config, KyubeyContext db,
             string tokenId, ITokenRepository tokenRepository)
         {
             while (true)
@@ -84,36 +84,38 @@ namespace Andoromeda.Kyubey.Portal.Jobs
             while (true)
             {
                 var actions = await LookupDexActionAsync(config, db);
-                foreach (var act in actions)
+                if (actions != null)
                 {
-                    Console.WriteLine($"Handling action log {act.account_action_seq} {act.action_trace.act.name}");
-                    var blockTime = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(act.block_time + 'Z'));
-                    switch (act.action_trace.act.name)
+                    foreach (var act in actions)
                     {
-                        case "sellmatch":
-                            await HandleSellMatchAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        case "buymatch":
-                            await HandleBuyMatchAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        case "sellreceipt":
-                            await HandleSellReceiptAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        case "buyreceipt":
-                            await HandleBuyReceiptAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        case "cancelbuy":
-                            await HandleCancelBuyAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        case "cancelsell":
-                            await HandleCancelSellAsync(db, act.action_trace.act.data, blockTime);
-                            break;
-                        default:
-                            continue;
+                        Console.WriteLine($"Handling action log {act.account_action_seq} {act.action_trace.act.name}");
+                        var blockTime = TimeZoneInfo.ConvertTimeToUtc(Convert.ToDateTime(act.block_time + 'Z'));
+                        switch (act.action_trace.act.name)
+                        {
+                            case "sellmatch":
+                                await HandleSellMatchAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            case "buymatch":
+                                await HandleBuyMatchAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            case "sellreceipt":
+                                await HandleSellReceiptAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            case "buyreceipt":
+                                await HandleBuyReceiptAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            case "cancelbuy":
+                                await HandleCancelBuyAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            case "cancelsell":
+                                await HandleCancelSellAsync(db, act.action_trace.act.data, blockTime);
+                                break;
+                            default:
+                                continue;
+                        }
                     }
                 }
-
-                if (actions.Count() < 100)
+                if (actions == null || actions.Count() < 100)
                 {
                     break;
                 }
@@ -310,37 +312,45 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 
         private async Task<IEnumerable<EosAction<ActionDataWrap>>> LookupDexActionAsync(IConfiguration config, KyubeyContext db)
         {
-            var row = await db.Constants.SingleAsync(x => x.Id == "action_pos");
-            var position = Convert.ToInt64(row.Value);
-            using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/history/get_actions", new
+            try
             {
-                account_name = "kyubeydex.bp",
-                pos = position,
-                offset = 100
-            }))
-            {
-                var txt = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<EosActionWrap<ActionDataWrap>>(txt, new JsonSerializerSettings
+                var row = await db.Constants.SingleAsync(x => x.Id == "action_pos");
+                var position = Convert.ToInt64(row.Value);
+                using (var client = new HttpClient { BaseAddress = new Uri(config["TransactionNodeBackup"]) })
+                using (var response = await client.PostAsJsonAsync("/v1/history/get_actions", new
                 {
-                    Error = HandleDeserializationError
-                });
-                if (result.actions.Count() == 0)
+                    account_name = "kyubeydex.bp",
+                    pos = position,
+                    offset = 100
+                }))
                 {
-                    return null;
-                }
-                if (result.actions.Count() > 0)
-                {
-                    row.Value = result.actions.Last().account_action_seq.ToString();
-                    await db.SaveChangesAsync();
-                }
+                    var txt = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<EosActionWrap<ActionDataWrap>>(txt, new JsonSerializerSettings
+                    {
+                        Error = HandleDeserializationError
+                    });
+                    if (result.actions.Count() == 0)
+                    {
+                        return null;
+                    }
+                    if (result.actions.Count() > 0)
+                    {
+                        row.Value = result.actions.Last().account_action_seq.ToString();
+                        await db.SaveChangesAsync();
+                    }
 
-                return result.actions;
+                    return result.actions;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
             }
         }
 
         private async Task<IEnumerable<EosAction<TransferActionData>>> LookupIboActionAsync(
-            IConfiguration config, KyubeyContext db, 
+            IConfiguration config, KyubeyContext db,
             string tokenId, ITokenRepository tokenRepository)
         {
             var tokenInDb = await db.Tokens.SingleAsync(x => x.Id == tokenId);

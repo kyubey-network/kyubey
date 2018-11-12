@@ -1,8 +1,7 @@
 ﻿@model Token
 @{
-    Otc otc = ViewBag.Otc;
-    Bancor bancor = ViewBag.Bancor;
     TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
+    OTCViewModel otc = ViewBag.Otc;
 }
 
 <div class="col-md-4">
@@ -31,18 +30,6 @@
             {
                 <div><i class="fa fa-key"></i> <a href="https://eosflare.io/account/@tokenInfo.Basic.Contract.Transfer" target="_blank">@tokenInfo.Basic.Contract.Transfer</a></div>
             }
-        </div>
-    }
-    @if (bancor != null)
-    {
-        <div class="card">
-            <div class="brand-current-label">@SR["Kyubey Price"]</div>
-            <div class="brand-current-text">@SR["Buy"]: @bancor.BuyPrice.ToString("0.0000") EOS</div>
-            <div class="brand-current-text">@SR["Sell"]: @bancor.SellPrice.ToString("0.0000") EOS</div>
-        </div>
-        <div class="card">
-            <div class="brand-current-label">@SR["24 Hours Change"]</div>
-            <div class="brand-current-text">@((bancor.Change * 100.0).ToString("0.0000"))%</div>
         </div>
     }
     @if (otc != null)
