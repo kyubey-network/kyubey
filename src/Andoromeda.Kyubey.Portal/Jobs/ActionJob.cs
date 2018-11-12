@@ -51,7 +51,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
         }
 
         private async Task TryHandleIboActionAsync(
-            IConfiguration config, KyubeyContext db,
+            IConfiguration config, KyubeyContext db, 
             string tokenId, ITokenRepository tokenRepository)
         {
             while (true)
@@ -340,7 +340,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
         }
 
         private async Task<IEnumerable<EosAction<TransferActionData>>> LookupIboActionAsync(
-            IConfiguration config, KyubeyContext db,
+            IConfiguration config, KyubeyContext db, 
             string tokenId, ITokenRepository tokenRepository)
         {
             var tokenInDb = await db.Tokens.SingleAsync(x => x.Id == tokenId);
