@@ -36,21 +36,21 @@
                                 <div class="col-md-6">
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Remain Time"]</div>
+                                        <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
                                         <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.HandlerInfo.RemainingDay]</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Goal"]</div>
+                                        <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
                                         <div class="token-incubation-card-value">@($"{ (Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised).ToString("N")}") EOS</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Support"]</div>
+                                        <div class="token-incubation-card-text">@SR["Supporters"]</div>
                                         <div class="token-incubation-card-value">@SR["{0} User(s)", Model.HandlerInfo.CurrentRaisedCount]</div>
                                     </div>
                                 </div>
