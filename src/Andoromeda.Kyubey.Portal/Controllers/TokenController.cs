@@ -191,10 +191,11 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days, 0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
-                    (x.Timestamp > tokenInfo.Incubation.Begin_Time
-                    && x.Timestamp < tokenInfo.Incubation.DeadLine)
-                    && x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
+                    //CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
+                    //(x.Timestamp > tokenInfo.Incubation.Begin_Time
+                    //&& x.Timestamp < tokenInfo.Incubation.DeadLine)
+                    //&& x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
+                    CurrentRaised = 0,
                     CurrentRaisedCount = await db.RaiseLogs.Where(x =>
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
                     && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
@@ -211,7 +212,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             };
 
-            ViewBag.CurrentPrice = await db.MatchReceipts.Where(x => x.TokenId == id).OrderByDescending(x => x.Time).Select(x=>x.UnitPrice).FirstOrDefaultAsync();
+            ViewBag.CurrentPrice = await db.MatchReceipts.Where(x => x.TokenId == id).OrderByDescending(x => x.Time).Select(x => x.UnitPrice).FirstOrDefaultAsync();
             ViewBag.HandlerView = handlerVM;
 
             return View(token);
@@ -233,7 +234,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             var data = await DB.MatchReceipts
                 .Where(x => x.TokenId == id)
                 .Where(x => x.Time < end)
-                .OrderBy(x=>x.Time)
+                .OrderBy(x => x.Time)
                 .GroupBy(x => x.Time >= begin ? x.Time.Ticks / ticks.Ticks * ticks.Ticks : 0)
                 .Select(x => new Candlestick
                 {
@@ -241,7 +242,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Min = x.Select(y => y.UnitPrice).Min(),
                     Max = x.Select(y => y.UnitPrice).Max(),
                     Opening = x.Select(y => y.UnitPrice).FirstOrDefault(),
-                    Closing = x.OrderByDescending(y=>y.Time).Select(y => y.UnitPrice).FirstOrDefault(),
+                    Closing = x.OrderByDescending(y => y.Time).Select(y => y.UnitPrice).FirstOrDefault(),
                     Volume = x.Count()
                 })
                 .ToListAsync();

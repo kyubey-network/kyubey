@@ -27,7 +27,7 @@
                                     <div class="token-incubation-raised">@($"{Model.IncubationInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</div>
                                     <div class="progress" style="background-color:darkgray;height:30px;">
                                         @{
-                                            int raisedPercent = (Model.IncubationInfo.CurrentRaised == 0 || Model.IncubationInfo.TargetCredits == 0) ? 0 : (int)(100 * Model.IncubationInfo.CurrentRaised / Model.IncubationInfo.TargetCredits);
+                                            long raisedPercent = (Model.IncubationInfo.CurrentRaised == 0 || Model.IncubationInfo.TargetCredits == 0) ? 0 : (long)(100 * Model.IncubationInfo.CurrentRaised / Model.IncubationInfo.TargetCredits);
                                         }
                                         <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
                                     </div>
