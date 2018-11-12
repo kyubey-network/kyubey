@@ -20,7 +20,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         [Route("/")]
         public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository)
         {
-            var tokenInfoList = _tokenRepository.GetAll().Where(x => x.Incubation != null).ToList();
+            var tokenInfoList = _tokenRepository.GetAll().Where(x => x?.Incubation != null).ToList();
             var dbIncubations = await db.Tokens.Where(x => x.HasIncubation && tokenInfoList.FirstOrDefault(t => x.Id == t.Id).Incubation != null && x.Status == TokenStatus.Active).ToListAsync();
 
             tokenInfoList.ForEach(x => x.Incubation.Begin_Time = x.Incubation.Begin_Time ?? DateTimeOffset.MinValue);

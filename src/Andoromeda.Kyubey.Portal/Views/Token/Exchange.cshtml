@@ -2,8 +2,6 @@
 @{
     ViewBag.Title = Model.Id + " - " + SR["Exchange"];
     ViewBag.Current = "token-exchange";
-    Bancor bancor = ViewBag.Bancor;
-    Otc otc = ViewBag.Otc;
     Curve curve = ViewBag.Curve;
     TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
     var constJs = "";
@@ -28,7 +26,7 @@
 <script src="~/js/eval-expr.js"></script>
 <script src="~/js/kyubey.js"></script>
 <script src="~/js/candlestick/index.js"></script>
-@if (bancor != null)
+@if (tokenInfo.Contract_Exchange)
 {
     <script src="/token/@(Model.Id).js"></script>
 }
@@ -172,12 +170,12 @@
                     </div>
                     <div class="card exchange-submit-card">
                         <div class="exchange-chart-menu">
-                            @if (otc != null)
+                            @if (tokenInfo.Dex)
                             {
                                 <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'limit' }" v-on:click="control.publish = 'limit'">@SR["Limit Order"]</a>
                                 <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'market' }" v-on:click="control.publish = 'market'">@SR["Market Order"]</a>
                             }
-                            @if (bancor != null)
+                            @if (tokenInfo.Contract_Exchange)
                             {
                                 <a class="exchange-chart-menu-item" v-bind:class="{ 'active': control.publish === 'contract' }" v-on:click="control.publish = 'contract'">@SR["Exchange Via Contract"]</a>
                             }

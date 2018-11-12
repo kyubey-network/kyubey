@@ -1,7 +1,6 @@
 ﻿@model Token
 @{
-    Otc otc = ViewBag.Otc;
-    Bancor bancor = ViewBag.Bancor;
+    TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
 }
 
 <header class="brand-header masthead text-center text-white"></header>
@@ -16,7 +15,7 @@
 <section class="brand-menu">
     <div id="containId">
         <a class="brand-menu-item @(ViewBag.Current == " token-about" ? "active" : "" )" asp-action="Index" asp-route-id="@Model.Id">@SR["About"]</a>
-        @if (otc != null || bancor != null)
+        @if (tokenInfo.Dex || tokenInfo.Contract_Exchange)
         {
         <a class="brand-menu-item @(ViewBag.Current == " token-exchange" ? "active" : "" )" asp-action="Exchange" asp-route-id="@Model.Id">@SR["Exchange"]</a>
         }

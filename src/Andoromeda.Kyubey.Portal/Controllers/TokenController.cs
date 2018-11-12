@@ -68,8 +68,8 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 });
             }
 
-            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            
+            
             ViewBag.Curve = token.Curve;
             ViewBag.TokenInfo = _tokenRepository.GetOne(id);
 
@@ -94,8 +94,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 });
             }
 
-            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             ViewBag.Curve = token.Curve;
             ViewBag.Token = token;
 
@@ -503,9 +501,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 .Include(x => x.Curve)
                 .SingleOrDefaultAsync(x => x.Id == id
                     && x.Status == TokenStatus.Active, cancellationToken);
-
-            ViewBag.Otc = await db.Otcs.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            ViewBag.Bancor = await db.Bancors.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             if (token == null)
             {
