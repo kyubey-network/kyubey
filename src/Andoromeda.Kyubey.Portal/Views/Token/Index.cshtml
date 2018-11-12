@@ -43,7 +43,7 @@
                                     <div class="token-incubation-card">
                                         <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
                                         <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
-                                        <div class="token-incubation-card-value">@($"{ (Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised).ToString("N")}") EOS</div>
+                                        <div class="token-incubation-card-value">@($"{ Math.Max((Model.HandlerInfo.TargetCredits - Model.HandlerInfo.CurrentRaised),0).ToString("N")}") EOS</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

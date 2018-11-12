@@ -190,7 +190,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 {
                     Detail = _tokenRepository.GetTokenIncubationDetail(id, currentCulture),
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
-                    RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : (tokenInfo.Incubation.DeadLine - DateTime.Now).Days,
+                    RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days,0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
                     CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
