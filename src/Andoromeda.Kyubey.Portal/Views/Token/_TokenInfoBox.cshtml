@@ -3,7 +3,7 @@
 
     Otc otc = ViewBag.Otc;
     Bancor bancor = ViewBag.Bancor;
-    TokenHandlerViewModel hatcher = ViewBag.HandlerView;
+    TokenIncubationViewModel hatcher = ViewBag.HandlerView;
     TokenManifestJObject tokenInfo = ViewBag.TokenInfo;
 }
 <section>
@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-4 token-incubation-infobox-card">
                             <div class="token-incubation-infobox-title">@SR["Crowdfunding Amount"]</div>
-                            <div class="token-incubation-infobox-subtitle">@(hatcher.HandlerInfo.TargetCredits.ToString("0.0000")) EOS</div>
+                            <div class="token-incubation-infobox-subtitle">@(hatcher.IncubationInfo.TargetCredits.ToString("0.0000")) EOS</div>
                         </div>
                         <div class="col-md-4 token-incubation-infobox-card">
                             <div class="token-incubation-infobox-title">@SR["Total Supply"]</div>
@@ -36,7 +36,7 @@
                         </div>
                         <div class="col-md-4 token-incubation-infobox-card">
                             <div class="token-incubation-infobox-title">@SR["Current Price"]</div>
-                            <div class="token-incubation-infobox-subtitle">@(0) EOS</div>
+                            <div class="token-incubation-infobox-subtitle">@(ViewBag.CurrentPrice) EOS</div>
                         </div>
                         <div class="col-md-4 token-incubation-infobox-card">
                             <div class="token-incubation-infobox-title">@SR["Contract Account"]</div>

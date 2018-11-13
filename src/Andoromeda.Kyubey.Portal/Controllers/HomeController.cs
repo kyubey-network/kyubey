@@ -29,10 +29,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 Id = x.Id,
                 BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.Id, _tokenRepository.GetTokenIncubationBannerPaths(x.Id, currentCulture).FirstOrDefault()),
-                CurrentRaised = Convert.ToDecimal(db.RaiseLogs.Where(y =>
-                    (y.Timestamp > tokenInfoList.FirstOrDefault(t => t.Id == y.TokenId).Incubation.Begin_Time
-                    && y.Timestamp < tokenInfoList.FirstOrDefault(t => t.Id == y.TokenId).Incubation.DeadLine)
-                    && y.TokenId == x.Id && !y.Account.StartsWith("eosio.")).Select(y => y.Amount).Sum()),
+                CurrentRaised = 0,
                 Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
                 ShowGoExchange = true,
                 TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.Goal ?? 0

@@ -21,7 +21,7 @@
                     <div class="incubation-card-progress-outer">
                         @{
                             var minVal = 10m;
-                            var rowPercent = minVal + ((row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (int)(100 * (row.CurrentRaised) / row.TargetCredits));
+                            var rowPercent = minVal + ((row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (long)(100 * (row.CurrentRaised) / row.TargetCredits));
 
                             rowPercent = 100 * rowPercent / (100 + minVal);
                             if (rowPercent > 100)
