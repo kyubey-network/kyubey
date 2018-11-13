@@ -191,10 +191,6 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days, 0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    //CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
-                    //(x.Timestamp > tokenInfo.Incubation.Begin_Time
-                    //&& x.Timestamp < tokenInfo.Incubation.DeadLine)
-                    //&& x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
                     CurrentRaised = 0,
                     CurrentRaisedCount = await db.RaiseLogs.Where(x =>
                     (x.Timestamp > tokenInfo.Incubation.Begin_Time
