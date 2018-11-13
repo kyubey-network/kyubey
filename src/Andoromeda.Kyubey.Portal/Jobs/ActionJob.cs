@@ -37,7 +37,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     if (token.Incubation == null
                         || token.Basic == null
                         || token.Basic.Contract == null
-                        || string.IsNullOrEmpty(token.Basic.Contract.Transfer))
+                        || string.IsNullOrEmpty(token.Basic.Contract.Depot ?? token.Basic.Contract.Transfer))
                     {
                         continue;
                     }
@@ -65,7 +65,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     {
                         case "transfer":
                             var token = tokenRepository.GetOne(tokenId);
-                            await HandleRaiseLogAsync(db, act.action_trace.act.data, blockTime, tokenId, token.Basic.Contract.Transfer);
+                            await HandleRaiseLogAsync(db, act.action_trace.act.data, blockTime, tokenId, token.Basic.Contract.Depot ?? token.Basic.Contract.Transfer);
                             break;
                         default:
                             continue;

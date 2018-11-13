@@ -28,7 +28,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <a class="tab-incubation" v-bind:class="{ 'active': tab === 'general' }" v-on:click="tab = 'general'">@SR["General"]</a>
-                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'exchange' }" v-on:click="tab = 'exchange'">@SR["Exchange"]</a>
+                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'exchange' }" v-on:click="tab = 'exchange'">@SR["Buy"]</a>
                                 </div>
                                 <template v-if="tab === 'general'">
                                     <div class="col-md-12">
@@ -67,7 +67,7 @@
                                         <a v-on:click="login" class="btn btn-incubation-exchange col-md-12">@SR["Login with Scatter"]</a>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
-                                        <div class="token-incubation-infobox-title">@SR["Balance"]</div>
+                                        <div class="token-incubation-infobox-title">@SR["My Balance"]</div>
                                         <div class="token-incubation-infobox-subtitle">{{ parseFloat(eosBalance).toFixed(4) }} EOS / {{ parseFloat(tokenBalance).toFixed(4) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
@@ -93,24 +93,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <a v-on:click="amount = eosBalance * 0.25" class="btn-incubation-amount">25%</a>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <a v-on:click="amount = eosBalance * 0.5" class="btn-incubation-amount">50%</a>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <a v-on:click="amount = eosBalance * 0.75" class="btn-incubation-amount">75%</a>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <a v-on:click="amount = eosBalance" class="btn-incubation-amount">100%</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@token.Id</div>
-                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(amount * @ViewBag.CurrentPrice.ToString("0.00000000")).toFixed(4) }} @token.Id</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(amount / @ViewBag.CurrentPrice.ToString("0.00000000")).toFixed(4) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <a v-on:click="buy()" class="btn btn-incubation-exchange col-md-12">@SR["Buy"]</a>

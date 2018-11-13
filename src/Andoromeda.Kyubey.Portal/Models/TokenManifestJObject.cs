@@ -38,5 +38,6 @@ namespace Andoromeda.Kyubey.Portal.Models
     {
         public string Transfer { get; set; }
         public string Pricing { get; set; }
+        public string Depot { get; set; }
     }
 }
