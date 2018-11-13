@@ -134,7 +134,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 return View("IndexOld", token);
             }
-            tokenInfo.Incubation.Begin_Time = tokenInfo.Incubation.Begin_Time ?? DateTimeOffset.MinValue;
+            tokenInfo.Incubation.Begin_Time = tokenInfo.Incubation.Begin_Time ?? DateTime.MinValue;
 
             ViewBag.Flex = false;
 
@@ -182,7 +182,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     ReplyUserName = c.ReplyUser?.UserName
                 }).ToList()
             }).ToList();
-
+            
             var handlerVM = new TokenIncubationViewModel()
             {
                 IncubationInfo = new IncubationInfo()
@@ -191,9 +191,12 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days, 0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    CurrentRaised = 0,
+                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
+                    (x.Timestamp > (tokenInfo.Incubation.Begin_Time ?? DateTime.MinValue)
+                    && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
+                    x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
                     CurrentRaisedCount = await db.RaiseLogs.Where(x =>
-                    (x.Timestamp > tokenInfo.Incubation.Begin_Time
+                    (x.Timestamp > (tokenInfo.Incubation.Begin_Time ?? DateTime.MinValue)
                     && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
                     x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).CountAsync(),
                     BeginTime = tokenInfo?.Incubation?.Begin_Time

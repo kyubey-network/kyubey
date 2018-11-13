@@ -18,8 +18,8 @@ namespace Andoromeda.Kyubey.Portal.Models
     public class IncubationJObject
     {
         public decimal Goal { get; set; }
-        public DateTimeOffset DeadLine { get; set; }
-        public DateTimeOffset? Begin_Time { get; set; }
+        public DateTime DeadLine { get; set; }
+        public DateTime? Begin_Time { get; set; }
     }
     public class TokenManifestBasicJObject
     {
