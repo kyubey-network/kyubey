@@ -29,7 +29,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             {
                 Id = x.Id,
                 BannerSrc = TokenTool.GetTokenIncubatorBannerUri(x.Id, _tokenRepository.GetTokenIncubationBannerPaths(x.Id, currentCulture).FirstOrDefault()),
-                CurrentRaised = 0,
+                CurrentRaised = x.Raised,
                 Introduction = _tokenRepository.GetTokenIncubationDescription(x.Id, currentCulture),
                 ShowGoExchange = true,
                 TargetCredits = tokenInfoList.FirstOrDefault(s => s.Id == x.Id)?.Incubation?.Goal ?? 0
