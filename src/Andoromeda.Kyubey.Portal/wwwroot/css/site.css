@@ -1205,3 +1205,15 @@ section {
     border: 1px solid rgba(255,255,255,1);
     color: rgba(255,255,255,1)!important;
 }
+
+.tab-incubation {
+    padding: 5px 10px;
+    color: rgba(0,0,0,0.6);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .tab-incubation.active {
+        background: rgba(255,255,255,0.3);
+        color: rgba(0,0,0,0.8);
+    }

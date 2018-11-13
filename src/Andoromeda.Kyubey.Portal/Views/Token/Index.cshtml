@@ -6,7 +6,10 @@
     ViewBag.Title = token.Id;
 }
 
+<script src="~/js/eos.js"></script>
+<script src="~/js/kyubey.js"></script>
 <script src="~/js/vue.js"></script>
+<script src="/token/@(token.Id).js"></script>
 
 <section id="app" class="token-incubation-container">
     <div class="container">
@@ -24,38 +27,50 @@
                         <div class="col-md-5">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="token-incubation-raised">@($"{Model.IncubationInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</div>
-                                    <div class="progress" style="background-color:darkgray;height:30px;">
-                                        @{
-                                            long raisedPercent = (Model.IncubationInfo.CurrentRaised == 0 || Model.IncubationInfo.TargetCredits == 0) ? 0 : (long)(100 * Model.IncubationInfo.CurrentRaised / Model.IncubationInfo.TargetCredits);
-                                        }
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
+                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'general' }" v-on:click="tab = 'general'">@SR["General"]</a>
+                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'exchange' }" v-on:click="tab = 'exchange'">@SR["Exchange"]</a>
+                                </div>
+                                <template v-if="tab === 'general'">
+                                    <div class="col-md-12">
+                                        <div class="token-incubation-raised">@($"{Model.IncubationInfo.CurrentRaised.ToString("N")} EOS {SR["Raised"]}")</div>
+                                        <div class="progress" style="background-color:darkgray;height:30px;">
+                                            @{
+                                                long raisedPercent = (Model.IncubationInfo.CurrentRaised == 0 || Model.IncubationInfo.TargetCredits == 0) ? 0 : (long)(100 * Model.IncubationInfo.CurrentRaised / Model.IncubationInfo.TargetCredits);
+                                            }
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: @(raisedPercent)%" aria-valuenow="@(raisedPercent)" aria-valuemin="0" aria-valuemax="100">@(raisedPercent)%</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="token-incubation-card">
-                                        <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
-                                        <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.RemainingDay]</div>
+                                    <div class="col-md-6">
+                                        <div class="token-incubation-card">
+                                            <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
+                                            <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.RemainingDay]</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="token-incubation-card">
-                                        <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
-                                        <div class="token-incubation-card-value">@($"{ Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised),0).ToString("N")}") EOS</div>
+                                    <div class="col-md-6">
+                                        <div class="token-incubation-card">
+                                            <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
+                                            <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
+                                            <div class="token-incubation-card-value">@($"{ Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N")}") EOS</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="token-incubation-card">
-                                        <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
-                                        <div class="token-incubation-card-text">@SR["Supporters"]</div>
-                                        <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.CurrentRaisedCount]</div>
+                                    <div class="col-md-6">
+                                        <div class="token-incubation-card">
+                                            <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
+                                            <div class="token-incubation-card-text">@SR["Supporters"]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.CurrentRaisedCount]</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <a href="/Token/@token.Id/exchange" class="btn btn-incubation-exchange col-md-12">@SR["Exchange"]</a>
-                                </div>
+                                </template>
+                                <template v-if="tab === 'exchange'">
+                                    <div class="col-md-12">
+                                        <a v-if="!isSignedIn" v-on:click="login" class="btn btn-incubation-exchange col-md-12">@SR["Login with Scatter"]</a>
+                                    </div>
+                                    <div class="col-md-12" v-if="isSignedIn">
+                                        <div class="token-incubation-infobox-title">@SR["Balance"]</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ eosBalance }} EOS / {{ tokenBalance }} @token.Id</div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -121,12 +136,36 @@
     </div>
 </section>
 
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var app = new Vue({
         el: '#app',
         data: {
             images: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.IncubatorBannerUrls))),
-            current: null
+            current: null,
+            tab: 'general',
+            isSignedIn: false,
+            buySupported: false,
+            sellSupported: false,
+            amount: '0.0000',
+            tokenBalance: null,
+            eosBalance: null
         },
         watch: {
         },
@@ -141,8 +180,86 @@
                 }
                 self.current = self.images[index];
             }, 15000);
+
+            setInterval(function () {
+                var self = this;
+                try {
+                    if (account && account.name) {
+                        self.isSignedIn = true;
+                    } else {
+                        self.isSignedIn = false;
+                    }
+                } catch (e) {
+                    self.isSignedIn = false;
+                }
+
+                try {
+                    if (window.buy) {
+                        self.buySupported = true;
+                    } else {
+                        self.buySupported = false;
+                    }
+                } catch (e) {
+                    self.buySupported = false;
+                }
+
+                try {
+                    if (window.sell) {
+                        self.sellSupported = true;
+                    } else {
+                        self.sellSupported = false;
+                    }
+                } catch (e) {
+                    self.sellSupported = false;
+                }
+            }, 2000);
+
+            self.getBalances();
+            setInterval(function () {
+                self.getBalances();
+            }, 15000);
         },
         methods: {
+            login: function () {
+                if (!('scatter' in window)) {
+                    showModal('Scatter插件没有找到', 'Scatter是一款EOS钱包，运行在Chrome浏览器中，请您确定已经安装Scatter插件. 参考：https://www.jianshu.com/p/a2e1e6204023');
+                } else {
+                    var self = this;
+
+                    var network = {
+                        blockchain: 'eos',
+                        host: host,
+                        port: 443,
+                        protocol: 'https',
+                        chainId: chain_id
+                    };
+
+                    scatter.getIdentity({ accounts: [network] }).then(identity => {
+                        account = identity.accounts.find(acc => acc.blockchain === 'eos');
+                        eos = scatter.eos(network, Eos, {});
+                        requiredFields = { accounts: [network] };
+                        self.isSignedIn = true;
+                    });
+                }
+            },
+            
+            getBalances: function () {
+                if (account && account.name) {
+                    this.getBalance(account.name, 'EOS');
+                    this.getBalance(account.name, '@token.Id');
+                }
+            },
+
+            getBalance: function (account_name, token) {
+                var self = this;
+                $.get(`/token/${account_name}/balance/${token}`, {}, function (data) {
+                    if (token === 'EOS') {
+                        self.eosBalance = parseFloat(data);
+                    } else {
+                        self.tokenBalance = parseFloat(data);
+                    }
+                });
+            },
         }
     });
 </script>

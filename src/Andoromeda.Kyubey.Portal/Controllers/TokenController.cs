@@ -488,17 +488,16 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             var t = DB.Tokens.SingleOrDefault(x => x.Id == token);
             var tokenInfo = _tokenRepository.GetOne(token);
             using (var client = new HttpClient { BaseAddress = new Uri(Configuration["TransactionNode"]) })
-            using (var response = await client.PostAsJsonAsync("/v1/chain/get_table_rows", new
+            using (var response = await client.PostAsJsonAsync("/v1/chain/get_currency_balance", new
             {
                 code = tokenInfo?.Basic?.Contract?.Transfer ?? "eosio.token",
-                table = "accounts",
-                scope = account,
-                json = true,
-                limit = 65535
+                account = account,
+                symbol = token
             }))
             {
-                var result = await response.Content.ReadAsAsync<Table>();
-                var balance = result.rows.SelectMany(x => x.Values.Select(y => y.ToString())).Where(x => x.EndsWith(" " + token)).FirstOrDefault();
+                var txt = await response.Content.ReadAsStringAsync();
+                var result = await response.Content.ReadAsAsync<IEnumerable<string>>();
+                var balance = result.FirstOrDefault();
                 if (string.IsNullOrEmpty(balance))
                 {
                     return Content("0.0000");
