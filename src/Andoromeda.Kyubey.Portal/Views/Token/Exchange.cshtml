@@ -222,7 +222,7 @@
                                 <div class="row exchange-form-input">
                                     <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                     <div class="col-sm-8">
-                                        <input type="text" class="exchange-textbox" v-model="inputs.buyTotal" />
+                                        <input type="text" class="exchange-textbox" id="buyAmount" v-model="inputs.buyTotal" />
                                         <div class="exchange-textbox-unit">EOS</div>
                                     </div>
                                 </div>
@@ -285,7 +285,7 @@
                                 <div class="row exchange-form-input" v-if="control.publish === 'limit'">
                                     <div class="col-sm-4 exchange-label">@SR["Total"]</div>
                                     <div class="col-sm-8">
-                                        <input type="text" class="exchange-textbox" v-model="inputs.sellTotal" />
+                                        <input type="text" class="exchange-textbox" id="sellAmount" v-model="inputs.sellTotal" />
                                         <div class="exchange-textbox-unit">EOS</div>
                                     </div>
                                 </div>
