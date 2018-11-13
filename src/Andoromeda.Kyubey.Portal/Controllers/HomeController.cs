@@ -23,7 +23,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             var tokenInfoList = _tokenRepository.GetAll().Where(x => x?.Incubation != null).ToList();
             var dbIncubations = await db.Tokens.Where(x => x.HasIncubation && tokenInfoList.FirstOrDefault(t => x.Id == t.Id).Incubation != null && x.Status == TokenStatus.Active).ToListAsync();
 
-            tokenInfoList.ForEach(x => x.Incubation.Begin_Time = x.Incubation.Begin_Time ?? DateTimeOffset.MinValue);
+            tokenInfoList.ForEach(x => x.Incubation.Begin_Time = x.Incubation.Begin_Time ?? DateTime.MinValue);
 
             var tokens = dbIncubations.OrderByDescending(x => x.Priority).Select(x => new TokenHandlerListViewModel()
             {
