@@ -1217,3 +1217,38 @@ section {
         background: rgba(255,255,255,0.3);
         color: rgba(0,0,0,0.8);
     }
+
+.incubation-buy-amount-txtbox {
+    background: rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 5px 10px;
+    outline: 0;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.2s linear;
+}
+
+    .incubation-buy-amount-txtbox:focus {
+        background: rgba(0,0,0,0.4);
+        color: #50c6fd;
+    }
+
+.btn-incubation-amount {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.4);
+    transition: all 0.2s linear;
+    padding: 5px 0;
+    width: 100%;
+    display: block;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+    .btn-incubation-amount:hover {
+        color: rgba(255,255,255,0.8);
+        border: 1px solid rgba(255,255,255,0.8);
+    }
