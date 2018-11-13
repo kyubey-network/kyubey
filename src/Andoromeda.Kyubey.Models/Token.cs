@@ -61,8 +61,6 @@ namespace Andoromeda.Kyubey.Models
 
         public decimal Raised { get; set; }
 
-        public int RaisedUserCount { get; set; }
-
         public long ActionPosition { get; set; }
 
         public virtual ICollection<RaiseLog> RaiseLogs { get; set; }

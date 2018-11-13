@@ -21,7 +21,9 @@ namespace Andoromeda.Kyubey.Portal
             services.AddNodeServices(x =>
                  x.ProjectPath = "./Node"
                 );
-            services.AddTransient<ITokenRepository, TokenFileInfoRepository>();
+            services.AddTransient<ITokenRepository, TokenFileInfoRepository>()
+                .AddTransient<ITokenAPIRopository, TokenAPIRopository>();
+
             services.AddMvc();
             services.AddEntityFrameworkMySql()
                 .AddDbContext<KyubeyContext>(x =>

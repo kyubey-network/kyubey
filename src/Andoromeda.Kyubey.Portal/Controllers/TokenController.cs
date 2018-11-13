@@ -106,7 +106,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
         }
 
         [HttpGet("[controller]/{id:regex(^[[A-Z]]{{1,16}}$)}")]
-        public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Index([FromServices] KyubeyContext db, [FromServices] ITokenRepository _tokenRepository, [FromServices]ITokenAPIRopository tokenAPIRopository, string id, CancellationToken cancellationToken)
         {
             var token = await db.Tokens
                 .Include(x => x.Curve)
@@ -182,7 +182,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     ReplyUserName = c.ReplyUser?.UserName
                 }).ToList()
             }).ToList();
-            
+
             var handlerVM = new TokenIncubationViewModel()
             {
                 IncubationInfo = new IncubationInfo()
@@ -191,10 +191,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                     Introduction = _tokenRepository.GetTokenIncubationDescription(id, currentCulture),
                     RemainingDay = tokenInfo?.Incubation?.DeadLine == null ? -999 : Math.Max((tokenInfo.Incubation.DeadLine - DateTime.Now).Days, 0),
                     TargetCredits = tokenInfo?.Incubation?.Goal ?? 0,
-                    CurrentRaised = Convert.ToDecimal(await db.RaiseLogs.Where(x =>
-                    (x.Timestamp > (tokenInfo.Incubation.Begin_Time ?? DateTime.MinValue)
-                    && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
-                    x.TokenId == token.Id && !x.Account.StartsWith("eosio.")).Select(x => x.Amount).SumAsync()),
+                    CurrentRaised = token.Raised,
                     CurrentRaisedCount = await db.RaiseLogs.Where(x =>
                     (x.Timestamp > (tokenInfo.Incubation.Begin_Time ?? DateTime.MinValue)
                     && x.Timestamp < tokenInfo.Incubation.DeadLine) &&
@@ -211,7 +208,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 }).ToList()
             };
 
-            ViewBag.CurrentPrice = await db.MatchReceipts.Where(x => x.TokenId == id).OrderByDescending(x => x.Time).Select(x => x.UnitPrice).FirstOrDefaultAsync();
+            ViewBag.CurrentPrice = (await tokenAPIRopository.GetTokenContractPriceAsync(id)).BuyPrice;
             ViewBag.HandlerView = handlerVM;
 
             return View(token);
@@ -337,50 +334,14 @@ namespace Andoromeda.Kyubey.Portal.Controllers
 
         [HttpGet("[controller]/{id}/contract-price")]
         public async Task<IActionResult> ContractPrice(
-          [FromServices]  INodeServices node,
-             //[FromServices] KyubeyContext db,
-             [FromServices] ITokenRepository _tokenRepository,
-            [FromServices] IConfiguration config,
+            [FromServices]ITokenAPIRopository tokenAPIRopository,
             string id,
             CancellationToken token)
         {
             try
             {
-                using (var txClient = new HttpClient { BaseAddress = new Uri(config["TransactionNode"]) })
-                {
-                    var currentTokenInfo = _tokenRepository.GetOne(id);
-                    var currentPriceJavascript = _tokenRepository.GetPriceJsText(id);
-                    using (var tableResponse = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
-                    {
-                        code = currentTokenInfo.Basic.Contract.Pricing,
-                        scope = currentTokenInfo.Basic.Price_Scope,
-                        table = currentTokenInfo.Basic.Price_Table,
-                        json = true
-                    }))
-                    {
-                        if (string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope) || string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope))
-                        {
-                            return Json(new
-                            {
-                                BuyPrice = 0,
-                                SellPrice = 0
-                            });
-                        }
-
-                        var text = await tableResponse.Content.ReadAsStringAsync();
-                        var rows = JsonConvert.DeserializeObject<Table>(text).rows;
-
-                        var buy = await node.InvokeExportAsync<string>("./price", "buyPrice", rows, currentPriceJavascript);
-                        var sell = await node.InvokeExportAsync<string>("./price", "sellPrice", rows, currentPriceJavascript);
-                        var buyPrice = Convert.ToDouble(buy.Contains(".") ? buy.TrimEnd('0') : buy);
-                        var sellPrice = Convert.ToDouble(sell.Contains(".") ? sell.TrimEnd('0') : sell);
-                        return Json(new
-                        {
-                            BuyPrice = buyPrice,
-                            SellPrice = sellPrice
-                        });
-                    }
-                }
+                var r = await tokenAPIRopository.GetTokenContractPriceAsync(id);
+                return Json(r);
             }
             catch (Exception e)
             {
