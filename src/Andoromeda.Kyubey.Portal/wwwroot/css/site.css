@@ -18,7 +18,12 @@
 }
 .tab-pane img { max-width: 100% }
 
-
+.modal-dialog .modal-header{
+    color:black;
+}
+.modal-dialog .modal-body {
+    color: black;
+}
 
 .hatcher-introduction {
     padding-left: 4px;
