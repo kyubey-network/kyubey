@@ -25,7 +25,6 @@
 <script src="~/js/function-plot.min.js"></script>
 <script src="~/js/eval-expr.js"></script>
 <script src="~/js/kyubey.js"></script>
-<script src="~/js/candlestick/index.js"></script>
 @if (tokenInfo.Contract_Exchange)
 {
     <script src="/token/@(Model.Id).js"></script>
@@ -99,6 +98,7 @@
                         <div v-show="control.chart === 'k'">
                             <div id="chart" style=" height:350px; width: 100%">
                                 @section Style{
+                                    <script src="~/js/candlestick/index.js"></script>
                                     <!--封装了一个发布订阅模式-->
                                     <script src="/js/candlestick/event.js"></script>
                                     <!--图表库js-->
@@ -112,23 +112,16 @@
                                     <link href="~/css/kyubey-candlestick.css" rel="stylesheet">
                                 }
                                 <div class="root">
-                                    <!--<div id="market" class="market">
-                                      <span class="active">BTC/USDT</span>
-                                      <span>ETH/USDT</span>
-                                      <span>BCH/USDT</span>
-                                      <span>EOS/USDT</span>
-                                      <span>ETC/USDT</span>
-                                    </div>-->
                                     <div class="chart">
                                         <div class="interval" id="interval">
-                                            <span  data-value="1">1min</span>
-                                            <span data-value="5">5min</span>
-                                            <span data-value="15">15min</span>
-                                            <span data-value="30">30min</span>
-                                            <span data-value="60">1hour</span>
-                                            <span class="active" data-value="240">4hour</span>
-                                            <span data-value="360">6hour</span>
-                                            <span data-value="1D">1day</span>
+                                            <span data-value="1">@(1+SR["min"])</span>
+                                            <span data-value="5">@(5 + SR["min"])</span>
+                                            <span data-value="15">@(15 + SR["min"])</span>
+                                            <span data-value="30">@(30 + SR["min"])</span>
+                                            <span data-value="60">@(1 + SR["hour"])</span>
+                                            <span class="active" data-value="240">@(4+ SR["hour"])</span>
+                                            <span data-value="360">@(6 + SR["hour"])</span>
+                                            <span data-value="1D">@(1 + SR["day"])</span>
                                         </div>
                                         <div id="tv_chart_container"></div>
                                     </div>
