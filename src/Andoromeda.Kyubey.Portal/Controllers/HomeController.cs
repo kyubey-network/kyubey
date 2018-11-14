@@ -49,7 +49,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
             }
             ViewBag.SearchToken = token;
             var ret = new List<TokenDisplay>();
-            var tokens = await DB.Tokens.ToListAsync(cancellationToken);
+            var tokens = await DB.Tokens.Where(x => token == null || x.Id.Contains(token) || x.Name.Contains(token)).ToListAsync(cancellationToken);
             foreach (var x in tokens)
             {
                 if (!x.HasDex && !x.HasContractExchange)
