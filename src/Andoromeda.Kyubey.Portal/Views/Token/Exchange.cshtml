@@ -97,7 +97,7 @@
                         </div>
                         <div v-show="control.chart === 'k'">
                             <div id="chart" style=" height:350px; width: 100%">
-                                @section Style{
+                                @section Scripts{
                                     <script src="~/js/candlestick/index.js"></script>
                                     <!--封装了一个发布订阅模式-->
                                     <script src="/js/candlestick/event.js"></script>
@@ -114,14 +114,14 @@
                                 <div class="root">
                                     <div class="chart">
                                         <div class="interval" id="interval">
-                                            <span data-value="1">@(1+SR["min"])</span>
-                                            <span data-value="5">@(5 + SR["min"])</span>
-                                            <span data-value="15">@(15 + SR["min"])</span>
-                                            <span data-value="30">@(30 + SR["min"])</span>
-                                            <span data-value="60">@(1 + SR["hour"])</span>
-                                            <span class="active" data-value="240">@(4+ SR["hour"])</span>
-                                            <span data-value="360">@(6 + SR["hour"])</span>
-                                            <span data-value="1D">@(1 + SR["day"])</span>
+                                            <span data-value="1">@SR["min", 1]</span>
+                                            <span data-value="5">@SR["min", 5]</span>
+                                            <span data-value="15">@SR["min", 15]</span>
+                                            <span data-value="30">@SR["min", 30]</span>
+                                            <span data-value="60">@SR["hour", 1]</span>
+                                            <span class="active" data-value="240">@SR["hour", 4]</span>
+                                            <span data-value="360">@SR["hour", 6]</span>
+                                            <span data-value="1D">@SR["day", 1]</span>
                                         </div>
                                         <div id="tv_chart_container"></div>
                                     </div>
@@ -177,7 +177,7 @@
                             <div class="col-md-6">
                                 <div class="exchange-buy-text">
                                     <span>@SR["Buy {0}", Model.Id]</span>
-                                    <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ eosBalance.toFixed(4) }} EOS</span>
+                                    <span v-if="isSignedIn" class="exchange-sell-text-right">@SR["Balance"]: {{ eosBalance.toFixed(4) }} EOS</span>
                                 </div>
                                 <div class="row exchange-form-input">
                                     <div class="col-sm-4 exchange-label">@SR["Price"]</div>
@@ -240,7 +240,7 @@
                             <div class="col-md-6">
                                 <div class="exchange-sell-text">
                                     <span>@SR["Sell {0}", Model.Id]</span>
-                                    <span v-if="isSignedIn" class="exchange-sell-text-right">Balance: {{ tokenBalance.toFixed(4) }} @Model.Id</span>
+                                    <span v-if="isSignedIn" class="exchange-sell-text-right">@SR["Balance"]: {{ tokenBalance.toFixed(4) }} @Model.Id</span>
                                 </div>
                                 <div class="row exchange-form-input">
                                     <div class="col-sm-4 exchange-label">@SR["Price"]</div>
