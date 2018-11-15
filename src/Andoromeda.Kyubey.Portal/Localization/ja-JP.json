@@ -114,7 +114,7 @@
   "Protocol": "使用プロトコル",
   "A Decentralized DApps Incubation Center": "去中心化的孵化器",
   "The first DAIBO protocol (decentralized initial bancor offering protocl). Introduce the project progess as indexes. Unblock raised fund by community votes": "首个使用去中心化班科协议(DAIBO)的去中心化孵化器，引入项目进度为指标，通过社区投票解锁储备金",
-  "min": "分",
-  "hour": "時間",
-  "day": "日"
+  "{0}min": "{0}分",
+  "{0}hour": "{0}時間",
+  "{0}day": "{0}日"
 }
