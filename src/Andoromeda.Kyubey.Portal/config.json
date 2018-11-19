@@ -1,5 +1,5 @@
 {
-  "MySQL": "Server=kyubey2.mysqldb.chinacloudapi.cn;Port=3306;Database=kyubey;Uid=kyubey2%web;Pwd=Kyubey2018;ConnectionReset=false",
+  "MySQL": "",
   "TransactionNode": "http://api1.eosasia.one",
   "TransactionNodeBackup": "http://api1.eosasia.one",
   "DexContract": "kyubeydex.bp",
