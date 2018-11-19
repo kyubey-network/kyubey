@@ -53,7 +53,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="x in sellOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F8EBF1 ' + getcolorOccupationRatio(x.amount,x.totalMax) + ', white ' + getcolorOccupationRatio(x.amount,x.totalMax) + ')'">
-                                    <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.unit).toFixed(8) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
                                 </tr>
@@ -75,7 +75,7 @@
                             </thead>
                             <tbody>
                                 <tr v-for="x in buyOrders" v-on:click="setPublish(x.unit, x.amount)" :style="'background: linear-gradient(to left, #F3F9EC ' + getcolorOccupationRatio(x.total,x.totalMax) + ', white ' + getcolorOccupationRatio(x.total,x.totalMax) + ')'">
-                                    <td>{{ parseFloat(x.unit).toFixed(4) }}</td>
+                                    <td>{{ parseFloat(x.unit).toFixed(8) }}</td>
                                     <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                     <td>{{ parseFloat(x.total).toFixed(4) }}</td>
                                 </tr>
@@ -315,7 +315,7 @@
                                 <tbody>
                                     <tr v-for="x in (control.pair === 'all' ? pairs : pairs.filter(y => fav.indexOf(y.id) >= 0))">
                                         <td><a v-on:click="toggleFav(x.id)"><i v-if="isSignedIn" class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i></a> <a v-on:click="redirectToToken(x.id)" class="exchange-pair-id">{{ x.id }}</a></td>
-                                        <td class="text-right">{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td class="text-right">{{ parseFloat(x.price).toFixed(8) }}</td>
                                         <td class="text-right" v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change * 100.0) >= 0 ? '+' : '' }}{{ parseFloat(x.change * 100.0).toFixed(2) }}%</td>
                                     </tr>
                                 </tbody>
@@ -338,7 +338,7 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="x in recentTransactions">
-                                        <td>{{ parseFloat(x.price).toFixed(4) }}</td>
+                                        <td>{{ parseFloat(x.price).toFixed(8) }}</td>
                                         <td>{{ parseFloat(x.amount).toFixed(4) }}</td>
                                         <td>{{ moment(x.time + 'Z').format('MM-DD HH:mm:ss') }}</td>
                                     </tr>
@@ -371,9 +371,9 @@
                                 <tr v-for="x in currentOrders">
                                     <td>{{ x.token }}</td>
                                     <td>{{ x.type }}</td>
-                                    <td class="text-right">{{ parseFloat(x.price).toFixed(4) || '@SR["Loading..."]' }} </td>
+                                    <td class="text-right">{{ parseFloat(x.price).toFixed(8) || '@SR["Loading..."]' }} </td>
                                     <td class="text-right">{{ parseFloat(x.amount).toFixed(4) || '@SR["Loading..."]' }}</td>
-                                    <td class="text-right">{{ parseFloat(x.total).toFixed(4) || '@SR["Loading..."]' }}</td>
+                                    <td class="text-right">{{ parseFloat(x.total).toFixed(8) || '@SR["Loading..."]' }}</td>
                                     <td>{{ moment(x.time + 'Z').format('MM-DD HH:mm:ss') }}</td>
                                     <td>
                                         <a class="btn-cancel" v-on:click="cancel(x.token, x.type, x.id)">@SR["Cancel"]</a>
@@ -524,7 +524,7 @@
             },
             buyOrders: [],
             sellOrders: [],
-            lastMatched: '0.0000',
+            lastMatched: '0.00000000',
             recentTransactions: [],
             currentOrders: [],
             historyOrders: [],
@@ -549,7 +549,7 @@
                 this.inputs.buyTotal = val * this.inputs.buyAmount;
             },
             'inputs.buyAmount': function (val) {
-                if (!this.isValidInput(val)) {
+                if (!this.isValidInput(val,4)) {
                     this.inputs.buyAmount = this.inputs.vaildbuyAmountInput;
                     val = this.inputs.vaildbuyAmountInput;
                 }
@@ -573,7 +573,7 @@
                 this.inputs.sellTotal = val * this.inputs.sellAmount;
             },
             'inputs.sellAmount': function (val) {
-                if (!this.isValidInput(val)) {
+                if (!this.isValidInput(val, 4)) {
                     this.inputs.sellAmount = this.inputs.vaildsellAmountInput;
                     val = this.inputs.vaildsellAmountInput;
                 }
@@ -700,7 +700,7 @@
                     self.sellOrders = data;
                 });
                 $.get('/token/@Model.Id/last-match', {}, function (data) {
-                    self.lastMatched = parseFloat(data).toFixed(4);
+                    self.lastMatched = parseFloat(data).toFixed(8);
                 });
             },
             getRecentTransaction: function () {
@@ -920,9 +920,17 @@
                 if (now > history) return "100%";
                 return parseInt(now * 100.0 / history) + "%";
             },
-            isValidInput: function (value) {
-                if (! /^\d*(?:\.\d{0,4})?$/.test(value)) {
-                    return false;
+            isValidInput: function (value, precision) {
+                if (precision!=null&&precision == 4) {
+                    if (! /^\d*(?:\.\d{0,4})?$/.test(value)) {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (! /^\d*(?:\.\d{0,8})?$/.test(value)) {
+                        return false;
+                    }
                 }
                 return true;
             }
