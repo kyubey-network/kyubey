@@ -109,7 +109,7 @@
     </div>
 </section>
 @await Html.PartialAsync("_TokenInfoBox")
-<section>
+<section id="app-detail">
     <div class="container">
         <div class="row ">
 
@@ -127,43 +127,39 @@
                         @Html.Marked(Model.IncubationInfo.Detail)
                     </div>
                     <div class="tab-pane" id="tab-2" role="tabpanel">
-                        <ul class="timeline">
-                            <li>
-                                <span class="timeline-title">New Web Design</span>
-                                <span class="timeline-date float-right">New Web Design</span>
+ 
+                            <div v-for="up in recentUpdates">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <a class="recentupdate-title" href="#"><i class="fa fa-plus"></i> {{up.Title}}</a>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12  recentupdate-date">
+                                        <span class="">{{up.Time}}</span>
+                                    </div>
+                                </div>
 
-                                @*<a target="_blank" href="https://www.totoprayogo.com/#">New Web Design</a>
-                                <a href="#" class="float-right">21 March, 2014</a>*@
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque diam non nisi semper, et elementum lorem ornare. Maecenas placerat facilisis mollis. Duis sagittis ligula in sodales vehicula....</p>
-                            </li>
-                            <li>
+                                <p>{{up.Content}}</p>
+                            </div>
 
-                                <a target="_blank" href="https://www.totoprayogo.com/#">New Web Design</a>
-                                <a href="#" class="float-right">21 March, 2014</a>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque diam non nisi semper, et elementum lorem ornare. Maecenas placerat facilisis mollis. Duis sagittis ligula in sodales vehicula....</p>
-                            </li>
-                            <li>
-                                <a href="#">21 000 Job Seekers</a>
-                                <a href="#" class="float-right">4 March, 2014</a>
-                                <p>Curabitur purus sem, malesuada eu luctus eget, suscipit sed turpis. Nam pellentesque felis vitae justo accumsan, sed semper nisi sollicitudin...</p>
-                            </li>
-                            <li>
-                                <a href="#">Awesome Employers</a>
-                                <a href="#" class="float-right">1 April, 2014</a>
-                                <p>Fusce ullamcorper ligula sit amet quam accumsan aliquet. Sed nulla odio, tincidunt vitae nunc vitae, mollis pharetra velit. Sed nec tempor nibh...</p>
-                            </li>
-                        </ul>
-
-
-                        @if (Model.RecentUpdate != null)
-                        {
-                            @foreach (var up in Model.RecentUpdate)
-                            {
-                                <h4>@up.Title</h4>
-                                <p>@up.Time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
-                                <p>@Html.Marked(up.Content)</p>
-                            }
-                        }
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                     <div class="tab-pane" id="tab-3" role="tabpanel">
                         @if (Model.Comments != null)
@@ -212,9 +208,24 @@
 
 <script>
     var app = new Vue({
+        el: '#app-detail',
+        data: {
+            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate)))
+        },
+        watch: {
+        },
+        created: function () {
+        },
+        methods: {
+        }
+    });
+
+
+    var app = new Vue({
         el: '#app',
         data: {
             images: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.IncubatorBannerUrls))),
+            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate))),
             current: null,
             tab: 'general',
             isSignedIn: false,
