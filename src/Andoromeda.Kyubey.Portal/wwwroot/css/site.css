@@ -1257,3 +1257,39 @@ section {
         color: rgba(255,255,255,0.8);
         border: 1px solid rgba(255,255,255,0.8);
     }
+.tab-pane .timeline {
+    list-style-type: none;
+    position: relative;
+}
+    .tab-pane .timeline:before {
+        content: ' ';
+        background: #d4d9df;
+        display: inline-block;
+        position: absolute;
+        left: 14px;
+        width: 2px;
+        height: 100%;
+        z-index: 400;
+    }
+    .tab-pane .timeline > li:before {
+        content: ' ';
+        background: white;
+        display: inline-block;
+        position: relative;
+        border-radius: 50%;
+        border: 3px solid #22c0e8;
+        line-height: 24px;
+        position: relative;
+        top: 4px;
+        left: -37px;
+        width: 24px;
+        height: 24px;
+        z-index: 400;
+    }
+    .tab-pane .timeline .timeline-title {
+        position: relative;
+        left: -27px;
+        color: #50c6fd;
+        font-size: 24px;
+        font-weight: bold;
+    }
