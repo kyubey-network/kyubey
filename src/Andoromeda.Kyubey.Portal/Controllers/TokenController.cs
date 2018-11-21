@@ -72,7 +72,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 change = (x.Last?.UnitPrice ?? 0) / (last24?.FirstOrDefault(l => l.TokenId == x.TokenId)?.Last?.UnitPrice - 1)
             });
 
-            var r = db.Tokens.Where(x => (x.Id.Contains(token)||string.IsNullOrWhiteSpace(token)) && x.Status == TokenStatus.Active).ToList().Select(x => new
+            var r = db.Tokens.Where(x => (x.Id.Contains(token) || string.IsNullOrWhiteSpace(token)) && x.Status == TokenStatus.Active).ToList().Select(x => new
             {
                 id = x.Id,
                 price = rOrdinal.FirstOrDefault(o => o.id == x.Id)?.price ?? 0,
@@ -202,7 +202,7 @@ namespace Andoromeda.Kyubey.Portal.Controllers
                 Comments = commentsVM,
                 RecentUpdate = _tokenRepository.GetTokenIncubatorUpdates(id, currentCulture)?.Select(x => new RecentUpdateViewModel()
                 {
-                    Content = x.Content,
+                    Content = Pomelo.Marked.Instance.Parse(x.Content),
                     Time = x.Time,
                     Title = x.Title
                 }).ToList()
