@@ -140,7 +140,7 @@
                             <p v-if="up.opening" v-html="up.Content"></p>
                         </div>
 
-                        <nav aria-label="Page navigation example">
+                        <nav aria-label="Page navigation example" v-if="totalPage">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" v-on:click="currentPage==1?'': currentPage--" v-bind:class="{ 'disabled':currentPage==1 }">
                                     <a class="page-link" href="javascript:void(0);" tabindex="-1">&laquo;</a>
@@ -203,8 +203,8 @@
     var app = new Vue({
         el: '#tab-2',
         data: {
-            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate))),
-            pageSize:1,
+            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate)??"[]")),
+            pageSize:5,
             currentPage:1,
         },
         computed:{
@@ -218,6 +218,8 @@
                 return r;
             },
             pagingRecentUpdates:function(){
+                if(this.recentUpdates==null)
+                    return [];
                 var startRow=(this.currentPage-1)*this.pageSize;
                 var endRow=startRow+this.pageSize;
                 return this.recentUpdates.slice(startRow, endRow);
