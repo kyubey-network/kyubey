@@ -131,14 +131,14 @@
                         <div class="recentupdate-box" v-for="up in pagingRecentUpdates">
                             <div class="row">
                                 <div class="col-md-6 col-sm-12">
-                                    <a v-on:click="up.opening=!up.opening" class="recentupdate-title" href="javascript:void(0);"><i class="fa" v-bind:class="{ 'fa-chevron-right':!up.opening,'fa-chevron-down':up.opening }"></i> {{up.Title}}</a>
+                                    <a v-on:click="switchContent(up)" class="recentupdate-title" href="javascript:void(0);"><i class="fa" v-bind:class="{ 'fa-chevron-right':!up.opening,'fa-chevron-down':up.opening }"></i> {{up.Title}}</a>
                                 </div>
                                 <div class="col-md-6 col-sm-12  recentupdate-date">
                                     <span>{{dateObjToString(new Date( up.Time))}}</span>
                                 </div>
                             </div>
-                            <transition  name="toTop" class="toTop">
-                            <p v-show="up.opening" v-html="up.Content"></p>
+                            <transition v-on:before-enter="enter" v-on:leave="leave">
+                                <p style="height:auto; display:inline-block;" v-show="up.opening" v-html="up.Content"></p>
                             </transition>
                         </div>
 
@@ -147,11 +147,11 @@
                                 <li class="page-item" v-on:click="currentPage==1?'': currentPage--" v-bind:class="{ 'disabled':currentPage==1 }">
                                     <a class="page-link" href="javascript:void(0);" tabindex="-1">&laquo;</a>
                                 </li>
-                                <li class="page-item" v-on:click="currentPage=pageNo"  v-for="pageNo in totalPage" v-bind:class="{ 'disabled':currentPage==pageNo }">
+                                <li class="page-item" v-on:click="currentPage=pageNo" v-for="pageNo in totalPage" v-bind:class="{ 'disabled':currentPage==pageNo }">
                                     <a class="page-link" href="javascript:void(0);">{{pageNo}}</a>
                                 </li>
                                 <li class="page-item" v-on:click="currentPage==totalPage?'': currentPage++" v-bind:class="{ 'disabled':currentPage==totalPage }">
-                                    <a class="page-link"  href="javascript:void(0);">&raquo;</a>
+                                    <a class="page-link" href="javascript:void(0);">&raquo;</a>
                                 </li>
                             </ul>
                         </nav>
@@ -209,7 +209,7 @@
             pageSize:10,
             currentPage:1
         },
-        computed:{
+        computed: {
             totalPage:function(){
                 var _this=this;
                 if(!_this.recentUpdates)
@@ -243,8 +243,22 @@
                 }
         },
         methods: {
+            enter: function (el) {
+                $(el).slideDown("fast");
+            },
+            leave: function (el, done) {
+                $(el).slideUp("fast", "swing", done);
+            },
+            switchContent: function (item) {
+                var _this = this;
+                var currentState = item.opening;
+                this.pagingRecentUpdates.forEach(function (element) {
+                    element.opening = false;
+                });
+                item.opening = !currentState;
+            },
             dateObjToString: function (date) {
-                return date.Format("yyyy-MM-dd hh:mm");
+                return date.Format("yyyy-MM-dd hh:mm:ss");
             }
         }
     });
