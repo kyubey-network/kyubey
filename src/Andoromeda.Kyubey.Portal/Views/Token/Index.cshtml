@@ -128,19 +128,21 @@
                     </div>
                     <div class="tab-pane" id="tab-2" role="tabpanel">
 
-                        <div v-for="up in pagingRecentUpdates">
+                        <div class="recentupdate-box" v-for="up in pagingRecentUpdates">
                             <div class="row">
                                 <div class="col-md-6 col-sm-12">
-                                    <a v-on:click="up.opening=!up.opening" class="recentupdate-title" href="javascript:void(0);"><i class="fa" v-bind:class="{ 'fa-plus':!up.opening,'fa-minus':up.opening }"></i> {{up.Title}}</a>
+                                    <a v-on:click="up.opening=!up.opening" class="recentupdate-title" href="javascript:void(0);"><i class="fa" v-bind:class="{ 'fa-chevron-right':!up.opening,'fa-chevron-down':up.opening }"></i> {{up.Title}}</a>
                                 </div>
                                 <div class="col-md-6 col-sm-12  recentupdate-date">
                                     <span>{{dateObjToString(new Date( up.Time))}}</span>
                                 </div>
                             </div>
-                            <p v-if="up.opening" v-html="up.Content"></p>
+                            <transition  name="toTop" class="toTop">
+                            <p v-show="up.opening" v-html="up.Content"></p>
+                            </transition>
                         </div>
 
-                        <nav aria-label="Page navigation example" v-if="totalPage">
+                        <nav aria-label="Page navigation example" v-if="totalPage>1">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" v-on:click="currentPage==1?'': currentPage--" v-bind:class="{ 'disabled':currentPage==1 }">
                                     <a class="page-link" href="javascript:void(0);" tabindex="-1">&laquo;</a>
@@ -204,16 +206,16 @@
         el: '#tab-2',
         data: {
             recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate)??"[]")),
-            pageSize:5,
-            currentPage:1,
+            pageSize:10,
+            currentPage:1
         },
         computed:{
             totalPage:function(){
                 var _this=this;
                 if(!_this.recentUpdates)
                     return 0;
-                var r=_this.recentUpdates.length/this.pageSize
-                if(_this.recentUpdates.length>r)
+                var r = parseInt(_this.recentUpdates.length / this.pageSize);
+                if((_this.recentUpdates.length/ this.pageSize)>r)
                     r++;
                 return r;
             },
@@ -242,7 +244,7 @@
         },
         methods: {
             dateObjToString: function (date) {
-                return `${date.getFullYear()}/${(date.getMonth() + 1)}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `;
+                return date.Format("yyyy-MM-dd hh:mm");
             }
         }
     });
