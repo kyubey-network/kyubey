@@ -13,15 +13,15 @@
                 <div class="incubation-card">
                     <div class="incubation-card-img" style="background: url(@row.BannerSrc)"></div>
                     <div class="incubation-card-main">
-                        <img class="incubation-card-icon" src="/token/@(row.Id).png" />
+                        <img class="incubation-card-icon" src="/token/@(row.Id).png"/>
                     </div>
                     <div class="incubation-card-main-text">@(row.Id)</div>
                     <div class="incubation-card-main-description">@((row.Introduction != null && row.Introduction.Length > 170) ? row.Introduction.Substring(0, 170) + "..." : row.Introduction)</div>
-                    <div class="incubation-card-underscore">@((row.BeginTime.HasValue&& row.BeginTime.Value>DateTime.Now)? SR["to be continued"]:SR["Crowdfunding Progress"])</div>
+                    <div class="incubation-card-underscore">@((row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now) ? SR["to be continued"] : SR["Crowdfunding Progress"])</div>
                     <div class="incubation-card-progress-outer">
                         @{
                             var minVal = 10m;
-                            var rowPercent = minVal + ((row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (long)(100 * (row.CurrentRaised) / row.TargetCredits));
+                            var rowPercent = minVal + ((row.CurrentRaised == 0 || row.TargetCredits == 0) ? 0 : (long) (100 * (row.CurrentRaised) / row.TargetCredits));
 
                             rowPercent = 100 * rowPercent / (100 + minVal);
                             if (rowPercent > 100)
@@ -32,18 +32,23 @@
                         <div class="incubation-card-progress" style="width: 100%">@(rowPercent == 100 ? "" : row.TargetCredits.ToString("0.00"))</div>
                         <div class="incubation-card-progress done" style="width: @(rowPercent)%">@row.CurrentRaised.ToString("0.00")</div>
                     </div>
-                    <hr />
+                    <hr/>
                     <div class="incubation-card-buttons">
                         <a href="/Token/@row.Id" class="btn btn-primary">@SR["View Detail"]</a>
-                        @if (row.ShowGoExchange)
+                        @if (row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now)
+                        {
+                            <a href="javascript:alert('@SR["to be continued"]')" class="btn btn-secondary">@SR["Go Exchange"]</a>
+                        }
+                        else if (row.ShowGoExchange)
                         {
                             <a href="/Token/@row.Id/Exchange" class="btn btn-primary">@SR["Go Exchange"]</a>
                         }
+
 
                     </div>
                 </div>
             </div>
         }
-        <div style="clear:both"></div>
+        <div style="clear: both"></div>
     </div>
 </section>
