@@ -44,21 +44,21 @@
                                         <div class="token-incubation-card">
                                             <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
                                             <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
-                                            <div class="token-incubation-card-value">@SR["{0} Day(s)",Model.IncubationInfo.BeginTime<DateTime.Now?  Model.IncubationInfo.RemainingDay.ToString():"--"]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.BeginTime < DateTime.Now ? Model.IncubationInfo.RemainingDay.ToString() : "--"]</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
                                             <div class="token-incubation-card-icon"><img src="~/img/EOS_Logo.svg" /></div>
                                             <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
-                                            <div class="token-incubation-card-value">@($"{(Model.IncubationInfo.BeginTime<DateTime.Now?  Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N"):"--")}") EOS</div>
+                                            <div class="token-incubation-card-value">@($"{(Model.IncubationInfo.BeginTime < DateTime.Now ? Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N") : "--")}") EOS</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
                                             <div class="token-incubation-card-icon"><img src="~/img/supporter.svg"></div>
                                             <div class="token-incubation-card-text">@SR["Supporters"]</div>
-                                            <div class="token-incubation-card-value">@SR["{0} User(s)",Model.IncubationInfo.BeginTime<DateTime.Now? Model.IncubationInfo.CurrentRaisedCount.ToString():"--"]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.BeginTime < DateTime.Now ? Model.IncubationInfo.CurrentRaisedCount.ToString() : "--"]</div>
                                         </div>
                                     </div>
                                 </template>
@@ -277,7 +277,7 @@
             amount: '0.0000',
             tokenBalance: null,
             eosBalance: null,
-            beginTime:new Date('@Html.Raw((Model.IncubationInfo.BeginTime.ToString()))')
+            beginTime:new Date(@Html.Raw(((!Model.IncubationInfo.BeginTime.HasValue?DateTime.MinValue.ToTimeStamp(): Model.IncubationInfo.BeginTime.Value.ToUnixTimeSeconds()) * 1000)))
         },
         watch: {
         },

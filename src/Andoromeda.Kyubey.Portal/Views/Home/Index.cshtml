@@ -19,7 +19,7 @@
                     <div class="incubation-card-main-description">@((row.Introduction != null && row.Introduction.Length > 170) ? row.Introduction.Substring(0, 170) + "..." : row.Introduction)</div>
                     @if (row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now)
                     {
-                        <div class="incubation-card-underscore text-muted">@SR["to be continued"]</div>
+                        <div class="incubation-card-underscore text-pink">@SR["to be continued"]</div>
                     }
                     else
                     {
