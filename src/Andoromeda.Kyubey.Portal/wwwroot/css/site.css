@@ -1052,7 +1052,7 @@ section {
     background-attachment: fixed;
     background-position: center;
     background-size: 100% !important;
-    min-height: 200px;
+    min-height: 180px;
 }
 
 .token-incubation-description-outer {
