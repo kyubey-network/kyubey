@@ -296,7 +296,7 @@
                             <div class="row">
                                 <div class="col-lg-7">
                                     <a class="exchange-pair-menu-item" v-bind:class="{ 'active': control.pair === 'all' }" v-on:click="control.pair = 'all'"><i class="fa fa-list"></i> @SR["All"]</a>
-                                    <a v-if="isSignedIn" v-bind:class="{ 'active': control.pair === 'fav' }" v-on:click="control.pair = 'fav'" class="exchange-pair-menu-item"><i class="fa fa-star"></i> @SR["Favorites"]</a>
+                                    <a v-if="isSignedIn" v-bind:class="{ 'active': control.pair === 'fav' }" v-on:click="control.pair = 'fav'" class="exchange-pair-menu-item"><i class="far fa-spinner"></i> @SR["Favorites"]</a>
                                 </div>
                                 <div class="col-lg-5">
                                     <input type="text" class="exchange-search-textbox" placeholder="@SR["Search"]" v-model="inputs.pair" />
@@ -314,7 +314,7 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="x in (control.pair === 'all' ? pairs : pairs.filter(y => fav.indexOf(y.id) >= 0))">
-                                        <td><a v-on:click="toggleFav(x.id)"><i v-if="isSignedIn" class="fa" v-bind:class="{ 'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i></a> <a v-on:click="redirectToToken(x.id)" class="exchange-pair-id">{{ x.id }}</a></td>
+                                        <td><a v-on:click="toggleFav(x.id)"><i v-if="isSignedIn" class="fa" v-bind:class="{ 'fa-spinner': favLoading.filter(y => y == x.id).length,'fa-star-o': !fav.filter(y => y == x.id).length, 'fa-star': fav.filter(y => y == x.id).length }"></i></a> <a v-on:click="redirectToToken(x.id)" class="exchange-pair-id">{{ x.id }}</a></td>
                                         <td class="text-right">{{ parseFloat(x.price).toFixed(4) }}</td>
                                         <td class="text-right" v-bind:class="{ 'green': x.change >= 0, 'red': x.change < 0 }">{{ parseFloat(x.change * 100.0) >= 0 ? '+' : '' }}{{ parseFloat(x.change * 100.0).toFixed(2) }}%</td>
                                     </tr>
@@ -532,6 +532,7 @@
             contractBuy: null,
             contractSell: null,
             fav: [],
+            favLoading:[],
             eosBalance: 0.0000,
             tokenBalance: 0.0000,
             isSignedIn: false
@@ -626,7 +627,11 @@
             },
             toggleFav: function (id) {
                 var self = this;
+                if(self.favLoading.indexOf(id) === -1){
+                    self.favLoading.push(id);
+                }
                 $.post(`/token/${account.name}/favorite/${id}`, {}, function (data) {
+                    self.favLoading.splice(id, 1);
                     self.getFavorites();
                 });
             },
