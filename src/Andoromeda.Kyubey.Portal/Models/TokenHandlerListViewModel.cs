@@ -13,5 +13,6 @@ namespace Andoromeda.Kyubey.Portal.Models
         public bool ShowGoExchange { get; set; }
         public decimal CurrentRaised { get; set; }
         public decimal TargetCredits { get; set; }
+        public DateTime? BeginTime { get; set; }
     }
 }
