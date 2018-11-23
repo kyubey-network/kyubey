@@ -49,14 +49,14 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
-                                            <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
+                                            <div class="token-incubation-card-icon"><img src="~/img/EOS_Logo.svg" /></div>
                                             <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
                                             <div class="token-incubation-card-value">@($"{ Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N")}") EOS</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
-                                            <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
+                                            <div class="token-incubation-card-icon"><img src="~/img/supporter.svg"></div>
                                             <div class="token-incubation-card-text">@SR["Supporters"]</div>
                                             <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.CurrentRaisedCount]</div>
                                         </div>
