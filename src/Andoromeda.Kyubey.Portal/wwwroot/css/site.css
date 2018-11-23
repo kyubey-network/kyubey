@@ -1264,6 +1264,43 @@ section {
         border: 1px solid rgba(255,255,255,0.8);
     }
 
+.tab-pane .timeline {
+    list-style-type: none;
+    position: relative;
+}
+
+
+.tab-pane .recentupdate-title {
+    color: #50c6fd;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.tab-pane .recentupdate-date {
+    font-size: 16px;
+}
+
+    .tab-pane .recentupdate-date span {
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+@media screen and (min-width: 540px) {
+    .tab-pane .recentupdate-date {
+        text-align: right;
+    }
+}
+
+.tab-pane .recentupdate-box p{
+    overflow: hidden;
+}
+
+    .tab-pane .recentupdate-box .row {
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
 .token-incubation-card-icon img {
     width: 27.44px;
     height: 32px;
