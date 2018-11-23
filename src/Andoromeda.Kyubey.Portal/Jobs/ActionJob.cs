@@ -195,7 +195,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     Account = data.data.account,
                     Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
                     Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
-                    UnitPrice = data.data.unit_price / 10000.0,
+                    UnitPrice = data.data.unit_price / 100000000.0,
                     Time = time,
                     TokenId = token
                 };
@@ -225,7 +225,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     Account = data.data.account,
                     Ask = Convert.ToDouble(data.data.ask.Split(' ')[0]),
                     Bid = Convert.ToDouble(data.data.bid.Split(' ')[0]),
-                    UnitPrice = data.data.unit_price / 10000.0,
+                    UnitPrice = data.data.unit_price / 100000000.0,
                     Time = time,
                     TokenId = token
                 };
@@ -264,7 +264,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     Bidder = data.data.bidder,
                     Time = time,
                     TokenId = token,
-                    UnitPrice = data.data.unit_price / 10000.0
+                    UnitPrice = data.data.unit_price / 100000000.0
                 });
                 await db.SaveChangesAsync();
             }
@@ -300,7 +300,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
                     Bidder = data.data.bidder,
                     Time = time,
                     TokenId = token,
-                    UnitPrice = data.data.unit_price / 10000.0
+                    UnitPrice = data.data.unit_price / 100000000.0
                 });
                 await db.SaveChangesAsync();
             }

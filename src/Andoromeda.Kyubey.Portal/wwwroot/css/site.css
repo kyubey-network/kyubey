@@ -1059,7 +1059,7 @@ section {
     background-attachment: fixed;
     background-position: center;
     background-size: 100% !important;
-    min-height: 200px;
+    min-height: 180px;
 }
 
 .token-incubation-description-outer {
@@ -1300,3 +1300,8 @@ section {
         padding: 5px;
         margin-bottom: 10px;
     }
+
+.token-incubation-card-icon img {
+    width: 27.44px;
+    height: 32px;
+}
