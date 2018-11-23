@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@SR["My Balance"]</div>
-                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(eosBalance).toFixed(4) }} EOS / {{ parseFloat(tokenBalance).toFixed(4) }} @token.Id</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(eosBalance.toFixed(8)) }} EOS / {{ parseFloat(tokenBalance.toFixed(8)) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@SR["Amount"] (EOS)</div>
@@ -94,7 +94,7 @@
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@token.Id</div>
-                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(amount / @ViewBag.CurrentPrice.ToString("0.00000000")).toFixed(4) }} @token.Id</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat((amount / @(((decimal)ViewBag.CurrentPrice).ToTokenPriceString())).toFixed(8)) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <a v-on:click="buy()" class="btn btn-incubation-exchange col-md-12">@SR["Buy"]</a>
