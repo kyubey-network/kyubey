@@ -9,6 +9,9 @@
     <div class="container">
         @foreach (var row in Model)
         {
+            
+                var rowOpen = !(row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now);
+           
             <div class="incubation-card-outer">
                 <div class="incubation-card">
                     <div class="incubation-card-img" style="background: url(@row.BannerSrc)"></div>
@@ -17,7 +20,7 @@
                     </div>
                     <div class="incubation-card-main-text">@(row.Id)</div>
                     <div class="incubation-card-main-description">@((row.Introduction != null && row.Introduction.Length > 170) ? row.Introduction.Substring(0, 170) + "..." : row.Introduction)</div>
-                    @if (row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now)
+                    @if (!rowOpen)
                     {
                         <div class="incubation-card-underscore text-pink">@SR["to be continued"]</div>
                     }
@@ -38,12 +41,12 @@
                             }
                         }
                         <div class="incubation-card-progress" style="width: 100%">@(rowPercent == 100 ? "" : row.TargetCredits.ToString("0.00"))</div>
-                        <div class="incubation-card-progress done" style="width: @(rowPercent)%">@row.CurrentRaised.ToString("0.00")</div>
+                        <div class="incubation-card-progress  @(rowOpen?"done":"bg-secondary" ) " style="width: @(rowPercent)%">@row.CurrentRaised.ToString("0.00")</div>
                     </div>
                     <hr />
                     <div class="incubation-card-buttons">
                         <a href="/Token/@row.Id" class="btn btn-primary">@SR["View Detail"]</a>
-                        @if (row.BeginTime.HasValue && row.BeginTime.Value > DateTime.Now)
+                        @if (!rowOpen)
                         {
                             <a href="javascript:alert('@SR["to be continued"]')" class="btn btn-secondary">@SR["Go Exchange"]</a>
                         }
@@ -51,8 +54,6 @@
                         {
                             <a href="/Token/@row.Id/Exchange" class="btn btn-primary">@SR["Go Exchange"]</a>
                         }
-
-
                     </div>
                 </div>
             </div>
