@@ -12,7 +12,7 @@ namespace Andoromeda.Kyubey.Portal.Jobs
 {
     public class RaiseJob : Job
     {
-        [Invoke(Begin = "2018-06-01", Interval = 1000 * 30, SkipWhileExecuting = true)]
+        //[Invoke(Begin = "2018-06-01", Interval = 1000 * 30, SkipWhileExecuting = true)]
         public void PollDexActions(IConfiguration config, KyubeyContext db, ITokenRepository tokenRepository)
         {
             foreach(var x in db.Tokens
