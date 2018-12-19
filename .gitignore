@@ -330,3 +330,5 @@ ASALocalRun/
 .mfractor/
 
 src/Andoromeda\.Kyubey\.Portal/wwwroot/kyubey/
+
+src/Andoromeda\.Kyubey\.Portal/\.vscode/

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Andoromeda.Kyubey.Portal.Services
 {
-    public class TokenAPIRopository: ITokenAPIRopository
+    public class TokenAPIRopository : ITokenAPIRopository
     {
         private readonly INodeServices _node;
         private readonly KyubeyContext _db;
@@ -69,7 +69,11 @@ namespace Andoromeda.Kyubey.Portal.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw e;
+                return new TokenContractPriceModel
+                {
+                    BuyPrice = 0,
+                    SellPrice = 0
+                };
             }
         }
     }

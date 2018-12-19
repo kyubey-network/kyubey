@@ -4,7 +4,7 @@
 
     body.dark {
         background: linear-gradient(to right bottom, #303649, #101016);
-        color: rgba(255,255,255,0.8)!important;
+        color: rgba(255,255,255,0.8) !important;
     }
 
 .exchange {
@@ -16,17 +16,28 @@
 .hatcher-title {
     margin-bottom: 0px;
 }
-.tab-pane img { max-width: 100% }
 
+.tab-pane img {
+    max-width: 100%
+}
 
+.modal-dialog .modal-header {
+    color: black;
+}
+
+.modal-dialog .modal-body {
+    color: black;
+}
 
 .hatcher-introduction {
     padding-left: 4px;
     margin-bottom: 4px;
 }
+
 .token-infobox-intro {
     width: 370px;
 }
+
 .token-infobox-intro {
     width: 370px;
 }
@@ -45,6 +56,7 @@ section {
     background: #fff;
     float: left;
 }
+
 .token-infobox-info-right strong {
     font-size: 14px;
 }
@@ -818,9 +830,9 @@ section {
         text-align: center;
     }
 
-    .token-incubation-icon-outer img {
-        float: none;
-    }
+        .token-incubation-icon-outer img {
+            float: none;
+        }
 
     .token-incubation-description-outer h3 {
         text-align: center;
@@ -955,7 +967,7 @@ section {
     width: 100%;
     background-position: center !important;
     overflow: hidden;
-    background-size: 100%!important
+    background-size: 100% !important
 }
 
 .incubation-card-main {
@@ -1047,7 +1059,7 @@ section {
     background-attachment: fixed;
     background-position: center;
     background-size: 100% !important;
-    min-height: 300px;
+    min-height: 180px;
 }
 
 .token-incubation-description-outer {
@@ -1056,7 +1068,6 @@ section {
 }
 
 .token-incubation-title-outer {
-
 }
 
 .token-incubation-container {
@@ -1127,7 +1138,7 @@ section {
 }
 
 .token-incubation-card-text {
-    font-size: 12px!important;
+    font-size: 12px !important;
 }
 
 .token-incubation-card-value {
@@ -1171,14 +1182,14 @@ section {
     border: 1px solid rgba(255,255,255,0.2);
     margin-top: -2px;
     border-radius: 0 5px 5px 5px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
-    .dark .nav-link.active {
-        background: linear-gradient(to right bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1))!important;
-        border: none;
-        color: rgba(255,255,255,0.8);
-    }
+.dark .nav-link.active {
+    background: linear-gradient(to right bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.1)) !important;
+    border: none;
+    color: rgba(255,255,255,0.8);
+}
 
 .dark .nav-tabs {
     border: none;
@@ -1197,14 +1208,14 @@ section {
 .btn-incubation-exchange {
     background: none;
     border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.4)!important;
+    color: rgba(255,255,255,0.4) !important;
 }
 
 
-.btn-incubation-exchange:hover {
-    border: 1px solid rgba(255,255,255,1);
-    color: rgba(255,255,255,1)!important;
-}
+    .btn-incubation-exchange:hover {
+        border: 1px solid rgba(255,255,255,1);
+        color: rgba(255,255,255,1) !important;
+    }
 
 .tab-incubation {
     padding: 5px 10px;
@@ -1252,3 +1263,49 @@ section {
         color: rgba(255,255,255,0.8);
         border: 1px solid rgba(255,255,255,0.8);
     }
+
+.tab-pane .timeline {
+    list-style-type: none;
+    position: relative;
+}
+
+
+.tab-pane .recentupdate-title {
+    color: #50c6fd;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.tab-pane .recentupdate-date {
+    font-size: 16px;
+}
+
+    .tab-pane .recentupdate-date span {
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+@media screen and (min-width: 540px) {
+    .tab-pane .recentupdate-date {
+        text-align: right;
+    }
+}
+
+.tab-pane .recentupdate-box p{
+    overflow: hidden;
+}
+
+    .tab-pane .recentupdate-box .row {
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+.token-incubation-card-icon img {
+    width: 27.44px;
+    height: 32px;
+}
+
+.text-pink {
+    color: #ee0979;
+}

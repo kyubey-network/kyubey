@@ -157,7 +157,9 @@ namespace Andoromeda.Kyubey.Portal.Services
             var result = new List<TokenManifestJObject>();
             foreach (var t in tokenFolderDirectories)
             {
-                result.Add(GetOne(t));
+                var item = GetOne(t);
+                if (item != null)
+                    result.Add(item);
             }
             return result;
         }

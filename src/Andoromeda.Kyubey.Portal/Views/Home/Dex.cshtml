@@ -37,7 +37,7 @@
                     @if (x.Change >= 0)
                     {
                         <td class="green">+@((x.Change * 100.0).ToString("0.00"))%</td>
-                        <td class="green">@x.Price.ToString("0.0000") EOS</td>
+                        <td class="green">@x.Price.ToTokenPriceString() EOS</td>
                     }
                     else
                     {

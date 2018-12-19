@@ -27,8 +27,8 @@
                         <div class="col-md-5">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'general' }" v-on:click="tab = 'general'">@SR["General"]</a>
-                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'exchange' }" v-on:click="tab = 'exchange'">@SR["Buy"]</a>
+                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'general' }" v-on:click="changeTopTab('general')">@SR["General"]</a>
+                                    <a class="tab-incubation" v-bind:class="{ 'active': tab === 'exchange' }" v-on:click="changeTopTab('exchange')">@SR["Buy"]</a>
                                 </div>
                                 <template v-if="tab === 'general'">
                                     <div class="col-md-12">
@@ -44,21 +44,21 @@
                                         <div class="token-incubation-card">
                                             <div class="token-incubation-card-icon"><i class="fa fa-clock-o"></i></div>
                                             <div class="token-incubation-card-text">@SR["Remaining Time"]</div>
-                                            <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.RemainingDay]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} Day(s)", Model.IncubationInfo.BeginTime < DateTime.Now ? Model.IncubationInfo.RemainingDay.ToString() : "--"]</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
-                                            <div class="token-incubation-card-icon"><i class="fa fa-btc"></i></div>
+                                            <div class="token-incubation-card-icon"><img src="~/img/EOS_Logo.svg" /></div>
                                             <div class="token-incubation-card-text">@SR["Remaining Amount"]</div>
-                                            <div class="token-incubation-card-value">@($"{ Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N")}") EOS</div>
+                                            <div class="token-incubation-card-value">@($"{(Model.IncubationInfo.BeginTime < DateTime.Now ? Math.Max((Model.IncubationInfo.TargetCredits - Model.IncubationInfo.CurrentRaised), 0).ToString("N") : "--")}") EOS</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="token-incubation-card">
-                                            <div class="token-incubation-card-icon"><i class="fa fa-thumbs-o-up"></i></div>
+                                            <div class="token-incubation-card-icon"><img src="~/img/supporter.svg"></div>
                                             <div class="token-incubation-card-text">@SR["Supporters"]</div>
-                                            <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.CurrentRaisedCount]</div>
+                                            <div class="token-incubation-card-value">@SR["{0} User(s)", Model.IncubationInfo.BeginTime < DateTime.Now ? Model.IncubationInfo.CurrentRaisedCount.ToString() : "--"]</div>
                                         </div>
                                     </div>
                                 </template>
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@SR["My Balance"]</div>
-                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(eosBalance).toFixed(4) }} EOS / {{ parseFloat(tokenBalance).toFixed(4) }} @token.Id</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(eosBalance.toFixed(8)) }} EOS / {{ parseFloat(tokenBalance.toFixed(8)) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@SR["Amount"] (EOS)</div>
@@ -94,7 +94,7 @@
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <div class="token-incubation-infobox-title">@token.Id</div>
-                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat(amount / @ViewBag.CurrentPrice.ToString("0.00000000")).toFixed(4) }} @token.Id</div>
+                                        <div class="token-incubation-infobox-subtitle">{{ parseFloat((amount / @(((decimal)ViewBag.CurrentPrice).ToTokenPriceString())).toFixed(8)) }} @token.Id</div>
                                     </div>
                                     <div class="col-md-12" v-if="isSignedIn">
                                         <a v-on:click="buy()" class="btn btn-incubation-exchange col-md-12">@SR["Buy"]</a>
@@ -127,15 +127,34 @@
                         @Html.Marked(Model.IncubationInfo.Detail)
                     </div>
                     <div class="tab-pane" id="tab-2" role="tabpanel">
-                        @if (Model.RecentUpdate != null)
-                        {
-                            @foreach (var up in Model.RecentUpdate)
-                            {
-                                <h4>@up.Title</h4>
-                                <p>@up.Time.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
-                                <p>@Html.Marked(up.Content)</p>
-                            }
-                        }
+
+                        <div class="recentupdate-box" v-for="up in pagingRecentUpdates">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <a v-on:click="switchContent(up)" class="recentupdate-title" href="javascript:void(0);"><i class="fa" v-bind:class="{ 'fa-chevron-right':!up.opening,'fa-chevron-down':up.opening }"></i> {{up.Title}}</a>
+                                </div>
+                                <div class="col-md-6 col-sm-12  recentupdate-date">
+                                    <span>{{dateObjToString(new Date( up.Time))}}</span>
+                                </div>
+                            </div>
+                            <transition v-on:before-enter="enter" v-on:leave="leave">
+                                <p style="height:auto; display:inline-block;" v-show="up.opening" v-html="up.Content"></p>
+                            </transition>
+                        </div>
+
+                        <nav aria-label="Page navigation example" v-if="totalPage>1">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" v-on:click="currentPage==1?'': currentPage--" v-bind:class="{ 'disabled':currentPage==1 }">
+                                    <a class="page-link" href="javascript:void(0);" tabindex="-1">&laquo;</a>
+                                </li>
+                                <li class="page-item" v-on:click="currentPage=pageNo" v-for="pageNo in totalPage" v-bind:class="{ 'disabled':currentPage==pageNo }">
+                                    <a class="page-link" href="javascript:void(0);">{{pageNo}}</a>
+                                </li>
+                                <li class="page-item" v-on:click="currentPage==totalPage?'': currentPage++" v-bind:class="{ 'disabled':currentPage==totalPage }">
+                                    <a class="page-link" href="javascript:void(0);">&raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                     <div class="tab-pane" id="tab-3" role="tabpanel">
                         @if (Model.Comments != null)
@@ -184,9 +203,72 @@
 
 <script>
     var app = new Vue({
+        el: '#tab-2',
+        data: {
+            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate)??"[]")),
+            pageSize:10,
+            currentPage:1
+        },
+        computed: {
+            totalPage:function(){
+                var _this=this;
+                if(!_this.recentUpdates)
+                    return 0;
+                var r = parseInt(_this.recentUpdates.length / this.pageSize);
+                if((_this.recentUpdates.length/ this.pageSize)>r)
+                    r++;
+                return r;
+            },
+            pagingRecentUpdates:function(){
+                if(this.recentUpdates==null)
+                    return [];
+                var startRow=(this.currentPage-1)*this.pageSize;
+                var endRow=startRow+this.pageSize;
+                return this.recentUpdates.slice(startRow, endRow);
+            }
+        },
+        watch: {
+        },
+        created:function (){
+                if(this.recentUpdates!=null){
+                    for(var i=0;i<this.recentUpdates.length;i++)
+                    {
+                        if(i%this.pageSize==0){
+                            Vue.set(this.recentUpdates[i], 'opening', true);
+                        }
+                        else{
+                            Vue.set(this.recentUpdates[i], 'opening', false);
+                        }
+                    }
+                }
+        },
+        methods: {
+            enter: function (el) {
+                $(el).slideDown("fast");
+            },
+            leave: function (el, done) {
+                $(el).slideUp("fast", "swing", done);
+            },
+            switchContent: function (item) {
+                var _this = this;
+                var currentState = item.opening;
+                this.pagingRecentUpdates.forEach(function (element) {
+                    element.opening = false;
+                });
+                item.opening = !currentState;
+            },
+            dateObjToString: function (date) {
+                return date.Format("yyyy-MM-dd hh:mm:ss");
+            }
+        }
+    });
+
+
+    var app = new Vue({
         el: '#app',
         data: {
             images: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.IncubatorBannerUrls))),
+            recentUpdates: @(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RecentUpdate))),
             current: null,
             tab: 'general',
             isSignedIn: false,
@@ -194,7 +276,8 @@
             sellSupported: false,
             amount: '0.0000',
             tokenBalance: null,
-            eosBalance: null
+            eosBalance: null,
+            beginTime:new Date(@Html.Raw(((!Model.IncubationInfo.BeginTime.HasValue?DateTime.MinValue.ToTimeStamp(): Model.IncubationInfo.BeginTime.Value.ToUnixTimeSeconds()) * 1000)))
         },
         watch: {
         },
@@ -249,6 +332,16 @@
             }, 15000);
         },
         methods: {
+            changeTopTab: function(typeStr) {
+              if (typeStr === "exchange") {
+                  var currentDt = new Date();
+                  if (this.beginTime > currentDt) {
+                      alert('@Html.Raw(SR["to be continued"]) ');
+                      return;
+                  }
+              }
+              this.tab = typeStr;
+            },
             login: function () {
                 if (!('scatter' in window)) {
                     showModal('Scatter插件没有找到', 'Scatter是一款EOS钱包，运行在Chrome浏览器中，请您确定已经安装Scatter插件. 参考：https://www.jianshu.com/p/a2e1e6204023');

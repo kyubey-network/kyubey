@@ -30,7 +30,7 @@ FeedBase.prototype.resolveSymbol = function (symbolName, onResolve, onError) {
     onResolve({
         "name": symbolName,
         "timezone": "Asia/Shanghai",
-        "pricescale": 100000,
+        "pricescale": 100000000,
         "minmov": 1,
         "minmov2": 0,
         "ticker": symbolName,

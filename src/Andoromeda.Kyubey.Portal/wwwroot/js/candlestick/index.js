@@ -21,7 +21,7 @@ var kyubeyExchangeCandlestick = (function () {
     var initCandlestick = function () {
         var _this = this;
         window.TradingView.onready(function () {
-            chartConfig.interval =defaultActiveCycle;
+            chartConfig.interval = defaultActiveCycle;
             chartConfig.symbol = `${window.tokenId}/EOS`// index_market
             widget = new window.TradingView.widget(chartConfig)
         })
@@ -71,7 +71,19 @@ var kyubeyExchangeCandlestick = (function () {
         bindCandlestick(ajaxCallback);
         addInternalChangedEventListener();
     }
+    function local() {
+        var currentLang = getCookie("ASPNET_LANG");
+        if (currentLang == "ja" )
+            return currentLang;
+        if (currentLang == "zh-CN" || currentLang == "")
+            return "zh";
+        if (currentLang == "zh-TW")
+            return "zh_TW";
+        if (currentLang == "en-US")
+            return "en";
+    }
     return {
-        init: init
+        init: init,
+        local: local
     }
 })();
