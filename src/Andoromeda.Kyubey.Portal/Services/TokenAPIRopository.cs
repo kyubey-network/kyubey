@@ -30,10 +30,24 @@ namespace Andoromeda.Kyubey.Portal.Services
         {
             try
             {
+                var currentTokenInfo = _tokenRepository.GetOne(id);
+                var currentPriceJavascript = _tokenRepository.GetPriceJsText(id);
+
+                if (string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope) || string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope))
+                {
+                    var buy = await _node.InvokeExportAsync<string>("./price", "buyPrice", new object[] { }, currentPriceJavascript);
+                    var sell = await _node.InvokeExportAsync<string>("./price", "sellPrice", new object[] { }, currentPriceJavascript);
+                    var buyPrice = Convert.ToDecimal(buy.Contains(".") ? buy.TrimEnd('0') : buy);
+                    var sellPrice = Convert.ToDecimal(sell.Contains(".") ? sell.TrimEnd('0') : sell);
+                    return new TokenContractPriceModel
+                    {
+                        BuyPrice = buyPrice,
+                        SellPrice = sellPrice
+                    };
+                }
+
                 using (var txClient = new HttpClient { BaseAddress = new Uri(_config["TransactionNode"]) })
                 {
-                    var currentTokenInfo = _tokenRepository.GetOne(id);
-                    var currentPriceJavascript = _tokenRepository.GetPriceJsText(id);
                     using (var tableResponse = await txClient.PostAsJsonAsync("/v1/chain/get_table_rows", new
                     {
                         code = currentTokenInfo.Basic.Contract.Pricing,
@@ -42,15 +56,6 @@ namespace Andoromeda.Kyubey.Portal.Services
                         json = true
                     }))
                     {
-                        if (string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope) || string.IsNullOrWhiteSpace(currentTokenInfo.Basic.Price_Scope))
-                        {
-                            return new TokenContractPriceModel
-                            {
-                                BuyPrice = 0,
-                                SellPrice = 0
-                            };
-                        }
-
                         var text = await tableResponse.Content.ReadAsStringAsync();
                         var rows = JsonConvert.DeserializeObject<Table>(text).rows;
 
