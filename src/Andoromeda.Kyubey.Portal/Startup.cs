@@ -17,7 +17,7 @@ namespace Andoromeda.Kyubey.Portal
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConfiguration(out var Config);
+            services.AddConfiguration2(out var Config);
             services.AddNodeServices(x =>
                  x.ProjectPath = "./Node"
                 );
